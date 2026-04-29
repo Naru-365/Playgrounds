@@ -393,9 +393,13 @@ body{
 .colophon-meta .label{color:var(--muted)}
 .colophon-tail{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.45em;color:var(--muted);margin-top:3rem;text-align:center}
 
-/* --- Reveal & motion primitives --- */
-.reveal-up{opacity:0;transform:translateY(28px)}
-.reveal-fade{opacity:0}
+/* --- Reveal & motion primitives ---
+   opacity:0 is applied only when js-ready class is on <html>.
+   This way, if JS fails to load or throws, content is still visible. */
+.reveal-up{opacity:1;transform:none}
+.reveal-fade{opacity:1}
+html.js-ready .reveal-up{opacity:0;transform:translateY(28px)}
+html.js-ready .reveal-fade{opacity:0}
 .split-line{overflow:hidden;display:block}
 .split-line .word{display:inline-block;will-change:transform,opacity}
 .char{display:inline-block;will-change:transform,opacity}
@@ -897,20 +901,20 @@ function initSmoothScroll(){
 }
 
 function initSplittingAndReveal(){
-  if(window.Splitting) Splitting();
-  if(!window.gsap) return;
+  if(window.Splitting) try { Splitting(); } catch(e){ console.warn('Splitting failed', e); }
+  if(!window.gsap){ forceShowAll(); return; }
   if(window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
 
-  // Hero: stagger fade-up
+  // Hero: stagger fade-up (set initial state BEFORE animating)
+  gsap.set('[data-hero-line]', {y:24, opacity:0});
   gsap.to('[data-hero-line]', {
     opacity:1,
     y:0,
     duration:1.2,
     stagger:.12,
     ease:'power3.out',
-    delay:.2
+    delay:.15
   });
-  gsap.set('[data-hero-line]', {y:24});
 
   // Prologue: char-by-char
   document.querySelectorAll('#prologue [data-splitting] .char').forEach(c => {
@@ -943,15 +947,39 @@ function initLucide(){
   if(window.lucide && lucide.createIcons) lucide.createIcons();
 }
 
+function forceShowAll(){
+  document.querySelectorAll('.reveal-up,.reveal-fade,[data-hero-line]').forEach(el => {
+    el.style.opacity = '1';
+    el.style.transform = 'none';
+  });
+  startCountUps(document);
+}
+
+function safeRun(label, fn){
+  try { fn(); }
+  catch(e){ console.warn('[init] '+label+' failed:', e); }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  buildDossier();
-  const winners = buildScoreTable();
-  buildSummary(winners);
-  initLucide();
-  initParticles();
-  initChart();
-  initSmoothScroll();
-  initSplittingAndReveal();
+  // Only hide content for reveal if GSAP is actually loaded.
+  // Otherwise content stays visible by CSS default.
+  const gsapReady = !!window.gsap;
+  if(gsapReady) document.documentElement.classList.add('js-ready');
+
+  // Safety net: force-show anything still hidden after 2.5s.
+  setTimeout(forceShowAll, 2500);
+
+  safeRun('dossier', buildDossier);
+  let winners = [];
+  safeRun('table', () => { winners = buildScoreTable(); });
+  safeRun('summary', () => buildSummary(winners));
+  safeRun('lucide', initLucide);
+  safeRun('particles', initParticles);
+  safeRun('chart', initChart);
+  safeRun('smoothScroll', initSmoothScroll);
+  safeRun('reveal', initSplittingAndReveal);
+
+  setTimeout(()=>startCountUps(document), 600);
 });
 </script>
 
