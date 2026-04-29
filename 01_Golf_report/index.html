@@ -394,12 +394,11 @@ body{
 .colophon-tail{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.45em;color:var(--muted);margin-top:3rem;text-align:center}
 
 /* --- Reveal & motion primitives ---
-   opacity:0 is applied only when js-ready class is on <html>.
-   This way, if JS fails to load or throws, content is still visible. */
+   Always visible by default. GSAP uses from() to animate from a hidden
+   state INTO the visible state. If GSAP fails or doesn't load, content
+   is still on screen. No opacity:0 traps. */
 .reveal-up{opacity:1;transform:none}
 .reveal-fade{opacity:1}
-html.js-ready .reveal-up{opacity:0;transform:translateY(28px)}
-html.js-ready .reveal-fade{opacity:0}
 .split-line{overflow:hidden;display:block}
 .split-line .word{display:inline-block;will-change:transform,opacity}
 .char{display:inline-block;will-change:transform,opacity}
@@ -889,7 +888,11 @@ function startCountUps(root){
 
 function initSmoothScroll(){
   if(typeof Lenis === 'undefined') return null;
-  const lenis = new Lenis({duration:1.2,smoothWheel:true,smoothTouch:false,easing:t => Math.min(1, 1.001 - Math.pow(2, -10 * t))});
+  // Skip Lenis on touch devices — native iOS scrolling is smoother
+  // and avoids any compat issues that could break the page.
+  const isTouch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  if(isTouch) return null;
+  const lenis = new Lenis({duration:1.2,easing:t => Math.min(1, 1.001 - Math.pow(2, -10 * t))});
   function raf(time){lenis.raf(time);requestAnimationFrame(raf)}
   requestAnimationFrame(raf);
   if(window.gsap && window.ScrollTrigger){
@@ -902,42 +905,52 @@ function initSmoothScroll(){
 
 function initSplittingAndReveal(){
   if(window.Splitting) try { Splitting(); } catch(e){ console.warn('Splitting failed', e); }
-  if(!window.gsap){ forceShowAll(); return; }
+  if(!window.gsap){ startCountUps(document); return; }
   if(window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
 
-  // Hero: stagger fade-up (set initial state BEFORE animating)
-  gsap.set('[data-hero-line]', {y:24, opacity:0});
-  gsap.to('[data-hero-line]', {
-    opacity:1,
-    y:0,
+  // Hero: from-state animation (content is visible by default; gsap.from
+  // animates FROM a hidden state INTO current visible state).
+  gsap.from('[data-hero-line]', {
+    opacity:0,
+    y:24,
     duration:1.2,
     stagger:.12,
     ease:'power3.out',
-    delay:.15
+    delay:.15,
+    immediateRender:false
   });
 
-  // Prologue: char-by-char
-  document.querySelectorAll('#prologue [data-splitting] .char').forEach(c => {
-    gsap.set(c,{opacity:.18});
-  });
+  // Prologue: char-by-char (only if Splitting actually wrapped chars)
   if(window.ScrollTrigger){
     document.querySelectorAll('#prologue [data-splitting]').forEach(p => {
-      gsap.to(p.querySelectorAll('.char'),{
-        opacity:1,
-        ease:'none',
-        stagger:.012,
-        scrollTrigger:{trigger:p,start:'top 80%',end:'bottom 60%',scrub:.7}
-      });
+      const chars = p.querySelectorAll('.char');
+      if(!chars.length) return;
+      gsap.fromTo(chars,
+        {opacity:.18},
+        {opacity:1, ease:'none', stagger:.012,
+         scrollTrigger:{trigger:p,start:'top 80%',end:'bottom 60%',scrub:.7}}
+      );
     });
   }
 
-  // Generic reveal-up / reveal-fade
-  gsap.utils.toArray('.reveal-up').forEach(el => {
-    gsap.fromTo(el,{opacity:0,y:34},{
-      opacity:1,y:0,duration:1,ease:'power3.out',
-      scrollTrigger:{trigger:el,start:'top 85%',toggleActions:'play none none none',onEnter:()=>startCountUps(el)}
+  // Generic reveal-up: from-state, content visible by default.
+  if(window.ScrollTrigger){
+    gsap.utils.toArray('.reveal-up').forEach(el => {
+      gsap.from(el,{
+        opacity:0,
+        y:34,
+        duration:1,
+        ease:'power3.out',
+        immediateRender:false,
+        scrollTrigger:{
+          trigger:el,
+          start:'top 85%',
+          toggleActions:'play none none none',
+          onEnter:()=>startCountUps(el)
+        }
+      });
     });
-  });
+  }
 
   // Trigger countups already in viewport
   startCountUps(document);
@@ -961,14 +974,8 @@ function safeRun(label, fn){
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Only hide content for reveal if GSAP is actually loaded.
-  // Otherwise content stays visible by CSS default.
-  const gsapReady = !!window.gsap;
-  if(gsapReady) document.documentElement.classList.add('js-ready');
-
-  // Safety net: force-show anything still hidden after 2.5s.
-  setTimeout(forceShowAll, 2500);
-
+  // Content is always visible by CSS default. JS only adds animations
+  // and dynamic content. If anything throws, nothing is hidden.
   safeRun('dossier', buildDossier);
   let winners = [];
   safeRun('table', () => { winners = buildScoreTable(); });
@@ -979,7 +986,8 @@ document.addEventListener('DOMContentLoaded', () => {
   safeRun('smoothScroll', initSmoothScroll);
   safeRun('reveal', initSplittingAndReveal);
 
-  setTimeout(()=>startCountUps(document), 600);
+  // Always run countups (will no-op if already counted)
+  setTimeout(()=>startCountUps(document), 400);
 });
 </script>
 
