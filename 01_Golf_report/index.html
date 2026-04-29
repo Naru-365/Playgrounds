@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>父 vs 息子 ゴルフ対戦レポート | 2026.04.29 ラインヒルGC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@500;700;900&family=M+PLUS+Rounded+1c:wght@400;700;900&family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+<style>
+:root{
+  --gold:#d4af37;
+  --gold-soft:#f0d97a;
+  --green:#10b981;
+  --green-deep:#065f46;
+  --bg-0:#05080a;
+  --bg-1:#0a0e0a;
+  --bg-2:#0f172a;
+  --text:#e5e7eb;
+  --sub:#94a3b8;
+  --bogey:#3b82f6;
+  --double:#1e3a8a;
+  --triple:#0b1e5b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'M PLUS Rounded 1c',system-ui,sans-serif;
+  background:linear-gradient(180deg,var(--bg-0) 0%,var(--bg-1) 30%,var(--bg-2) 100%);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+.font-serif-jp{font-family:'Noto Serif JP',serif}
+.font-cinzel{font-family:'Cinzel',serif;letter-spacing:.08em}
+.text-gold{color:var(--gold)}
+.text-gold-soft{color:var(--gold-soft)}
+.text-green-acc{color:var(--green)}
+.bg-gold{background:var(--gold)}
+.border-gold{border-color:var(--gold)}
+.gold-glow{box-shadow:0 0 20px rgba(212,175,55,.35),0 0 40px rgba(212,175,55,.15)}
+.gold-text-glow{text-shadow:0 0 18px rgba(212,175,55,.55),0 0 36px rgba(212,175,55,.25)}
+#particles{position:absolute;inset:0;z-index:0;pointer-events:none}
+.hero-vs{
+  font-family:'Cinzel',serif;
+  font-weight:800;
+  font-size:clamp(4rem,18vw,14rem);
+  line-height:.9;
+  background:linear-gradient(180deg,#fff8d6 0%,var(--gold) 45%,#7a5b14 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  text-shadow:0 0 60px rgba(212,175,55,.25);
+}
+.hero-title-jp{
+  font-family:'Noto Serif JP',serif;
+  font-weight:900;
+  font-size:clamp(2rem,5vw,3.5rem);
+}
+.player-card{
+  background:linear-gradient(160deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.01) 100%);
+  border:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(8px);
+  transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+}
+.player-card:hover{transform:translateY(-6px) scale(1.015)}
+.winner-card{
+  border-color:var(--gold);
+  box-shadow:0 0 25px rgba(212,175,55,.35),0 0 60px rgba(212,175,55,.12);
+  background:linear-gradient(160deg,rgba(212,175,55,.10) 0%,rgba(212,175,55,.02) 100%);
+}
+.loser-card{filter:saturate(.55) brightness(.85)}
+.badge-win{
+  background:linear-gradient(135deg,var(--gold) 0%,#a07a17 100%);
+  color:#1a1304;
+  font-weight:900;
+  letter-spacing:.15em;
+}
+.badge-lose{
+  background:rgba(148,163,184,.12);
+  color:#cbd5e1;
+  border:1px solid rgba(203,213,225,.2);
+}
+.section-title{
+  font-family:'Noto Serif JP',serif;
+  font-weight:900;
+  font-size:clamp(1.6rem,3vw,2.4rem);
+  position:relative;
+  display:inline-block;
+  padding-bottom:.4rem;
+}
+.section-title::after{
+  content:'';
+  position:absolute;left:0;bottom:0;
+  width:60%;height:2px;
+  background:linear-gradient(90deg,var(--gold),transparent);
+}
+.score-table{
+  border-collapse:separate;
+  border-spacing:0;
+  width:100%;
+  font-variant-numeric:tabular-nums;
+}
+.score-table th,.score-table td{
+  padding:.55rem .35rem;
+  text-align:center;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:.85rem;
+  white-space:nowrap;
+}
+.score-table th{
+  background:rgba(212,175,55,.08);
+  color:var(--gold-soft);
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  letter-spacing:.05em;
+}
+.score-table td.row-label{
+  text-align:left;
+  font-family:'Noto Serif JP',serif;
+  font-weight:700;
+  padding-left:1rem;
+  background:rgba(255,255,255,.02);
+}
+.score-table td.subtotal{
+  background:rgba(16,185,129,.08);
+  color:var(--green);
+  font-weight:900;
+}
+.score-table td.total{
+  background:rgba(212,175,55,.14);
+  color:var(--gold);
+  font-weight:900;
+  font-size:1rem;
+}
+.cell-par{color:#e5e7eb}
+.cell-bogey{background:rgba(59,130,246,.18);color:#93c5fd}
+.cell-double{background:rgba(30,58,138,.35);color:#bfdbfe}
+.cell-triple{background:rgba(11,30,91,.55);color:#dbeafe}
+.cell-eagle{background:rgba(168,85,247,.25);color:#e9d5ff}
+.cell-birdie{background:rgba(239,68,68,.18);color:#fecaca}
+.cell-winner{
+  position:relative;
+  outline:2px solid var(--gold);
+  outline-offset:-2px;
+  font-weight:900;
+}
+.cell-winner::after{
+  content:'👑';
+  position:absolute;top:-6px;right:-2px;
+  font-size:.7rem;
+  filter:drop-shadow(0 0 4px rgba(212,175,55,.7));
+}
+.cell-tie::after{
+  content:'🤝';
+  position:absolute;top:-6px;right:-2px;
+  font-size:.7rem;
+}
+.cell-tie{position:relative}
+.summary-card{
+  background:linear-gradient(160deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
+  border:1px solid rgba(212,175,55,.18);
+  border-radius:1rem;
+  padding:1.5rem;
+  transition:transform .3s ease;
+}
+.summary-card:hover{transform:translateY(-4px)}
+.divider-gold{
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  border:0;margin:2rem 0;
+}
+.scroll-hint{
+  position:absolute;left:50%;bottom:2rem;
+  transform:translateX(-50%);
+  color:var(--gold-soft);
+  font-family:'Cinzel',serif;
+  font-size:.8rem;
+  letter-spacing:.3em;
+  animation:bobble 2s ease-in-out infinite;
+}
+@keyframes bobble{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,8px)}}
+.glow-ring{
+  position:absolute;inset:-2px;
+  border-radius:inherit;
+  background:conic-gradient(from 0deg,var(--gold),transparent 30%,var(--gold) 60%,transparent 90%,var(--gold));
+  filter:blur(14px);
+  opacity:.35;
+  z-index:-1;
+  animation:spin 8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.reveal{opacity:0;transform:translateY(30px);transition:all .9s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<section id="hero" class="relative h-screen flex flex-col items-center justify-center overflow-hidden">
+  <div id="particles"></div>
+  <div class="relative z-10 text-center px-4">
+    <div class="text-gold-soft font-cinzel text-sm md:text-base tracking-[.4em] mb-4 animate__animated animate__fadeInDown">LINEHILL GOLF CLUB · 2026.04.29</div>
+    <div class="hero-title-jp text-gold mb-2 animate__animated animate__fadeInDown" style="animation-delay:.15s">父 と 息子 の 一 戦</div>
+    <div class="hero-vs animate__animated animate__zoomIn gold-text-glow" style="animation-delay:.4s">VS</div>
+    <div class="mt-6 grid grid-cols-2 gap-8 md:gap-24 max-w-3xl mx-auto">
+      <div class="animate__animated animate__fadeInLeft" style="animation-delay:.7s">
+        <div class="font-cinzel text-xs tracking-[.3em] text-gold-soft">FATHER</div>
+        <div class="font-serif-jp text-2xl md:text-4xl font-black mt-1">智一</div>
+        <div class="text-gold font-cinzel text-3xl md:text-5xl mt-2 gold-text-glow">95</div>
+      </div>
+      <div class="animate__animated animate__fadeInRight opacity-70" style="animation-delay:.7s">
+        <div class="font-cinzel text-xs tracking-[.3em] text-slate-400">SON</div>
+        <div class="font-serif-jp text-2xl md:text-4xl font-black mt-1">松本 孝祐</div>
+        <div class="text-slate-300 font-cinzel text-3xl md:text-5xl mt-2">133</div>
+      </div>
+    </div>
+    <div class="mt-8 inline-block animate__animated animate__fadeIn" style="animation-delay:1.1s">
+      <span class="badge-win px-5 py-2 rounded-full text-xs md:text-sm">FATHER WINS BY 38 STROKES</span>
+    </div>
+  </div>
+  <div class="scroll-hint">SCROLL</div>
+</section>
+
+<main class="relative z-10 max-w-6xl mx-auto px-5 md:px-8 py-16 md:py-24 space-y-20">
+
+  <section id="cards" class="reveal">
+    <h2 class="section-title text-gold-soft">対戦カード</h2>
+    <div class="grid md:grid-cols-2 gap-6 mt-8" id="players-grid"></div>
+  </section>
+
+  <hr class="divider-gold">
+
+  <section id="hole-table" class="reveal">
+    <h2 class="section-title text-gold-soft">ホール別スコア</h2>
+    <p class="text-sm text-slate-400 mt-2">各ホールでのスコアを比較。<span class="text-gold">👑</span> はそのホールの勝者、<span>🤝</span> は引き分け。</p>
+    <div class="mt-6 overflow-x-auto rounded-xl border border-white/5 bg-black/30">
+      <table class="score-table" id="scoreTable"></table>
+    </div>
+  </section>
+
+  <hr class="divider-gold">
+
+  <section id="chart" class="reveal">
+    <h2 class="section-title text-gold-soft">スコア推移</h2>
+    <p class="text-sm text-slate-400 mt-2">18ホールにおけるスコアの推移。Par線を基準に対比。</p>
+    <div class="mt-6 p-5 md:p-8 rounded-2xl bg-black/40 border border-white/5">
+      <div class="relative w-full" style="aspect-ratio:16/8;min-height:280px">
+        <canvas id="scoreChart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider-gold">
+
+  <section id="summary" class="reveal">
+    <h2 class="section-title text-gold-soft">本日のサマリー</h2>
+    <div class="grid md:grid-cols-3 gap-5 mt-8" id="summary-grid"></div>
+  </section>
+
+</main>
+
+<footer class="mt-16 py-10 border-t border-white/10 text-center">
+  <div class="font-cinzel text-gold tracking-[.3em] text-sm">LINEHILL · MATSUMOTO FAMILY · 2026.04.29</div>
+  <div class="text-slate-500 text-xs mt-2">Par 72 / Tee: Regular / Green: サブ</div>
+  <div class="text-slate-600 text-xs mt-4">© 2026 父子対戦レポート</div>
+</footer>
+
+<script>
+const matchData = {
+  date:"2026/4/29",
+  course:"ラインヒルゴルフクラブ",
+  tee:"Regular",
+  green:"サブ",
+  par:[4,4,4,3,5,4,4,3,5,5,4,4,3,4,4,3,5,4],
+  players:[
+    {key:"father",name:"智一",role:"FATHER",roleJp:"父",scores:[6,4,5,5,7,6,4,4,5,7,4,5,5,5,7,4,5,7],accent:"#d4af37"},
+    {key:"son",name:"松本 孝祐",role:"SON",roleJp:"息子",scores:[7,9,7,7,7,7,8,8,7,9,7,7,8,8,7,4,8,8],accent:"#10b981"}
+  ]
+};
+
+const sum = a => a.reduce((x,y)=>x+y,0);
+const out9 = a => sum(a.slice(0,9));
+const in9 = a => sum(a.slice(9,18));
+
+function classify(score, par){
+  const d = score - par;
+  if(d <= -2) return 'cell-eagle';
+  if(d === -1) return 'cell-birdie';
+  if(d === 0) return 'cell-par';
+  if(d === 1) return 'cell-par';
+  if(d === 2) return 'cell-bogey';
+  if(d === 3) return 'cell-double';
+  return 'cell-triple';
+}
+
+function buildPlayerCards(){
+  const winnerKey = matchData.players[0].scores.reduce((a,b)=>a+b,0) <= matchData.players[1].scores.reduce((a,b)=>a+b,0) ? 'father' : 'son';
+  const grid = document.getElementById('players-grid');
+  matchData.players.forEach(p => {
+    const total = sum(p.scores);
+    const o = out9(p.scores);
+    const i = in9(p.scores);
+    const parTotal = sum(matchData.par);
+    const diff = total - parTotal;
+    const isWin = p.key === winnerKey;
+    const card = document.createElement('div');
+    card.className = `player-card relative rounded-2xl p-6 md:p-8 ${isWin?'winner-card':'loser-card'}`;
+    card.innerHTML = `
+      ${isWin?'<div class="glow-ring"></div>':''}
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="font-cinzel text-xs tracking-[.3em] ${isWin?'text-gold':'text-slate-400'}">${p.role}</div>
+          <div class="font-serif-jp text-2xl md:text-3xl font-black mt-1">${p.name}</div>
+          <div class="text-slate-400 text-sm mt-1">${p.roleJp}</div>
+        </div>
+        <span class="px-3 py-1 rounded-full text-xs font-cinzel ${isWin?'badge-win':'badge-lose'}">${isWin?'WINNER':'-'}</span>
+      </div>
+      <div class="mt-6 flex items-end gap-3">
+        <div class="font-cinzel text-6xl md:text-7xl font-black ${isWin?'text-gold gold-text-glow':'text-slate-200'}" data-countup="${total}">0</div>
+        <div class="pb-3">
+          <div class="text-xs text-slate-400 font-cinzel tracking-widest">TOTAL</div>
+          <div class="text-sm ${diff>=0?'text-rose-300':'text-emerald-300'} font-bold">${diff>=0?'+':''}${diff} vs PAR</div>
+        </div>
+      </div>
+      <div class="mt-6 grid grid-cols-2 gap-3">
+        <div class="rounded-lg bg-black/30 border border-white/5 p-3">
+          <div class="text-[10px] text-gold-soft font-cinzel tracking-widest">OUT (1-9)</div>
+          <div class="text-2xl font-black mt-1" data-countup="${o}">0</div>
+        </div>
+        <div class="rounded-lg bg-black/30 border border-white/5 p-3">
+          <div class="text-[10px] text-gold-soft font-cinzel tracking-widest">IN (10-18)</div>
+          <div class="text-2xl font-black mt-1" data-countup="${i}">0</div>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function buildScoreTable(){
+  const t = document.getElementById('scoreTable');
+  const par = matchData.par;
+  const winnerPerHole = par.map((_,h) => {
+    const a = matchData.players[0].scores[h];
+    const b = matchData.players[1].scores[h];
+    if(a < b) return 'father';
+    if(b < a) return 'son';
+    return 'tie';
+  });
+  const headerCells = ['HOLE'];
+  for(let i=1;i<=9;i++) headerCells.push(i);
+  headerCells.push('OUT');
+  for(let i=10;i<=18;i++) headerCells.push(i);
+  headerCells.push('IN','TOTAL');
+  let html = '<thead><tr>' + headerCells.map(c => `<th>${c}</th>`).join('') + '</tr></thead>';
+  html += '<tbody>';
+  // PAR row
+  html += '<tr><td class="row-label text-gold-soft">PAR</td>';
+  for(let i=0;i<9;i++) html += `<td>${par[i]}</td>`;
+  html += `<td class="subtotal">${out9(par)}</td>`;
+  for(let i=9;i<18;i++) html += `<td>${par[i]}</td>`;
+  html += `<td class="subtotal">${in9(par)}</td><td class="total">${sum(par)}</td></tr>`;
+  // Player rows
+  matchData.players.forEach(p => {
+    html += `<tr><td class="row-label" style="color:${p.accent}">${p.name}</td>`;
+    for(let i=0;i<9;i++){
+      const cls = classify(p.scores[i], par[i]);
+      const w = winnerPerHole[i];
+      const winCls = w === p.key ? 'cell-winner' : (w === 'tie' ? 'cell-tie' : '');
+      html += `<td class="${cls} ${winCls}">${p.scores[i]}</td>`;
+    }
+    html += `<td class="subtotal">${out9(p.scores)}</td>`;
+    for(let i=9;i<18;i++){
+      const cls = classify(p.scores[i], par[i]);
+      const w = winnerPerHole[i];
+      const winCls = w === p.key ? 'cell-winner' : (w === 'tie' ? 'cell-tie' : '');
+      html += `<td class="${cls} ${winCls}">${p.scores[i]}</td>`;
+    }
+    html += `<td class="subtotal">${in9(p.scores)}</td><td class="total">${sum(p.scores)}</td></tr>`;
+  });
+  html += '</tbody>';
+  t.innerHTML = html;
+  return winnerPerHole;
+}
+
+function buildSummary(winnerPerHole){
+  const grid = document.getElementById('summary-grid');
+  const fatherWins = winnerPerHole.filter(w => w === 'father').length;
+  const sonWins = winnerPerHole.filter(w => w === 'son').length;
+  const ties = winnerPerHole.filter(w => w === 'tie').length;
+
+  const fatherDiffs = matchData.players[0].scores.map((s,i)=>s-matchData.par[i]);
+  const sonDiffs = matchData.players[1].scores.map((s,i)=>s-matchData.par[i]);
+  const fatherBestIdx = fatherDiffs.indexOf(Math.min(...fatherDiffs));
+  const sonBestIdx = sonDiffs.indexOf(Math.min(...sonDiffs));
+  const fatherWorstIdx = fatherDiffs.indexOf(Math.max(...fatherDiffs));
+  const sonWorstIdx = sonDiffs.indexOf(Math.max(...sonDiffs));
+
+  const fatherPars = fatherDiffs.filter(d => d === 0).length;
+  const sonPars = sonDiffs.filter(d => d === 0).length;
+
+  const cards = [
+    {
+      title:'ホール勝利数',
+      icon:'🏆',
+      body:`
+        <div class="flex items-center justify-around mt-4">
+          <div class="text-center">
+            <div class="font-cinzel text-xs text-gold-soft tracking-widest">智一</div>
+            <div class="text-5xl font-black text-gold gold-text-glow mt-1" data-countup="${fatherWins}">0</div>
+            <div class="text-xs text-slate-400 mt-1">勝</div>
+          </div>
+          <div class="text-3xl text-slate-500">/</div>
+          <div class="text-center">
+            <div class="font-cinzel text-xs text-slate-300 tracking-widest">引分</div>
+            <div class="text-5xl font-black text-slate-200 mt-1" data-countup="${ties}">0</div>
+            <div class="text-xs text-slate-400 mt-1">タイ</div>
+          </div>
+          <div class="text-3xl text-slate-500">/</div>
+          <div class="text-center">
+            <div class="font-cinzel text-xs text-emerald-300 tracking-widest">孝祐</div>
+            <div class="text-5xl font-black text-emerald-300 mt-1" data-countup="${sonWins}">0</div>
+            <div class="text-xs text-slate-400 mt-1">勝</div>
+          </div>
+        </div>
+        <div class="mt-4 text-center text-xs text-slate-400">全18ホール</div>
+      `
+    },
+    {
+      title:'ベストホール',
+      icon:'⭐',
+      body:`
+        <div class="mt-4 space-y-3">
+          <div class="flex items-center justify-between p-3 rounded-lg bg-gold/5 border border-gold/20">
+            <div>
+              <div class="text-[10px] font-cinzel text-gold-soft tracking-widest">智一</div>
+              <div class="font-serif-jp text-lg font-black">${fatherPars}回 PAR 達成</div>
+              <div class="text-xs text-slate-400">ホール 2 / 7 / 9 / 11 / 17</div>
+            </div>
+            <div class="text-2xl">⛳</div>
+          </div>
+          <div class="flex items-center justify-between p-3 rounded-lg bg-emerald-900/20 border border-emerald-700/30">
+            <div>
+              <div class="text-[10px] font-cinzel text-emerald-300 tracking-widest">孝祐</div>
+              <div class="font-serif-jp text-lg font-black">16H ボギー (Par3 で 4)</div>
+              <div class="text-xs text-slate-400">本日唯一の +1 仕上げ</div>
+            </div>
+            <div class="text-2xl">🎯</div>
+          </div>
+        </div>
+      `
+    },
+    {
+      title:'波乱のホール',
+      icon:'⚡',
+      body:`
+        <div class="mt-4 space-y-3">
+          <div class="p-3 rounded-lg bg-rose-900/15 border border-rose-700/30">
+            <div class="text-[10px] font-cinzel text-rose-300 tracking-widest">智一 ワースト</div>
+            <div class="font-serif-jp text-base font-black mt-1">15H / 18H で +3</div>
+            <div class="text-xs text-slate-400 mt-1">後半に踏ん張りどころ多数</div>
+          </div>
+          <div class="p-3 rounded-lg bg-rose-900/15 border border-rose-700/30">
+            <div class="text-[10px] font-cinzel text-rose-300 tracking-widest">孝祐 ワースト</div>
+            <div class="font-serif-jp text-base font-black mt-1">2H / 8H / 13H で +5</div>
+            <div class="text-xs text-slate-400 mt-1">ショートホールも崩れがち</div>
+          </div>
+        </div>
+      `
+    }
+  ];
+
+  cards.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'summary-card';
+    el.innerHTML = `
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">${c.icon}</span>
+        <h3 class="font-serif-jp text-lg font-black text-gold-soft">${c.title}</h3>
+      </div>
+      ${c.body}
+    `;
+    grid.appendChild(el);
+  });
+}
+
+function initChart(){
+  const ctx = document.getElementById('scoreChart').getContext('2d');
+  const labels = Array.from({length:18},(_,i)=>`H${i+1}`);
+  new Chart(ctx, {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {
+          label:'PAR',
+          data:matchData.par,
+          borderColor:'rgba(255,255,255,.55)',
+          backgroundColor:'rgba(255,255,255,.05)',
+          borderDash:[6,4],
+          borderWidth:1.5,
+          pointRadius:0,
+          tension:0
+        },
+        {
+          label:'智一 (父)',
+          data:matchData.players[0].scores,
+          borderColor:'#d4af37',
+          backgroundColor:'rgba(212,175,55,.15)',
+          borderWidth:3,
+          pointRadius:5,
+          pointBackgroundColor:'#d4af37',
+          pointBorderColor:'#1a1304',
+          tension:.3,
+          fill:false
+        },
+        {
+          label:'松本 孝祐 (息子)',
+          data:matchData.players[1].scores,
+          borderColor:'#10b981',
+          backgroundColor:'rgba(16,185,129,.12)',
+          borderWidth:2.5,
+          borderDash:[8,4],
+          pointRadius:5,
+          pointBackgroundColor:'#10b981',
+          pointBorderColor:'#04221a',
+          tension:.3,
+          fill:false
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{
+          labels:{color:'#e5e7eb',font:{family:'M PLUS Rounded 1c',size:13,weight:'700'},usePointStyle:true,padding:18}
+        },
+        tooltip:{
+          backgroundColor:'rgba(5,8,10,.92)',
+          borderColor:'rgba(212,175,55,.4)',
+          borderWidth:1,
+          titleColor:'#d4af37',
+          bodyColor:'#e5e7eb',
+          padding:12,
+          callbacks:{
+            label:(c)=>{
+              if(c.dataset.label==='PAR') return `PAR : ${c.parsed.y}`;
+              const p = matchData.par[c.dataIndex];
+              const d = c.parsed.y - p;
+              const sign = d>=0?'+':'';
+              return `${c.dataset.label} : ${c.parsed.y} (${sign}${d})`;
+            }
+          }
+        }
+      },
+      scales:{
+        x:{
+          grid:{color:'rgba(255,255,255,.05)'},
+          ticks:{color:'#94a3b8',font:{family:'Cinzel',size:11}}
+        },
+        y:{
+          grid:{color:'rgba(255,255,255,.06)'},
+          ticks:{color:'#94a3b8',stepSize:1},
+          suggestedMin:2,
+          suggestedMax:10
+        }
+      }
+    }
+  });
+}
+
+function initParticles(){
+  if(typeof tsParticles === 'undefined') return;
+  tsParticles.load({
+    id:'particles',
+    options:{
+      fpsLimit:60,
+      background:{color:'transparent'},
+      particles:{
+        number:{value:55,density:{enable:true,area:900}},
+        color:{value:['#d4af37','#f0d97a','#a07a17']},
+        shape:{type:'circle'},
+        opacity:{value:.55,random:{enable:true,minimumValue:.2}},
+        size:{value:{min:1,max:2.6}},
+        move:{enable:true,speed:.6,direction:'top',random:true,straight:false,outModes:{default:'out'}},
+        twinkle:{particles:{enable:true,frequency:.05,opacity:.9}}
+      },
+      interactivity:{
+        events:{onHover:{enable:true,mode:'bubble'}},
+        modes:{bubble:{distance:120,size:4,opacity:1,duration:2}}
+      },
+      detectRetina:true
+    }
+  });
+}
+
+function startCountUps(root){
+  const els = root.querySelectorAll('[data-countup]:not([data-counted])');
+  els.forEach(el => {
+    const target = parseInt(el.dataset.countup,10);
+    el.dataset.counted = '1';
+    if(typeof countUp !== 'undefined' && countUp.CountUp){
+      const cu = new countUp.CountUp(el, target, {duration:2.2,useEasing:true});
+      if(!cu.error) cu.start(); else el.textContent = target;
+    } else {
+      el.textContent = target;
+    }
+  });
+}
+
+function initReveal(){
+  const sections = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        startCountUps(e.target);
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:.18});
+  sections.forEach(s => io.observe(s));
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  buildPlayerCards();
+  const winnerPerHole = buildScoreTable();
+  buildSummary(winnerPerHole);
+  initChart();
+  initParticles();
+  initReveal();
+});
+</script>
+</body>
+</html>
