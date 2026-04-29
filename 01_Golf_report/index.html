@@ -5,617 +5,492 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Father vs Son — A Day at Linehill | 2026.04.29</title>
 <meta name="description" content="2026年4月29日、ラインヒルゴルフクラブ。父・智一と息子・松本孝祐、その一日の記録。">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500;1,600&family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@500;700;900&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,500;1,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/splitting@1.0.6/dist/splitting.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/splitting@1.0.6/dist/splitting-cells.css">
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/splitting@1.0.6/dist/splitting.min.js"></script>
-<script src="https://unpkg.com/lucide@0.453.0/dist/umd/lucide.min.js"></script>
-<style id="app-style">
+<style>
 :root{
   --ink-0:#08090b;
   --ink-1:#0b0d10;
   --ink-2:#11141a;
-  --ink-3:#1a1f27;
   --line:rgba(244,237,225,.10);
   --line-soft:rgba(244,237,225,.05);
   --ivory:#f4ede1;
   --ivory-dim:#cdc4b3;
   --muted:#8a8b8e;
   --gold:#c8a85a;
-  --gold-deep:#8a7232;
   --gold-soft:#e6cf95;
   --sage:#6b9a8b;
-  --sage-deep:#3e6b5d;
-  --over-1:rgba(125,160,180,.18);
-  --over-2:rgba(125,160,180,.30);
-  --over-3:rgba(125,160,180,.45);
 }
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--ink-0);color:var(--ivory)}
-html{scroll-behavior:auto}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--ink-0);color:var(--ivory);overflow-x:hidden}
 body{
-  font-family:'Noto Sans JP','Inter',system-ui,sans-serif;
-  font-weight:300;
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Helvetica Neue",sans-serif;
+  font-weight:400;
   letter-spacing:.01em;
+  line-height:1.6;
   background:
-    radial-gradient(ellipse at top,rgba(200,168,90,.06),transparent 60%),
-    radial-gradient(ellipse at bottom,rgba(107,154,139,.05),transparent 50%),
-    linear-gradient(180deg,var(--ink-0) 0%,var(--ink-1) 40%,var(--ink-2) 100%);
+    radial-gradient(1200px 600px at 50% -10%,rgba(200,168,90,.08),transparent 60%),
+    radial-gradient(1000px 500px at 50% 110%,rgba(107,154,139,.06),transparent 60%),
+    linear-gradient(180deg,var(--ink-0) 0%,var(--ink-1) 50%,var(--ink-2) 100%);
   min-height:100vh;
-  overflow-x:hidden;
 }
-.lenis.lenis-smooth{scroll-behavior:auto!important}
-.font-display{font-family:'Playfair Display',serif}
-.font-cormorant{font-family:'Cormorant Garamond',serif}
-.font-cinzel{font-family:'Cinzel',serif;letter-spacing:.12em}
-.font-mono{font-family:'Space Mono',ui-monospace,monospace;letter-spacing:.04em}
-.font-jp-serif{font-family:'Noto Serif JP',serif}
-.font-jp-sans{font-family:'Noto Sans JP',sans-serif}
-.text-ivory{color:var(--ivory)}
-.text-ivory-dim{color:var(--ivory-dim)}
-.text-muted{color:var(--muted)}
-.text-gold{color:var(--gold)}
-.text-gold-soft{color:var(--gold-soft)}
-.text-sage{color:var(--sage)}
-.bg-line{background:var(--line)}
-.border-line{border-color:var(--line)}
+.serif{font-family:ui-serif,"Hiragino Mincho ProN","Yu Mincho",Georgia,"Times New Roman",serif}
+.italic{font-style:italic}
 .tabular{font-variant-numeric:tabular-nums}
 
-/* --- Editorial primitives --- */
-.eyebrow{
-  font-family:'Cinzel',serif;
-  font-size:11px;
-  letter-spacing:.42em;
-  color:var(--gold);
+/* Layout */
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+.wrap-narrow{max-width:680px;margin:0 auto;padding:0 24px}
+.section{padding:72px 0}
+@media(min-width:768px){.section{padding:112px 0}}
+.flex{display:flex}.col{flex-direction:column}.center{align-items:center;justify-content:center}
+.between{justify-content:space-between}.gap-4{gap:16px}.gap-6{gap:24px}
+.grid{display:grid;gap:24px}
+.grid-2{grid-template-columns:1fr}
+@media(min-width:768px){.grid-2{grid-template-columns:1fr 1fr;gap:48px}}
+.grid-3{grid-template-columns:1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+@media(min-width:768px){.grid-3{grid-template-columns:1fr 1fr 1fr}}
+
+/* Top header strip */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 24px;
+  font-family:ui-serif,Georgia,serif;
+  font-size:11px;letter-spacing:.4em;
+  color:var(--ivory-dim);
+  background:linear-gradient(180deg,rgba(8,9,11,.6),rgba(8,9,11,0));
+  pointer-events:none;
+}
+
+/* Hero */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:80px 24px 60px;text-align:center;position:relative;
+}
+.hero .meta{
+  font-family:ui-serif,Georgia,serif;
+  font-size:11px;letter-spacing:.5em;color:var(--ivory-dim);
   text-transform:uppercase;
 }
-.eyebrow-muted{color:var(--muted)}
-.rule{height:1px;background:var(--line);width:100%;border:0}
-.rule-gold{height:1px;background:linear-gradient(90deg,transparent,var(--gold) 30%,var(--gold) 70%,transparent);border:0}
-.section-heading{
-  font-family:'Playfair Display',serif;
-  font-style:italic;
-  font-weight:500;
-  font-size:clamp(2rem,4vw,3.2rem);
-  line-height:1.1;
+.hero .display{
+  font-family:ui-serif,"Hiragino Mincho ProN",Georgia,serif;
+  font-style:italic;font-weight:500;
+  font-size:clamp(4rem,15vw,11rem);
+  line-height:.95;letter-spacing:-.015em;
   color:var(--ivory);
+  margin-top:32px;
 }
-.section-heading-jp{
-  font-family:'Noto Serif JP',serif;
-  font-weight:700;
-  font-size:clamp(1rem,1.4vw,1.2rem);
-  letter-spacing:.18em;
+.hero .display .vs{
+  display:inline-block;
+  font-family:ui-serif,Georgia,serif;
+  font-style:normal;font-weight:600;letter-spacing:.18em;
+  color:var(--gold);
+  font-size:.5em;
+  vertical-align:middle;
+  position:relative;padding:0 .15em;
+}
+.hero .display .vs::before,.hero .display .vs::after{
+  content:'';position:absolute;top:50%;width:.7em;height:1px;
+  background:var(--gold);opacity:.6;
+}
+.hero .display .vs::before{right:100%;margin-right:.35em}
+.hero .display .vs::after{left:100%;margin-left:.35em}
+.hero .jp{
+  font-family:ui-serif,"Hiragino Mincho ProN","Yu Mincho",serif;
+  font-weight:500;
+  font-size:clamp(1.05rem,2vw,1.4rem);
+  letter-spacing:.5em;
   color:var(--ivory-dim);
+  margin-top:28px;
+}
+.hero .tag{
+  margin-top:48px;
+  display:inline-flex;align-items:center;gap:18px;
+  font-family:ui-serif,Georgia,serif;
+  font-size:11px;letter-spacing:.4em;color:var(--gold);
+}
+.hero .tag::before,.hero .tag::after{
+  content:'';display:block;width:48px;height:1px;background:var(--gold);opacity:.6;
+}
+.scroll-hint{
+  position:absolute;left:50%;bottom:28px;transform:translateX(-50%);
+  font-family:ui-serif,Georgia,serif;
+  font-size:10px;letter-spacing:.45em;color:var(--ivory-dim);
+  display:flex;align-items:center;gap:12px;
+}
+.scroll-hint::before{
+  content:'';display:inline-block;width:36px;height:1px;background:var(--gold);opacity:.6;
+}
+
+/* Editorial primitives */
+.eyebrow{
+  font-family:ui-serif,Georgia,serif;
+  font-size:11px;letter-spacing:.42em;color:var(--gold);
+  text-transform:uppercase;
+}
+.heading{
+  font-family:ui-serif,"Hiragino Mincho ProN",Georgia,serif;
+  font-style:italic;font-weight:500;
+  font-size:clamp(2rem,4vw,3.2rem);
+  line-height:1.15;color:var(--ivory);
+  margin-top:16px;
+}
+.heading-jp{
+  font-family:ui-serif,"Hiragino Mincho ProN",serif;
+  font-weight:700;
+  font-size:1.05rem;letter-spacing:.18em;
+  color:var(--ivory-dim);margin-top:10px;
 }
 .lead{
-  font-family:'Cormorant Garamond',serif;
-  font-style:italic;
-  font-weight:500;
-  font-size:clamp(1.25rem,2.2vw,1.7rem);
-  line-height:1.7;
-  color:var(--ivory-dim);
+  font-family:ui-serif,Georgia,serif;
+  font-style:italic;font-weight:400;
+  font-size:clamp(1.2rem,2.2vw,1.55rem);
+  line-height:1.75;color:var(--ivory-dim);
 }
 .lead-jp{
-  font-family:'Noto Serif JP',serif;
-  font-weight:500;
-  font-size:clamp(1rem,1.4vw,1.15rem);
-  line-height:2;
-  color:var(--ivory-dim);
-  letter-spacing:.04em;
+  font-family:ui-serif,"Hiragino Mincho ProN",serif;
+  font-weight:500;line-height:2;
+  color:var(--ivory-dim);letter-spacing:.04em;
+  margin-top:32px;
 }
+.rule{height:1px;background:var(--line);width:100%;border:0;margin:48px 0}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.section-head .icon{width:28px;height:28px;color:var(--gold);flex-shrink:0;opacity:.85;display:none}
+@media(min-width:768px){.section-head .icon{display:block}}
 
-/* --- Hero --- */
-.hero-meta{
-  font-family:'Cinzel',serif;
-  font-size:10px;
-  letter-spacing:.5em;
-  color:var(--ivory-dim);
+/* Dossier */
+.dossier{position:relative;border-top:1px solid var(--line);padding-top:36px}
+.dossier.winner{border-top-color:var(--gold)}
+.dossier .index{
+  font-family:ui-serif,Georgia,serif;
+  font-size:11px;letter-spacing:.5em;color:var(--gold-soft);
+  display:flex;align-items:center;gap:14px;
 }
-.hero-display{
-  font-family:'Playfair Display',serif;
-  font-style:italic;
-  font-weight:500;
-  font-size:clamp(4.5rem,16vw,12rem);
-  line-height:.95;
-  letter-spacing:-.02em;
-  color:var(--ivory);
-  text-shadow:0 1px 0 rgba(0,0,0,.4);
+.dossier .index .bar{display:inline-block;width:36px;height:1px;background:currentColor;opacity:.5}
+.dossier .index .role{color:var(--ivory-dim)}
+.dossier .name-en{
+  font-family:ui-serif,Georgia,serif;font-style:italic;font-weight:500;
+  font-size:1.45rem;color:var(--ivory);margin-top:18px;
 }
-.hero-display .accent{
-  font-family:'Cinzel',serif;
-  font-style:normal;
-  font-weight:600;
-  letter-spacing:.18em;
-  color:var(--gold);
-  display:inline-block;
-  padding:0 .15em;
-  position:relative;
-  vertical-align:middle;
-  font-size:.55em;
-}
-.hero-display .accent::before,
-.hero-display .accent::after{
-  content:'';
-  position:absolute;top:50%;width:.7em;height:1px;
-  background:var(--gold);
-  opacity:.5;
-}
-.hero-display .accent::before{right:100%;margin-right:.35em}
-.hero-display .accent::after{left:100%;margin-left:.35em}
-.hero-jp{
-  font-family:'Noto Serif JP',serif;
-  font-weight:500;
-  font-size:clamp(1.1rem,2vw,1.5rem);
-  letter-spacing:.5em;
-  color:var(--ivory-dim);
-  margin-top:1.5rem;
-}
-.hero-tag{
-  font-family:'Cinzel',serif;
-  font-size:11px;
-  letter-spacing:.4em;
-  color:var(--gold);
-}
-.hero-bottom{
-  position:absolute;left:0;right:0;bottom:2.5rem;
-  display:flex;justify-content:center;align-items:center;
-  gap:1.2rem;
-}
-.hero-scroll{
-  font-family:'Cinzel',serif;
-  font-size:10px;
-  letter-spacing:.45em;
-  color:var(--ivory-dim);
-  display:flex;align-items:center;gap:.7rem;
-}
-.hero-scroll .line{display:inline-block;width:36px;height:1px;background:var(--gold);opacity:.6;animation:lineSlide 2.4s ease-in-out infinite}
-@keyframes lineSlide{0%,100%{transform:scaleX(.4);transform-origin:left}50%{transform:scaleX(1);transform-origin:left}}
-
-/* --- Dossier --- */
-.dossier-grid{display:grid;grid-template-columns:1fr;gap:2.5rem}
-@media(min-width:768px){.dossier-grid{grid-template-columns:1fr 1fr;gap:3rem}}
-.dossier{
-  position:relative;
-  border-top:1px solid var(--line);
-  padding-top:2.5rem;
-}
-.dossier-winner{border-top-color:var(--gold)}
-.dossier-index{
-  font-family:'Cinzel',serif;
-  font-size:11px;
-  letter-spacing:.5em;
-  color:var(--gold-soft);
-  display:flex;align-items:center;gap:.8rem;
-}
-.dossier-index .role{color:var(--ivory-dim)}
-.dossier-name-en{
-  font-family:'Playfair Display',serif;
-  font-style:italic;
-  font-weight:500;
-  font-size:clamp(1.4rem,2vw,1.7rem);
-  color:var(--ivory);
-  margin-top:1.1rem;
-  letter-spacing:.01em;
-}
-.dossier-name-jp{
-  font-family:'Noto Serif JP',serif;
-  font-weight:900;
-  font-size:clamp(2.2rem,4vw,3.4rem);
-  color:var(--ivory);
-  margin-top:.4rem;
-  letter-spacing:.04em;
-}
-.dossier-stat-row{
-  margin-top:2.2rem;
-  display:flex;align-items:flex-end;gap:1.4rem;
-  border-top:1px solid var(--line-soft);
-  padding-top:1.5rem;
-}
-.dossier-total{
-  font-family:'Playfair Display',serif;
-  font-weight:500;
-  font-size:clamp(4rem,8vw,6rem);
-  line-height:.9;
-  letter-spacing:-.02em;
-  color:var(--ivory);
-}
-.dossier-winner .dossier-total{color:var(--gold)}
-.dossier-vs-par{
-  font-family:'Cinzel',serif;
-  font-size:13px;
-  letter-spacing:.3em;
-  color:var(--ivory-dim);
-  padding-bottom:.8rem;
-}
-.dossier-vs-par .v{color:var(--ivory)}
-.dossier-splits{
-  margin-top:1.6rem;
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:0;
-  border-top:1px solid var(--line-soft);
-}
-.dossier-split{
-  padding:1.1rem 0;
-  border-right:1px solid var(--line-soft);
-}
-.dossier-split:last-child{border-right:0;padding-left:1.4rem}
-.dossier-split:first-child{padding-right:1.4rem}
-.dossier-split-label{
-  font-family:'Cinzel',serif;
-  font-size:10px;letter-spacing:.4em;
-  color:var(--muted);
-}
-.dossier-split-value{
-  font-family:'Playfair Display',serif;
-  font-weight:500;
-  font-size:1.6rem;
-  color:var(--ivory);
-  margin-top:.4rem;
-  letter-spacing:.02em;
-}
-.dossier-icon{
-  position:absolute;top:2.2rem;right:0;
-  width:18px;height:18px;
-  color:var(--ivory-dim);
-  opacity:.6;
-}
-.dossier-winner .dossier-icon{color:var(--gold);opacity:1}
-
-/* --- Score table --- */
-.score-table-wrap{margin-top:2.4rem;overflow-x:auto;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.score-table{
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0;
-  font-variant-numeric:tabular-nums;
-  min-width:780px;
-}
-.score-table th,.score-table td{
-  padding:.85rem .55rem;
-  text-align:center;
-  font-size:13px;
-  border-bottom:1px solid var(--line-soft);
-}
-.score-table thead th{
-  font-family:'Cinzel',serif;
-  font-weight:600;
-  font-size:11px;
-  letter-spacing:.18em;
-  color:var(--ivory-dim);
-  border-bottom:1px solid var(--line);
-  padding:1rem .55rem;
-}
-.score-table .row-label{
-  text-align:left;
-  font-family:'Noto Serif JP',serif;
+.dossier .name-jp{
+  font-family:ui-serif,"Hiragino Mincho ProN",serif;
   font-weight:700;
+  font-size:clamp(2rem,4vw,3rem);
+  color:var(--ivory);margin-top:6px;letter-spacing:.04em;
+}
+.dossier .stat-row{
+  margin-top:32px;display:flex;align-items:flex-end;gap:20px;
+  border-top:1px solid var(--line-soft);padding-top:24px;
+}
+.dossier .total{
+  font-family:ui-serif,Georgia,serif;font-weight:500;
+  font-size:clamp(3.6rem,7vw,5.5rem);line-height:.9;letter-spacing:-.02em;
   color:var(--ivory);
-  padding-left:0;
-  white-space:nowrap;
 }
-.score-table .row-label .sub{
-  font-family:'Cinzel',serif;
-  font-size:10px;
-  letter-spacing:.3em;
-  color:var(--muted);
-  display:block;
-  margin-top:2px;
+.dossier.winner .total{color:var(--gold)}
+.dossier .vp{
+  font-family:ui-serif,Georgia,serif;
+  font-size:13px;letter-spacing:.3em;color:var(--ivory-dim);padding-bottom:14px;
 }
-.score-table .par-row td{color:var(--ivory-dim);font-family:'Cinzel',serif;font-size:13px;letter-spacing:.05em}
-.score-table .par-row .row-label{color:var(--gold)}
-.score-table .subtotal{font-family:'Cinzel',serif;color:var(--ivory-dim);background:rgba(255,255,255,.015)}
-.score-table .total{font-family:'Playfair Display',serif;font-weight:500;font-size:15px;color:var(--ivory);background:rgba(200,168,90,.06)}
-.score-table td.cell{position:relative;font-family:'Cinzel',serif;font-weight:500;color:var(--ivory)}
-.score-table td.bogey{color:var(--ivory-dim);background:rgba(125,160,180,.06)}
-.score-table td.double{color:var(--ivory-dim);background:rgba(125,160,180,.13)}
-.score-table td.triple{color:var(--ivory-dim);background:rgba(125,160,180,.22)}
-.score-table td.par{color:var(--ivory)}
-.score-table td.birdie{color:#f5b8b8;background:rgba(245,184,184,.06)}
-.score-table td.winner::before{
-  content:'';position:absolute;left:0;top:8%;bottom:8%;width:2px;
-  background:var(--gold);
+.dossier .vp .v{color:var(--ivory)}
+.dossier .splits{
+  margin-top:24px;display:grid;grid-template-columns:1fr 1fr;
+  border-top:1px solid var(--line-soft);
 }
-.score-table td.tie::before{
-  content:'';position:absolute;left:50%;transform:translateX(-50%);bottom:6px;width:14px;height:1px;
-  background:var(--ivory-dim);opacity:.6;
+.dossier .split{padding:18px 0;border-right:1px solid var(--line-soft)}
+.dossier .split:last-child{border-right:0;padding-left:22px}
+.dossier .split:first-child{padding-right:22px}
+.dossier .split .lbl{
+  font-family:ui-serif,Georgia,serif;font-size:10px;letter-spacing:.4em;color:var(--muted);
 }
-.score-table tbody tr:hover td{background:rgba(255,255,255,.02)}
-.legend{
-  display:flex;flex-wrap:wrap;gap:1.4rem 2rem;margin-top:1.4rem;
-  font-family:'Cinzel',serif;font-size:11px;letter-spacing:.2em;color:var(--muted);
+.dossier .split .val{
+  font-family:ui-serif,Georgia,serif;font-weight:500;
+  font-size:1.55rem;color:var(--ivory);margin-top:6px;letter-spacing:.02em;
 }
-.legend-item{display:inline-flex;align-items:center;gap:.55rem}
-.legend-swatch{width:12px;height:12px;border:1px solid var(--line)}
-.legend-swatch.gold-bar{background:var(--gold);width:2px;height:14px;border:0}
-.legend-swatch.dash{height:1px;background:var(--ivory-dim);width:14px;border:0;opacity:.6}
+.dossier .corner{
+  position:absolute;top:36px;right:0;color:var(--ivory-dim);opacity:.6;
+}
+.dossier.winner .corner{color:var(--gold);opacity:1}
 
-/* --- Trajectory chart frame --- */
+/* Score table */
+.table-wrap{
+  margin-top:36px;overflow-x:auto;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  -webkit-overflow-scrolling:touch;
+}
+table.score{
+  width:100%;border-collapse:separate;border-spacing:0;
+  font-variant-numeric:tabular-nums;min-width:780px;
+}
+table.score th,table.score td{
+  padding:14px 8px;text-align:center;
+  font-size:13px;border-bottom:1px solid var(--line-soft);
+}
+table.score thead th{
+  font-family:ui-serif,Georgia,serif;font-weight:600;font-size:11px;
+  letter-spacing:.18em;color:var(--ivory-dim);
+  border-bottom:1px solid var(--line);padding:18px 8px;
+}
+table.score .row-label{
+  text-align:left;
+  font-family:ui-serif,"Hiragino Mincho ProN",serif;
+  font-weight:700;color:var(--ivory);white-space:nowrap;padding-left:4px;
+}
+table.score .row-label .sub{
+  display:block;font-family:ui-serif,Georgia,serif;font-weight:400;
+  font-size:10px;letter-spacing:.3em;color:var(--muted);margin-top:3px;
+}
+table.score .par-row td{color:var(--ivory-dim);font-family:ui-serif,Georgia,serif;font-size:13px}
+table.score .par-row .row-label{color:var(--gold)}
+table.score .subtotal{font-family:ui-serif,Georgia,serif;color:var(--ivory-dim);background:rgba(255,255,255,.015)}
+table.score .total{
+  font-family:ui-serif,Georgia,serif;font-weight:500;font-size:15px;
+  color:var(--ivory);background:rgba(200,168,90,.06);
+}
+table.score td.cell{position:relative;font-family:ui-serif,Georgia,serif;font-weight:500;color:var(--ivory)}
+table.score td.bogey{color:var(--ivory-dim);background:rgba(125,160,180,.06)}
+table.score td.double{color:var(--ivory-dim);background:rgba(125,160,180,.13)}
+table.score td.triple{color:var(--ivory-dim);background:rgba(125,160,180,.22)}
+table.score td.winner::before{content:'';position:absolute;left:0;top:8%;bottom:8%;width:2px;background:var(--gold)}
+table.score td.tie::after{content:'';position:absolute;left:50%;bottom:6px;width:14px;height:1px;transform:translateX(-50%);background:var(--ivory-dim);opacity:.6}
+.legend{display:flex;flex-wrap:wrap;gap:20px 28px;margin-top:20px;font-family:ui-serif,Georgia,serif;font-size:11px;letter-spacing:.2em;color:var(--muted)}
+.legend .item{display:inline-flex;align-items:center;gap:8px}
+.legend .sw{width:14px;height:14px;border:1px solid var(--line)}
+.legend .sw.gold{background:var(--gold);width:2px;height:14px;border:0}
+.legend .sw.dash{height:1px;width:14px;background:var(--ivory-dim);opacity:.6;border:0}
+
+/* Trajectory chart */
 .chart-frame{
-  margin-top:2.4rem;
-  padding:1.6rem 1.4rem 1.2rem;
+  margin-top:36px;padding:28px 18px 14px;
   border:1px solid var(--line);
   background:linear-gradient(180deg,rgba(255,255,255,.012),rgba(255,255,255,0));
 }
-.chart-canvas-wrap{position:relative;width:100%;aspect-ratio:16/8;min-height:280px}
-@media(max-width:640px){.chart-canvas-wrap{aspect-ratio:4/3}}
+#chart{display:block;width:100%;height:auto;font-family:ui-serif,Georgia,serif}
+.chart-legend{display:flex;flex-wrap:wrap;gap:16px 24px;justify-content:flex-end;margin-bottom:14px;font-family:ui-serif,Georgia,serif;font-size:11px;letter-spacing:.2em;color:var(--ivory-dim)}
+.chart-legend .li{display:inline-flex;align-items:center;gap:8px}
+.chart-legend .sw{width:18px;height:2px;display:inline-block}
 
-/* --- Summary --- */
-.summary-grid{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);margin-top:2.4rem;border:1px solid var(--line)}
-@media(min-width:768px){.summary-grid{grid-template-columns:1fr 1fr 1fr}}
+/* Summary */
 .summary-cell{
-  background:var(--ink-1);
-  padding:2.4rem 1.8rem;
-  display:flex;flex-direction:column;gap:1.2rem;
-  position:relative;
+  background:var(--ink-1);padding:32px 22px;
+  display:flex;flex-direction:column;gap:16px;
 }
-.summary-icon{
-  width:22px;height:22px;
-  color:var(--gold);
-  stroke-width:1.2;
-}
-.summary-eyebrow{
-  font-family:'Cinzel',serif;
-  font-size:10px;letter-spacing:.5em;color:var(--gold);text-transform:uppercase;
-}
-.summary-title{
-  font-family:'Noto Serif JP',serif;font-weight:700;font-size:1.05rem;color:var(--ivory);letter-spacing:.05em;
-}
-.summary-display{
-  display:flex;align-items:flex-end;gap:1.2rem;
-  font-family:'Playfair Display',serif;font-weight:500;
-}
-.summary-num{font-size:3.4rem;line-height:.95;color:var(--ivory)}
-.summary-num.gold{color:var(--gold)}
-.summary-num.sage{color:var(--sage)}
-.summary-divider{display:inline-block;width:1px;height:36px;background:var(--line);margin:0 .2rem}
-.summary-mini-label{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.35em;color:var(--muted);display:block;margin-top:.3rem}
-.summary-detail-list{font-family:'Noto Sans JP',sans-serif;font-size:13px;line-height:1.9;color:var(--ivory-dim)}
-.summary-detail-list .name{color:var(--gold);font-family:'Cinzel',serif;font-size:10px;letter-spacing:.4em;display:block;margin-bottom:.2rem}
-.summary-detail-list .name.son{color:var(--sage)}
-.summary-detail-list .holes{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.2em;color:var(--ivory-dim)}
-.summary-detail-list .row{padding:.6rem 0;border-top:1px solid var(--line-soft)}
-.summary-detail-list .row:first-child{border-top:0}
+.summary-cell .icon{width:22px;height:22px;color:var(--gold)}
+.summary-cell .eyebrow{font-family:ui-serif,Georgia,serif;font-size:10px;letter-spacing:.5em;color:var(--gold);text-transform:uppercase}
+.summary-cell .ttl{font-family:ui-serif,"Hiragino Mincho ProN",serif;font-weight:700;font-size:1.05rem;color:var(--ivory);letter-spacing:.05em}
+.summary-cell .display{display:flex;align-items:flex-end;gap:18px;font-family:ui-serif,Georgia,serif;font-weight:500}
+.summary-cell .display .num{font-size:3.2rem;line-height:.95;color:var(--ivory)}
+.summary-cell .display .num.gold{color:var(--gold)}
+.summary-cell .display .num.sage{color:var(--sage)}
+.summary-cell .display .div{display:inline-block;width:1px;height:34px;background:var(--line)}
+.summary-cell .mini{font-family:ui-serif,Georgia,serif;font-size:10px;letter-spacing:.35em;color:var(--muted);display:block;margin-top:6px}
+.detail{font-family:ui-serif,Georgia,serif;font-size:13px;line-height:1.9;color:var(--ivory-dim)}
+.detail .name{display:block;font-size:10px;letter-spacing:.4em;color:var(--gold);margin-bottom:4px}
+.detail .name.son{color:var(--sage)}
+.detail .row{padding:12px 0;border-top:1px solid var(--line-soft)}
+.detail .row:first-child{border-top:0}
+.detail .holes{font-size:11px;letter-spacing:.2em;color:var(--ivory-dim);margin-top:8px}
 
-/* --- Footer / colophon --- */
-.colophon{padding-top:2rem;border-top:1px solid var(--line);display:grid;gap:2rem}
+/* Colophon / footer */
+.colophon{padding-top:36px;border-top:1px solid var(--line);display:grid;gap:32px}
 @media(min-width:768px){.colophon{grid-template-columns:2fr 1fr 1fr}}
-.colophon-h{font-family:'Playfair Display',serif;font-style:italic;font-weight:500;font-size:1.6rem;color:var(--ivory)}
-.colophon-meta{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.3em;color:var(--ivory-dim);line-height:2.2}
-.colophon-meta .label{color:var(--muted)}
-.colophon-tail{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.45em;color:var(--muted);margin-top:3rem;text-align:center}
-
-/* --- Reveal & motion primitives ---
-   Always visible by default. GSAP uses from() to animate from a hidden
-   state INTO the visible state. If GSAP fails or doesn't load, content
-   is still on screen. No opacity:0 traps. */
-.reveal-up{opacity:1;transform:none}
-.reveal-fade{opacity:1}
-.split-line{overflow:hidden;display:block}
-.split-line .word{display:inline-block;will-change:transform,opacity}
-.char{display:inline-block;will-change:transform,opacity}
-
-/* --- Lucide icons baseline --- */
-[data-lucide]{stroke-width:1.2;color:currentColor}
-.icon-stroke-thin [data-lucide]{stroke-width:1.1}
-
+.colophon h3{font-family:ui-serif,Georgia,serif;font-style:italic;font-weight:500;font-size:1.5rem;color:var(--ivory);margin-top:14px}
+.colophon .meta{font-family:ui-serif,Georgia,serif;font-size:11px;letter-spacing:.3em;color:var(--ivory-dim);line-height:2.3}
+.colophon .meta .label{color:var(--muted)}
+.colophon-tail{font-family:ui-serif,Georgia,serif;font-size:10px;letter-spacing:.45em;color:var(--muted);margin-top:48px;text-align:center}
+</style>
 </head>
-<body class="antialiased">
+<body>
 
-<!-- DIAGNOSTIC: visible without any CDN, JS or custom font. If you can see this banner, HTML rendering is fine. -->
-<div style="background:#c8a85a;color:#0b0d10;padding:14px 16px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;font-weight:700;letter-spacing:.04em;text-align:center;position:relative;z-index:9999">
-  Father vs Son — Linehill 2026.04.29 (loading editorial layout…)
-</div>
-
-<div id="ts-bg" aria-hidden="true" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;pointer-events:none"></div>
-
-<header class="fixed top-0 left-0 right-0 z-40 px-6 md:px-10 py-5 flex items-center justify-between">
-  <div class="font-cinzel text-[11px] tracking-[.4em] text-ivory-dim">LINEHILL · 2026</div>
-  <div class="font-cinzel text-[11px] tracking-[.4em] text-ivory-dim hidden md:block">FATHER &nbsp;·&nbsp; SON</div>
-  <div class="font-cinzel text-[11px] tracking-[.4em] text-ivory-dim">04 / 29</div>
+<header class="topbar">
+  <span>LINEHILL · 2026</span>
+  <span style="display:none">FATHER · SON</span>
+  <span>04 / 29</span>
 </header>
 
-<main class="relative z-10">
-
-<section id="hero" class="relative min-h-screen flex flex-col justify-center items-center px-6">
-  <div class="hero-meta reveal-fade" data-hero-line>2026 &nbsp;·&nbsp; APRIL 29 &nbsp;·&nbsp; LINEHILL GOLF CLUB</div>
-  <h1 class="hero-display mt-10 text-center reveal-fade" data-hero-line>
-    <span class="block">Father</span>
-    <span class="block"><span class="accent">VS</span></span>
-    <span class="block">Son</span>
+<section class="hero">
+  <div class="meta">2026 &nbsp;·&nbsp; APRIL 29 &nbsp;·&nbsp; LINEHILL GOLF CLUB</div>
+  <h1 class="display">
+    <span style="display:block">Father</span>
+    <span style="display:block"><span class="vs">VS</span></span>
+    <span style="display:block">Son</span>
   </h1>
-  <div class="hero-jp text-center reveal-fade" data-hero-line>父 と 息子 の 一 戦</div>
-  <div class="mt-12 flex items-center gap-5 reveal-fade" data-hero-line>
-    <span class="block w-12 h-px bg-[color:var(--gold)] opacity-60"></span>
-    <span class="hero-tag">A 38-STROKE STORY</span>
-    <span class="block w-12 h-px bg-[color:var(--gold)] opacity-60"></span>
-  </div>
-  <div class="hero-bottom">
-    <span class="hero-scroll"><span class="line"></span>SCROLL</span>
+  <div class="jp">父 と 息子 の 一 戦</div>
+  <div class="tag">A 38-STROKE STORY</div>
+  <div class="scroll-hint">SCROLL</div>
+</section>
+
+<main id="main">
+
+<section class="section">
+  <div class="wrap-narrow">
+    <div class="eyebrow">— Prologue</div>
+    <p class="lead" style="margin-top:32px">
+      On the twenty-ninth of April, two thousand twenty-six, at Linehill Golf Club, a father and his son took to eighteen holes under a bright spring sky. The father, Tomoichi, finished thirty-eight strokes ahead. This is the record of that single afternoon.
+    </p>
+    <p class="lead-jp">
+      二〇二六年四月二十九日、ラインヒルゴルフクラブ。父・智一は、息子・松本孝祐に三十八打差をつけ静かに勝利した。十八のホールに刻まれた数字、そしてその間に流れた時間の記録である。
+    </p>
+    <hr class="rule">
   </div>
 </section>
 
-<section id="prologue" class="relative max-w-3xl mx-auto px-6 py-32 md:py-48">
-  <div class="eyebrow reveal-up">— Prologue</div>
-  <p class="lead mt-8 reveal-up" data-splitting="words">
-    On the twenty-ninth of April, two thousand twenty-six, at Linehill Golf Club, a father and his son took to eighteen holes under a bright spring sky. The father, Tomoichi, finished thirty-eight strokes ahead. This is the record of that single afternoon.
-  </p>
-  <p class="lead-jp mt-10 reveal-up">
-    二〇二六年四月二十九日、ラインヒルゴルフクラブ。父・智一は、息子・松本孝祐に三十八打差をつけ静かに勝利した。十八のホールに刻まれた数字、そしてその間に流れた時間の記録である。
-  </p>
-  <hr class="rule mt-16 reveal-up">
-</section>
-
-<section id="dossier" class="relative max-w-6xl mx-auto px-6 py-20 md:py-28">
-  <div class="flex items-end justify-between reveal-up">
-    <div>
-      <div class="eyebrow">— I. Players</div>
-      <h2 class="section-heading mt-4">The two who walked the fairway.</h2>
-      <div class="section-heading-jp mt-3">対 戦 の 記 録</div>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">— I. Players</div>
+        <h2 class="heading">The two who walked the fairway.</h2>
+        <div class="heading-jp">対 戦 の 記 録</div>
+      </div>
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
     </div>
-    <i data-lucide="users" class="hidden md:block w-7 h-7 text-[color:var(--gold)] icon-stroke-thin"></i>
-  </div>
-  <div id="dossier-grid" class="dossier-grid mt-14"></div>
-</section>
-
-<section id="hole-by-hole" class="relative max-w-6xl mx-auto px-6 py-20 md:py-28">
-  <div class="flex items-end justify-between reveal-up">
-    <div>
-      <div class="eyebrow">— II. Hole by Hole</div>
-      <h2 class="section-heading mt-4">Eighteen quiet judgments.</h2>
-      <div class="section-heading-jp mt-3">十 八 の ホ ー ル</div>
-    </div>
-    <i data-lucide="grid-2x2" class="hidden md:block w-7 h-7 text-[color:var(--gold)] icon-stroke-thin"></i>
-  </div>
-  <div class="score-table-wrap reveal-up">
-    <table class="score-table" id="scoreTable"></table>
-  </div>
-  <div class="legend reveal-up">
-    <span class="legend-item"><span class="legend-swatch gold-bar"></span>Hole won</span>
-    <span class="legend-item"><span class="legend-swatch dash"></span>Halved</span>
-    <span class="legend-item"><span class="legend-swatch" style="background:rgba(125,160,180,.06)"></span>Bogey</span>
-    <span class="legend-item"><span class="legend-swatch" style="background:rgba(125,160,180,.13)"></span>Double</span>
-    <span class="legend-item"><span class="legend-swatch" style="background:rgba(125,160,180,.22)"></span>Triple+</span>
+    <div id="dossier-grid" class="grid grid-2" style="margin-top:48px"></div>
   </div>
 </section>
 
-<section id="trajectory" class="relative max-w-6xl mx-auto px-6 py-20 md:py-28">
-  <div class="flex items-end justify-between reveal-up">
-    <div>
-      <div class="eyebrow">— III. Trajectory</div>
-      <h2 class="section-heading mt-4">The shape of an afternoon.</h2>
-      <div class="section-heading-jp mt-3">ス コ ア の 推 移</div>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">— II. Hole by Hole</div>
+        <h2 class="heading">Eighteen quiet judgments.</h2>
+        <div class="heading-jp">十 八 の ホ ー ル</div>
+      </div>
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 12h18M12 3v18"/></svg>
     </div>
-    <i data-lucide="trending-up" class="hidden md:block w-7 h-7 text-[color:var(--gold)] icon-stroke-thin"></i>
-  </div>
-  <div class="chart-frame reveal-up">
-    <div class="chart-canvas-wrap">
-      <canvas id="scoreChart"></canvas>
+    <div class="table-wrap">
+      <table class="score" id="scoreTable"></table>
+    </div>
+    <div class="legend">
+      <span class="item"><span class="sw gold"></span>Hole won</span>
+      <span class="item"><span class="sw dash"></span>Halved</span>
+      <span class="item"><span class="sw" style="background:rgba(125,160,180,.06)"></span>Bogey</span>
+      <span class="item"><span class="sw" style="background:rgba(125,160,180,.13)"></span>Double</span>
+      <span class="item"><span class="sw" style="background:rgba(125,160,180,.22)"></span>Triple+</span>
     </div>
   </div>
 </section>
 
-<section id="summary" class="relative max-w-6xl mx-auto px-6 py-20 md:py-28">
-  <div class="flex items-end justify-between reveal-up">
-    <div>
-      <div class="eyebrow">— IV. Notes</div>
-      <h2 class="section-heading mt-4">Three findings from the round.</h2>
-      <div class="section-heading-jp mt-3">本 日 の 記 録</div>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">— III. Trajectory</div>
+        <h2 class="heading">The shape of an afternoon.</h2>
+        <div class="heading-jp">ス コ ア の 推 移</div>
+      </div>
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
     </div>
-    <i data-lucide="bookmark" class="hidden md:block w-7 h-7 text-[color:var(--gold)] icon-stroke-thin"></i>
+    <div class="chart-frame">
+      <div class="chart-legend">
+        <span class="li"><span class="sw" style="background:rgba(244,237,225,.45)"></span>PAR</span>
+        <span class="li"><span class="sw" style="background:#c8a85a"></span>Tomoichi</span>
+        <span class="li"><span class="sw" style="background:#6b9a8b"></span>Kosuke</span>
+      </div>
+      <svg id="chart" viewBox="0 0 920 380" preserveAspectRatio="xMidYMid meet" aria-label="Score trajectory"></svg>
+    </div>
   </div>
-  <div class="summary-grid reveal-up" id="summary-grid"></div>
 </section>
 
-<footer id="colophon" class="relative max-w-6xl mx-auto px-6 py-20 md:py-28">
-  <div class="colophon">
-    <div>
-      <div class="eyebrow">— Colophon</div>
-      <h3 class="colophon-h mt-4 italic">A record kept for one afternoon.</h3>
-      <p class="lead-jp mt-4">後に振り返ったとき、ただの数字に過ぎないかもしれない。それでも、この一日は確かに在った。</p>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">— IV. Notes</div>
+        <h2 class="heading">Three findings from the round.</h2>
+        <div class="heading-jp">本 日 の 記 録</div>
+      </div>
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
     </div>
-    <div>
-      <div class="colophon-meta">
-        <div><span class="label">DATE</span><br>2026 . 04 . 29</div>
-        <div class="mt-4"><span class="label">VENUE</span><br>LINEHILL G.C.</div>
+    <div id="summary-grid" class="grid grid-3" style="margin-top:48px"></div>
+  </div>
+</section>
+
+<footer class="section">
+  <div class="wrap">
+    <div class="colophon">
+      <div>
+        <div class="eyebrow">— Colophon</div>
+        <h3>A record kept for one afternoon.</h3>
+        <p class="lead-jp">後に振り返ったとき、ただの数字に過ぎないかもしれない。それでも、この一日は確かに在った。</p>
+      </div>
+      <div>
+        <div class="meta">
+          <div><span class="label">DATE</span><br>2026 . 04 . 29</div>
+          <div style="margin-top:14px"><span class="label">VENUE</span><br>LINEHILL G.C.</div>
+        </div>
+      </div>
+      <div>
+        <div class="meta">
+          <div><span class="label">TEE</span><br>REGULAR</div>
+          <div style="margin-top:14px"><span class="label">GREEN</span><br>SUB</div>
+          <div style="margin-top:14px"><span class="label">PAR</span><br>72</div>
+        </div>
       </div>
     </div>
-    <div>
-      <div class="colophon-meta">
-        <div><span class="label">TEE</span><br>REGULAR</div>
-        <div class="mt-4"><span class="label">GREEN</span><br>SUB</div>
-        <div class="mt-4"><span class="label">PAR</span><br>72</div>
-      </div>
-    </div>
+    <div class="colophon-tail">— FIN —</div>
   </div>
-  <div class="colophon-tail">— FIN —</div>
 </footer>
 
 </main>
 
-<script id="match-data">
+<script>
 const matchData = {
-  date:"2026.04.29",
-  dateJp:"2026年4月29日",
-  course:"Linehill Golf Club",
-  courseJp:"ラインヒルゴルフクラブ",
-  tee:"Regular",
-  green:"Sub",
   par:[4,4,4,3,5,4,4,3,5,5,4,4,3,4,4,3,5,4],
   players:[
-    {key:"father",index:"01",name:"智一",nameRomaji:"Tomoichi",role:"FATHER",roleJp:"父",scores:[6,4,5,5,7,6,4,4,5,7,4,5,5,5,7,4,5,7],accent:"#c8a85a",accentDeep:"#8a7232"},
-    {key:"son",index:"02",name:"松本 孝祐",nameRomaji:"Kosuke Matsumoto",role:"SON",roleJp:"息子",scores:[7,9,7,7,7,7,8,8,7,9,7,7,8,8,7,4,8,8],accent:"#6b9a8b",accentDeep:"#3e6b5d"}
+    {key:"father",index:"01",name:"智一",nameRomaji:"Tomoichi",role:"FATHER",scores:[6,4,5,5,7,6,4,4,5,7,4,5,5,5,7,4,5,7]},
+    {key:"son",index:"02",name:"松本 孝祐",nameRomaji:"Kosuke Matsumoto",role:"SON",scores:[7,9,7,7,7,7,8,8,7,9,7,7,8,8,7,4,8,8]}
   ]
 };
+
 const sum = a => a.reduce((x,y)=>x+y,0);
 const out9 = a => sum(a.slice(0,9));
 const in9 = a => sum(a.slice(9,18));
 
-function classifyCell(score, par){
-  const d = score - par;
-  if(d <= -1) return 'birdie';
-  if(d === 0) return 'par';
-  if(d === 1) return 'par';
-  if(d === 2) return 'bogey';
-  if(d === 3) return 'double';
+function classCell(s,p){
+  const d = s-p;
+  if(d<=0) return '';
+  if(d===1) return '';
+  if(d===2) return 'bogey';
+  if(d===3) return 'double';
   return 'triple';
 }
 
-function holeWinner(idx){
-  const a = matchData.players[0].scores[idx];
-  const b = matchData.players[1].scores[idx];
-  if(a < b) return 'father';
-  if(b < a) return 'son';
-  return 'tie';
+function holeWinner(i){
+  const a = matchData.players[0].scores[i];
+  const b = matchData.players[1].scores[i];
+  return a<b?'father':b<a?'son':'tie';
 }
 
 function buildDossier(){
   const grid = document.getElementById('dossier-grid');
-  const totals = matchData.players.map(p => sum(p.scores));
-  const winnerKey = totals[0] <= totals[1] ? 'father' : 'son';
+  const totals = matchData.players.map(p=>sum(p.scores));
+  const winner = totals[0]<=totals[1]?'father':'son';
   const parTotal = sum(matchData.par);
-
-  matchData.players.forEach((p, i) => {
-    const total = totals[i];
-    const o = out9(p.scores);
-    const inn = in9(p.scores);
-    const diff = total - parTotal;
-    const isWinner = p.key === winnerKey;
+  matchData.players.forEach(p=>{
+    const total = sum(p.scores);
+    const o = out9(p.scores), i = in9(p.scores);
+    const diff = total-parTotal;
+    const isW = p.key===winner;
     const node = document.createElement('article');
-    node.className = `dossier ${isWinner ? 'dossier-winner' : ''}`;
+    node.className = 'dossier'+(isW?' winner':'');
     node.innerHTML = `
-      <i data-lucide="${isWinner ? 'award' : 'circle'}" class="dossier-icon"></i>
-      <div class="dossier-index">
-        <span>${p.index}</span>
-        <span class="rule" style="display:inline-block;width:36px;height:1px;background:currentColor;opacity:.5"></span>
-        <span class="role">${p.role}</span>
+      <svg class="corner" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+        ${isW?'<circle cx="12" cy="8" r="6"/><path d="M9 14l-2 7 5-3 5 3-2-7"/>':'<circle cx="12" cy="12" r="9"/>'}
+      </svg>
+      <div class="index">
+        <span>${p.index}</span><span class="bar"></span><span class="role">${p.role}</span>
       </div>
-      <div class="dossier-name-en">${p.nameRomaji}</div>
-      <div class="dossier-name-jp">${p.name}</div>
-      <div class="dossier-stat-row">
-        <div class="dossier-total tabular" data-countup="${total}">0</div>
-        <div class="dossier-vs-par">
-          <span class="v">${diff >= 0 ? '+' : ''}${diff}</span>
-          &nbsp;VS&nbsp;PAR
-        </div>
+      <div class="name-en">${p.nameRomaji}</div>
+      <div class="name-jp">${p.name}</div>
+      <div class="stat-row">
+        <div class="total tabular">${total}</div>
+        <div class="vp"><span class="v">${diff>=0?'+':''}${diff}</span> &nbsp;VS&nbsp;PAR</div>
       </div>
-      <div class="dossier-splits">
-        <div class="dossier-split">
-          <div class="dossier-split-label">OUT &nbsp;1—9</div>
-          <div class="dossier-split-value tabular" data-countup="${o}">0</div>
-        </div>
-        <div class="dossier-split">
-          <div class="dossier-split-label">IN &nbsp;10—18</div>
-          <div class="dossier-split-value tabular" data-countup="${inn}">0</div>
-        </div>
+      <div class="splits">
+        <div class="split"><div class="lbl">OUT &nbsp;1—9</div><div class="val tabular">${o}</div></div>
+        <div class="split"><div class="lbl">IN &nbsp;10—18</div><div class="val tabular">${i}</div></div>
       </div>
     `;
     grid.appendChild(node);
@@ -625,374 +500,158 @@ function buildDossier(){
 function buildScoreTable(){
   const t = document.getElementById('scoreTable');
   const par = matchData.par;
-  const winners = par.map((_,i) => holeWinner(i));
-
+  const winners = par.map((_,i)=>holeWinner(i));
   let head = '<thead><tr><th class="row-label">HOLE</th>';
-  for(let i=1;i<=9;i++) head += `<th>${String(i).padStart(2,'0')}</th>`;
+  for(let i=1;i<=9;i++) head += '<th>'+String(i).padStart(2,'0')+'</th>';
   head += '<th>OUT</th>';
-  for(let i=10;i<=18;i++) head += `<th>${i}</th>`;
+  for(let i=10;i<=18;i++) head += '<th>'+i+'</th>';
   head += '<th>IN</th><th>TOTAL</th></tr></thead>';
-
-  let body = '<tbody>';
-  body += '<tr class="par-row"><td class="row-label">PAR</td>';
-  for(let i=0;i<9;i++) body += `<td>${par[i]}</td>`;
-  body += `<td class="subtotal">${out9(par)}</td>`;
-  for(let i=9;i<18;i++) body += `<td>${par[i]}</td>`;
-  body += `<td class="subtotal">${in9(par)}</td><td class="total">${sum(par)}</td></tr>`;
-
-  matchData.players.forEach(p => {
-    body += `<tr><td class="row-label">${p.name}<span class="sub">${p.role}</span></td>`;
+  let body = '<tbody><tr class="par-row"><td class="row-label">PAR</td>';
+  for(let i=0;i<9;i++) body += '<td>'+par[i]+'</td>';
+  body += '<td class="subtotal">'+out9(par)+'</td>';
+  for(let i=9;i<18;i++) body += '<td>'+par[i]+'</td>';
+  body += '<td class="subtotal">'+in9(par)+'</td><td class="total">'+sum(par)+'</td></tr>';
+  matchData.players.forEach(p=>{
+    body += '<tr><td class="row-label">'+p.name+'<span class="sub">'+p.role+'</span></td>';
     for(let i=0;i<9;i++){
-      const cls = classifyCell(p.scores[i], par[i]);
-      const w = winners[i];
-      const wcls = w === p.key ? 'winner' : (w === 'tie' ? 'tie' : '');
-      body += `<td class="cell ${cls} ${wcls}">${p.scores[i]}</td>`;
+      const cls = classCell(p.scores[i],par[i]);
+      const w = winners[i], wcls = w===p.key?'winner':(w==='tie'?'tie':'');
+      body += '<td class="cell '+cls+' '+wcls+'">'+p.scores[i]+'</td>';
     }
-    body += `<td class="subtotal">${out9(p.scores)}</td>`;
+    body += '<td class="subtotal">'+out9(p.scores)+'</td>';
     for(let i=9;i<18;i++){
-      const cls = classifyCell(p.scores[i], par[i]);
-      const w = winners[i];
-      const wcls = w === p.key ? 'winner' : (w === 'tie' ? 'tie' : '');
-      body += `<td class="cell ${cls} ${wcls}">${p.scores[i]}</td>`;
+      const cls = classCell(p.scores[i],par[i]);
+      const w = winners[i], wcls = w===p.key?'winner':(w==='tie'?'tie':'');
+      body += '<td class="cell '+cls+' '+wcls+'">'+p.scores[i]+'</td>';
     }
-    body += `<td class="subtotal">${in9(p.scores)}</td><td class="total">${sum(p.scores)}</td></tr>`;
+    body += '<td class="subtotal">'+in9(p.scores)+'</td><td class="total">'+sum(p.scores)+'</td></tr>';
   });
   body += '</tbody>';
-  t.innerHTML = head + body;
+  t.innerHTML = head+body;
   return winners;
 }
 
 function buildSummary(winners){
   const grid = document.getElementById('summary-grid');
-  const fatherWins = winners.filter(w => w === 'father').length;
-  const sonWins = winners.filter(w => w === 'son').length;
-  const ties = winners.filter(w => w === 'tie').length;
-
+  const fW = winners.filter(w=>w==='father').length;
+  const sW = winners.filter(w=>w==='son').length;
+  const ties = winners.filter(w=>w==='tie').length;
   const par = matchData.par;
-  const fDiffs = matchData.players[0].scores.map((s,i)=>s-par[i]);
-  const sDiffs = matchData.players[1].scores.map((s,i)=>s-par[i]);
-  const fParHoles = fDiffs.map((d,i)=>d===0 ? i+1 : null).filter(x=>x);
-  const sBestIdx = sDiffs.indexOf(Math.min(...sDiffs));
-  const fWorst = Math.max(...fDiffs);
-  const sWorst = Math.max(...sDiffs);
-  const fWorstHoles = fDiffs.map((d,i)=>d===fWorst ? i+1 : null).filter(x=>x);
-  const sWorstHoles = sDiffs.map((d,i)=>d===sWorst ? i+1 : null).filter(x=>x);
+  const fD = matchData.players[0].scores.map((s,i)=>s-par[i]);
+  const sD = matchData.players[1].scores.map((s,i)=>s-par[i]);
+  const fParHoles = fD.map((d,i)=>d===0?i+1:null).filter(x=>x);
+  const sBest = sD.indexOf(Math.min(...sD));
+  const fWorst = Math.max(...fD), sWorst = Math.max(...sD);
+  const fWorstH = fD.map((d,i)=>d===fWorst?i+1:null).filter(x=>x);
+  const sWorstH = sD.map((d,i)=>d===sWorst?i+1:null).filter(x=>x);
 
   const cells = [
     {
+      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M6 9H4.5A2.5 2.5 0 0 1 2 6.5V5h4M18 9h1.5A2.5 2.5 0 0 0 22 6.5V5h-4M4 22h16M10 14.66V17a2 2 0 0 1-2 2H7v3h10v-3h-1a2 2 0 0 1-2-2v-2.34M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',
       eyebrow:'Match Play',
-      icon:'trophy',
       title:'Holes won across the round.',
-      body:`
-        <div class="summary-display tabular">
-          <div>
-            <span class="summary-num gold" data-countup="${fatherWins}">0</span>
-            <span class="summary-mini-label">FATHER</span>
-          </div>
-          <span class="summary-divider"></span>
-          <div>
-            <span class="summary-num" data-countup="${ties}">0</span>
-            <span class="summary-mini-label">HALVED</span>
-          </div>
-          <span class="summary-divider"></span>
-          <div>
-            <span class="summary-num sage" data-countup="${sonWins}">0</span>
-            <span class="summary-mini-label">SON</span>
-          </div>
-        </div>
-        <p class="text-[11px] tracking-[.3em] font-cinzel text-[color:var(--muted)] mt-2">OF EIGHTEEN HOLES</p>
-      `
+      body:`<div class="display tabular">
+        <div><span class="num gold">${fW}</span><span class="mini">FATHER</span></div>
+        <span class="div"></span>
+        <div><span class="num">${ties}</span><span class="mini">HALVED</span></div>
+        <span class="div"></span>
+        <div><span class="num sage">${sW}</span><span class="mini">SON</span></div>
+      </div>
+      <p style="font-size:11px;letter-spacing:.3em;font-family:ui-serif,Georgia,serif;color:var(--muted);margin-top:6px">OF EIGHTEEN HOLES</p>`
     },
     {
+      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>',
       eyebrow:'Highlight',
-      icon:'star',
       title:'Moments worth keeping.',
-      body:`
-        <div class="summary-detail-list">
-          <div class="row">
-            <span class="name">FATHER</span>
-            ${fParHoles.length} holes finished on par.
-            <div class="holes mt-2">No. ${fParHoles.join(' / ')}</div>
-          </div>
-          <div class="row">
-            <span class="name son">SON</span>
-            Hole ${sBestIdx+1}, par 3 — finished in ${matchData.players[1].scores[sBestIdx]} (+${sDiffs[sBestIdx]}).
-            <div class="holes mt-2">The single bogey of the day.</div>
-          </div>
+      body:`<div class="detail">
+        <div class="row">
+          <span class="name">FATHER</span>
+          ${fParHoles.length} holes finished on par.
+          <div class="holes">No. ${fParHoles.join(' / ')}</div>
         </div>
-      `
+        <div class="row">
+          <span class="name son">SON</span>
+          Hole ${sBest+1}, par 3 — finished in ${matchData.players[1].scores[sBest]} (+${sD[sBest]}).
+          <div class="holes">The single bogey of the day.</div>
+        </div>
+      </div>`
     },
     {
+      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M4 22V4l8 4 8-4v14l-8 4z"/></svg>',
       eyebrow:'Hardships',
-      icon:'flag',
       title:'Where the round bent.',
-      body:`
-        <div class="summary-detail-list">
-          <div class="row">
-            <span class="name">FATHER</span>
-            Worst hole: +${fWorst} at No. ${fWorstHoles.join(' / ')}.
-          </div>
-          <div class="row">
-            <span class="name son">SON</span>
-            Worst hole: +${sWorst} at No. ${sWorstHoles.join(' / ')}.
-          </div>
-        </div>
-      `
+      body:`<div class="detail">
+        <div class="row"><span class="name">FATHER</span>Worst hole: +${fWorst} at No. ${fWorstH.join(' / ')}.</div>
+        <div class="row"><span class="name son">SON</span>Worst hole: +${sWorst} at No. ${sWorstH.join(' / ')}.</div>
+      </div>`
     }
   ];
-
-  cells.forEach(c => {
+  cells.forEach(c=>{
     const node = document.createElement('div');
     node.className = 'summary-cell';
     node.innerHTML = `
-      <div class="flex items-center gap-3">
-        <i data-lucide="${c.icon}" class="summary-icon"></i>
-        <span class="summary-eyebrow">${c.eyebrow}</span>
+      <div class="flex" style="align-items:center;gap:12px">
+        <span class="icon" style="display:inline-flex">${c.icon}</span>
+        <span class="eyebrow">${c.eyebrow}</span>
       </div>
-      <div class="summary-title">${c.title}</div>
+      <div class="ttl">${c.title}</div>
       ${c.body}
     `;
     grid.appendChild(node);
   });
 }
 
-function initChart(){
-  const ctx = document.getElementById('scoreChart').getContext('2d');
-  const labels = matchData.par.map((_,i)=>String(i+1).padStart(2,'0'));
-  new Chart(ctx, {
-    type:'line',
-    data:{
-      labels,
-      datasets:[
-        {
-          label:'PAR',
-          data:matchData.par,
-          borderColor:'rgba(244,237,225,.35)',
-          borderDash:[2,5],
-          borderWidth:1,
-          pointRadius:0,
-          tension:0
-        },
-        {
-          label:'Tomoichi',
-          data:matchData.players[0].scores,
-          borderColor:'#c8a85a',
-          backgroundColor:'rgba(200,168,90,.1)',
-          borderWidth:2,
-          pointRadius:4,
-          pointBackgroundColor:'#0b0d10',
-          pointBorderColor:'#c8a85a',
-          pointBorderWidth:1.5,
-          tension:.32,
-          fill:false
-        },
-        {
-          label:'Kosuke',
-          data:matchData.players[1].scores,
-          borderColor:'#6b9a8b',
-          backgroundColor:'rgba(107,154,139,.08)',
-          borderWidth:1.6,
-          borderDash:[6,4],
-          pointRadius:4,
-          pointBackgroundColor:'#0b0d10',
-          pointBorderColor:'#6b9a8b',
-          pointBorderWidth:1.5,
-          tension:.32,
-          fill:false
-        }
-      ]
-    },
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      interaction:{mode:'index',intersect:false},
-      layout:{padding:{top:8,right:12,bottom:6,left:6}},
-      plugins:{
-        legend:{
-          align:'end',
-          labels:{
-            color:'#cdc4b3',
-            font:{family:'Cinzel',size:11,weight:'600'},
-            usePointStyle:true,
-            padding:18,
-            boxWidth:10,
-            boxHeight:10
-          }
-        },
-        tooltip:{
-          backgroundColor:'rgba(8,9,11,.95)',
-          borderColor:'rgba(200,168,90,.35)',
-          borderWidth:1,
-          titleColor:'#c8a85a',
-          titleFont:{family:'Cinzel',size:11,weight:'700'},
-          bodyColor:'#f4ede1',
-          bodyFont:{family:'Cinzel',size:12},
-          padding:14,
-          displayColors:false,
-          callbacks:{
-            title:(items)=>`HOLE ${items[0].label}`,
-            label:(c)=>{
-              if(c.dataset.label==='PAR') return `PAR  ·  ${c.parsed.y}`;
-              const p = matchData.par[c.dataIndex];
-              const d = c.parsed.y - p;
-              const sign = d >= 0 ? '+' : '';
-              return `${c.dataset.label.toUpperCase()}  ·  ${c.parsed.y}  (${sign}${d})`;
-            }
-          }
-        }
-      },
-      scales:{
-        x:{
-          grid:{color:'rgba(244,237,225,.05)',drawTicks:false},
-          border:{color:'rgba(244,237,225,.1)'},
-          ticks:{color:'#8a8b8e',font:{family:'Cinzel',size:11},padding:8}
-        },
-        y:{
-          grid:{color:'rgba(244,237,225,.05)',drawTicks:false},
-          border:{display:false},
-          ticks:{color:'#8a8b8e',stepSize:1,font:{family:'Cinzel',size:11},padding:8},
-          suggestedMin:2,
-          suggestedMax:10
-        }
-      }
-    }
-  });
-}
+function buildChart(){
+  const svg = document.getElementById('chart');
+  const W = 920, H = 380;
+  const ml = 48, mr = 28, mt = 24, mb = 36;
+  const cw = W - ml - mr;
+  const ch = H - mt - mb;
+  const par = matchData.par;
+  const all = par.concat(matchData.players[0].scores, matchData.players[1].scores);
+  const yMin = Math.max(2, Math.min(...all)-1);
+  const yMax = Math.max(...all)+1;
+  const x = i => ml + (cw * i / 17);
+  const y = v => mt + ch - ((v - yMin) / (yMax - yMin)) * ch;
+  let svgContent = '';
 
-function initParticles(){
-  if(typeof tsParticles === 'undefined') return;
-  tsParticles.load({
-    id:'ts-bg',
-    options:{
-      fpsLimit:60,
-      background:{color:'transparent'},
-      particles:{
-        number:{value:14,density:{enable:true,area:1200}},
-        color:{value:['#c8a85a','#e6cf95']},
-        shape:{type:'circle'},
-        opacity:{value:.18,random:{enable:true,minimumValue:.05}},
-        size:{value:{min:.5,max:1.6}},
-        move:{enable:true,speed:.25,direction:'top',random:true,straight:false,outModes:{default:'out'}}
-      },
-      detectRetina:true
-    }
-  });
-}
-
-function startCountUps(root){
-  const els = (root||document).querySelectorAll('[data-countup]:not([data-counted])');
-  els.forEach(el => {
-    const target = parseInt(el.dataset.countup,10);
-    el.dataset.counted = '1';
-    if(window.countUp && countUp.CountUp){
-      const cu = new countUp.CountUp(el, target, {duration:1.8,useEasing:true});
-      if(!cu.error) cu.start(); else el.textContent = target;
-    } else { el.textContent = target; }
-  });
-}
-
-function initSmoothScroll(){
-  if(typeof Lenis === 'undefined') return null;
-  // Skip Lenis on touch devices — native iOS scrolling is smoother
-  // and avoids any compat issues that could break the page.
-  const isTouch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-  if(isTouch) return null;
-  const lenis = new Lenis({duration:1.2,easing:t => Math.min(1, 1.001 - Math.pow(2, -10 * t))});
-  function raf(time){lenis.raf(time);requestAnimationFrame(raf)}
-  requestAnimationFrame(raf);
-  if(window.gsap && window.ScrollTrigger){
-    lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((time)=>lenis.raf(time*1000));
-    gsap.ticker.lagSmoothing(0);
+  // gridlines (y)
+  for(let v=Math.ceil(yMin); v<=Math.floor(yMax); v++){
+    const yy = y(v);
+    svgContent += `<line x1="${ml}" x2="${W-mr}" y1="${yy}" y2="${yy}" stroke="rgba(244,237,225,.05)" stroke-width="1"/>`;
+    svgContent += `<text x="${ml-10}" y="${yy+4}" text-anchor="end" fill="#8a8b8e" font-size="11" font-family="ui-serif,Georgia,serif">${v}</text>`;
   }
-  return lenis;
-}
+  // x-axis labels
+  for(let i=0;i<18;i++){
+    svgContent += `<text x="${x(i)}" y="${H-mb+22}" text-anchor="middle" fill="#8a8b8e" font-size="11" font-family="ui-serif,Georgia,serif" letter-spacing="1">${String(i+1).padStart(2,'0')}</text>`;
+  }
+  // axis frame
+  svgContent += `<line x1="${ml}" x2="${W-mr}" y1="${H-mb}" y2="${H-mb}" stroke="rgba(244,237,225,.1)" stroke-width="1"/>`;
+  svgContent += `<line x1="${ml}" x2="${ml}" y1="${mt}" y2="${H-mb}" stroke="rgba(244,237,225,.05)" stroke-width="1"/>`;
 
-function initSplittingAndReveal(){
-  if(window.Splitting) try { Splitting(); } catch(e){ console.warn('Splitting failed', e); }
-  if(!window.gsap){ startCountUps(document); return; }
-  if(window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
-
-  // Hero: from-state animation (content is visible by default; gsap.from
-  // animates FROM a hidden state INTO current visible state).
-  gsap.from('[data-hero-line]', {
-    opacity:0,
-    y:24,
-    duration:1.2,
-    stagger:.12,
-    ease:'power3.out',
-    delay:.15,
-    immediateRender:false
-  });
-
-  // Prologue: char-by-char (only if Splitting actually wrapped chars)
-  if(window.ScrollTrigger){
-    document.querySelectorAll('#prologue [data-splitting]').forEach(p => {
-      const chars = p.querySelectorAll('.char');
-      if(!chars.length) return;
-      gsap.fromTo(chars,
-        {opacity:.18},
-        {opacity:1, ease:'none', stagger:.012,
-         scrollTrigger:{trigger:p,start:'top 80%',end:'bottom 60%',scrub:.7}}
-      );
+  // draw a poly-line + points
+  function drawSeries(data, color, dashed){
+    const d = data.map((v,i)=> (i===0?'M':'L') + x(i) + ',' + y(v)).join(' ');
+    const dash = dashed ? ' stroke-dasharray="6,4"' : '';
+    svgContent += `<path d="${d}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"${dash}/>`;
+    data.forEach((v,i)=>{
+      svgContent += `<circle cx="${x(i)}" cy="${y(v)}" r="3.5" fill="#0b0d10" stroke="${color}" stroke-width="1.5"/>`;
     });
   }
-
-  // Generic reveal-up: from-state, content visible by default.
-  if(window.ScrollTrigger){
-    gsap.utils.toArray('.reveal-up').forEach(el => {
-      gsap.from(el,{
-        opacity:0,
-        y:34,
-        duration:1,
-        ease:'power3.out',
-        immediateRender:false,
-        scrollTrigger:{
-          trigger:el,
-          start:'top 85%',
-          toggleActions:'play none none none',
-          onEnter:()=>startCountUps(el)
-        }
-      });
-    });
-  }
-
-  // Trigger countups already in viewport
-  startCountUps(document);
-}
-
-function initLucide(){
-  if(window.lucide && lucide.createIcons) lucide.createIcons();
-}
-
-function forceShowAll(){
-  document.querySelectorAll('.reveal-up,.reveal-fade,[data-hero-line]').forEach(el => {
-    el.style.opacity = '1';
-    el.style.transform = 'none';
-  });
-  startCountUps(document);
-}
-
-function safeRun(label, fn){
-  try { fn(); }
-  catch(e){ console.warn('[init] '+label+' failed:', e); }
+  // PAR (dotted)
+  const dPar = par.map((v,i)=> (i===0?'M':'L') + x(i) + ',' + y(v)).join(' ');
+  svgContent += `<path d="${dPar}" fill="none" stroke="rgba(244,237,225,.4)" stroke-width="1" stroke-dasharray="2,5"/>`;
+  drawSeries(matchData.players[0].scores, '#c8a85a', false);
+  drawSeries(matchData.players[1].scores, '#6b9a8b', true);
+  svg.innerHTML = svgContent;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Content is always visible by CSS default. JS only adds animations
-  // and dynamic content. If anything throws, nothing is hidden.
-  safeRun('dossier', buildDossier);
+  try{ buildDossier(); }catch(e){ console.warn('dossier',e); }
   let winners = [];
-  safeRun('table', () => { winners = buildScoreTable(); });
-  safeRun('summary', () => buildSummary(winners));
-  safeRun('lucide', initLucide);
-  safeRun('particles', initParticles);
-  safeRun('chart', initChart);
-  safeRun('smoothScroll', initSmoothScroll);
-  safeRun('reveal', initSplittingAndReveal);
-
-  // Always run countups (will no-op if already counted)
-  setTimeout(()=>startCountUps(document), 400);
+  try{ winners = buildScoreTable(); }catch(e){ console.warn('table',e); }
+  try{ buildSummary(winners); }catch(e){ console.warn('summary',e); }
+  try{ buildChart(); }catch(e){ console.warn('chart',e); }
 });
 </script>
 
