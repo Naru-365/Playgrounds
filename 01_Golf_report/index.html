@@ -410,7 +410,12 @@ body{
 </head>
 <body class="antialiased">
 
-<div id="ts-bg" aria-hidden="true" style="position:fixed;inset:0;z-index:0;pointer-events:none"></div>
+<!-- DIAGNOSTIC: visible without any CDN, JS or custom font. If you can see this banner, HTML rendering is fine. -->
+<div style="background:#c8a85a;color:#0b0d10;padding:14px 16px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;font-weight:700;letter-spacing:.04em;text-align:center;position:relative;z-index:9999">
+  Father vs Son — Linehill 2026.04.29 (loading editorial layout…)
+</div>
+
+<div id="ts-bg" aria-hidden="true" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;pointer-events:none"></div>
 
 <header class="fixed top-0 left-0 right-0 z-40 px-6 md:px-10 py-5 flex items-center justify-between">
   <div class="font-cinzel text-[11px] tracking-[.4em] text-ivory-dim">LINEHILL · 2026</div>
