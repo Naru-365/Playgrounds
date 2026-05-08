@@ -53,10 +53,34 @@ docs/design-spec.md   要件 / UI仕様（Designer引き継ぎ用）
 全機能で `gemini-2.5-flash-lite` を使用（テキスト・vision とも $0.10 / $0.40 per 1M tokens）。
 JSON 出力は `responseMimeType: "application/json"` で構造化。
 
-## デプロイ
+## モバイルで使う（PWA）
 
-API ルートを使うため Vercel での Next.js デプロイが最も簡単。
-（GitHub Pages は静的ホスティングのため API ルートが動かない）
+このアプリは PWA 対応しており、Vercel にデプロイすると iPhone / Android のホーム画面に追加してネイティブアプリ風に使えます。
+
+### Vercel デプロイ手順
+
+1. https://vercel.com/ に GitHub アカウントでログイン
+2. **New Project** → `Naru-365/Playgrounds` をインポート
+3. 設定で:
+   - **Root Directory**: `02_diet_app`
+   - **Framework Preset**: Next.js（自動検出）
+4. **Environment Variables** に `GEMINI_API_KEY = AIza...` を追加（Production / Preview / Development 全部チェック）
+5. **Deploy** を押す → `https://xxx.vercel.app` URL が払い出される
+
+### ホーム画面に追加
+
+- **iPhone (Safari)**: 払い出された URL を開く → 共有ボタン → 「ホーム画面に追加」
+- **Android (Chrome)**: URL を開くとアドレスバー下にインストールバナーが出るので「インストール」
+
+ホーム画面のアイコンから起動するとフルスクリーン（アドレスバー無し）で立ち上がります。
+
+### オフライン挙動
+
+サービスワーカーが画面と静的アセットをキャッシュするので、機内モードでも食事ログ閲覧 / 入力 / 体重記録 / 運動記録は動きます（AI 機能はネットワーク必須）。
+
+## ローカルだけで使うなら
+
+API ルートを使うため Next.js dev/start が必要（GitHub Pages は静的ホスティングのため API ルートが動かない）。
 
 ## 注意
 

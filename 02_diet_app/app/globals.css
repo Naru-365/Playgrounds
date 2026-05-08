@@ -40,6 +40,7 @@ html, body {
 
 body {
   font-family: var(--font-noto-jp), system-ui, "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+  padding-top: env(safe-area-inset-top);
 }
 
 .tabular { font-variant-numeric: tabular-nums; }
