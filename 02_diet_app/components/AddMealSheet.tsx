@@ -68,7 +68,7 @@ export default function AddMealSheet({ open, slot, date, apiKey, myFoods, onClos
 
   const aiHeaders: Record<string, string> = {
     "Content-Type": "application/json",
-    ...(apiKey ? { "x-anthropic-key": apiKey } : {}),
+    ...(apiKey ? { "x-gemini-key": apiKey } : {}),
   };
 
   const submitAI = async () => {

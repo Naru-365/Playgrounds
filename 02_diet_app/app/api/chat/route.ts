@@ -1,10 +1,10 @@
-import { getClient, MODELS, extractText, errorJSON } from "@/lib/anthropic";
+import { getClient, MODELS, generateChat, errorJSON, type ChatTurn } from "@/lib/llm";
 import { NUTRIENT_LABELS } from "@/lib/nutrition";
 import type { ChatMessage, Nutrients, Profile } from "@/lib/types";
 
 export const runtime = "nodejs";
 
-const SYSTEM = `あなたは「ハル先生」というAI管理栄養士兼コーチです。
+const SYSTEM_BASE = `あなたは「ハル先生」というAI管理栄養士兼コーチです。
 - 30代・元アスリート出身、丁寧だが少しだけ砕けた口調
 - 1〜3行の短い返答を基本とし、必要なときだけ箇条書き
 - 医療診断は避け、参考情報として伝える
@@ -31,20 +31,20 @@ export async function POST(req: Request) {
 [運動による消費] ${body.context.burnedKcal}kcal
 ※ ユーザーには上記コンテキストが見えていないので、必要に応じて自然に引用して構いません。`;
 
-    const messages = body.history.map((m) => ({ role: m.role, content: m.content }));
+    const system = `${SYSTEM_BASE}\n\n${ctx}`;
+    const turns: ChatTurn[] = body.history.map((m) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      text: m.content,
+    }));
 
-    const client = getClient(req);
-    const msg = await client.messages.create({
+    const ai = getClient(req);
+    const reply = await generateChat(ai, {
       model: MODELS.fast,
-      max_tokens: 600,
-      system: [
-        { type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } },
-        { type: "text", text: ctx },
-      ],
-      messages,
+      system,
+      history: turns,
+      maxOutputTokens: 600,
     });
-
-    return Response.json({ reply: extractText(msg) });
+    return Response.json({ reply });
   } catch (e) {
     return errorJSON(e);
   }

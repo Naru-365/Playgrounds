@@ -1,4 +1,4 @@
-import { getClient, MODELS, extractText, extractJSON, errorJSON } from "@/lib/anthropic";
+import { getClient, MODELS, generateJSON, errorJSON } from "@/lib/llm";
 import type { Profile, Nutrients, WorkoutPlan } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -15,16 +15,16 @@ const SYSTEM = `あなたは「ハル先生」という名前のAIパーソナ�
 {
   "weekStartISO": "YYYY-MM-DD",
   "proteinTargetG": number,
-  "notesFromAI": "string",   // 今週のメモ・補食提案・注意点 (300字以内)
+  "notesFromAI": "string",
   "days": [
     {
-      "dayIndex": number,    // 0=月, 6=日
-      "focus": "string",     // 例: 上半身プッシュ / 下半身 / 休息 / 有酸素 など
+      "dayIndex": number,
+      "focus": "string",
       "items": [
         {
           "name": "string",
           "sets": number,
-          "reps": "string",   // "8-10" のような幅もOK
+          "reps": "string",
           "restSec": number,
           "note": "string"
         }
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     const userText = `# プロフィール
 ${body.profile.name} / ${body.profile.age}歳 / ${body.profile.sex} / 身長${body.profile.height}cm / 体重${body.profile.weight}kg / コース: ${body.profile.goal}
 # プラン要件
-- 目的: ${body.form.goal} (bulk=増量 / cut=減量 / maintain=維持)
+- 目的: ${body.form.goal}
 - 週あたり日数: ${body.form.daysPerWeek}
 - 1回の所要時間: ${body.form.durationMin}分
 - 設備: ${body.form.equipment}
@@ -68,20 +68,18 @@ ${body.profile.name} / ${body.profile.age}歳 / ${body.profile.sex} / 身長${bo
 ${body.weekStartISO}
 `;
 
-    const client = getClient(req);
-    const msg = await client.messages.create({
+    const ai = getClient(req);
+    const { data, raw } = await generateJSON<WorkoutPlan>(ai, {
       model: MODELS.smart,
-      max_tokens: 4000,
-      system: [{ type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }],
-      messages: [{ role: "user", content: userText }],
+      system: SYSTEM,
+      user: userText,
+      maxOutputTokens: 4000,
     });
-
-    const plan = extractJSON<WorkoutPlan>(extractText(msg));
-    if (!plan?.days) {
-      return Response.json({ error: "AIの応答を解釈できませんでした", raw: extractText(msg) }, { status: 502 });
+    if (!data?.days) {
+      return Response.json({ error: "AIの応答を解釈できませんでした", raw }, { status: 502 });
     }
-    plan.weekStartISO = body.weekStartISO;
-    return Response.json({ plan });
+    data.weekStartISO = body.weekStartISO;
+    return Response.json({ plan: data });
   } catch (e) {
     return errorJSON(e);
   }

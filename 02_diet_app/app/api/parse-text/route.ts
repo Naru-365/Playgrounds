@@ -1,10 +1,9 @@
-import { getClient, MODELS, extractText, extractJSON, errorJSON } from "@/lib/anthropic";
+import { getClient, MODELS, generateJSON, errorJSON } from "@/lib/llm";
 
 export const runtime = "nodejs";
 
 const SYSTEM = `あなたは日本食を中心に栄養素を推定する専門家です。
-ユーザーの自然文から食べた食品を抽出し、各品目について 100g 単位の標準値ではなく、
-「実際に食べた量」に対する栄養素を推定してください。
+ユーザーの自然文から食べた食品を抽出し、各品目について「実際に食べた量」に対する栄養素を推定してください。
 出力は厳格な JSON のみ。コメントや前置きは禁止。
 スキーマ:
 {
@@ -33,18 +32,17 @@ export async function POST(req: Request) {
     if (!text?.trim()) {
       return Response.json({ error: "text is required" }, { status: 400 });
     }
-    const client = getClient(req);
-    const msg = await client.messages.create({
+    const ai = getClient(req);
+    const { data, raw } = await generateJSON<{ items: unknown[] }>(ai, {
       model: MODELS.fast,
-      max_tokens: 1500,
-      system: [{ type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }],
-      messages: [{ role: "user", content: text }],
+      system: SYSTEM,
+      user: text,
+      maxOutputTokens: 1500,
     });
-    const out = extractJSON<{ items: unknown[] }>(extractText(msg));
-    if (!out?.items) {
-      return Response.json({ error: "AIの応答を解釈できませんでした", raw: extractText(msg) }, { status: 502 });
+    if (!data?.items) {
+      return Response.json({ error: "AIの応答を解釈できませんでした", raw }, { status: 502 });
     }
-    return Response.json(out);
+    return Response.json(data);
   } catch (e) {
     return errorJSON(e);
   }

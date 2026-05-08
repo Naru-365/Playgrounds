@@ -1,4 +1,4 @@
-import { getClient, MODELS, extractText, errorJSON } from "@/lib/anthropic";
+import { getClient, MODELS, generateText, errorJSON } from "@/lib/llm";
 import { NUTRIENT_LABELS } from "@/lib/nutrition";
 import type { Nutrients, Profile, MealEntry } from "@/lib/types";
 
@@ -31,9 +31,13 @@ export async function POST(req: Request) {
       return `- ${NUTRIENT_LABELS[k]}: ${v} / ${t} (${ratio}%)`;
     });
 
-    const mealsTxt = body.meals
-      .map((m) => `[${m.slot}] ${m.customName ?? m.foodId} ${m.amount}${m.unit} ${Math.round(m.nutrients.kcal)}kcal`)
-      .join("\n") || "(記録なし)";
+    const mealsTxt =
+      body.meals
+        .map(
+          (m) =>
+            `[${m.slot}] ${m.customName ?? m.foodId} ${m.amount}${m.unit} ${Math.round(m.nutrients.kcal)}kcal`
+        )
+        .join("\n") || "(記録なし)";
 
     const userText = `# プロフィール
 ${body.profile.name} / ${body.profile.age}歳 / ${body.profile.sex} / 体重${body.profile.weight}kg / コース: ${body.profile.goal}
@@ -45,15 +49,14 @@ ${lines.join("\n")}
 ${mealsTxt}
 `;
 
-    const client = getClient(req);
-    const msg = await client.messages.create({
+    const ai = getClient(req);
+    const advice = await generateText(ai, {
       model: MODELS.fast,
-      max_tokens: 500,
-      system: [{ type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }],
-      messages: [{ role: "user", content: userText }],
+      system: SYSTEM,
+      user: userText,
+      maxOutputTokens: 500,
     });
-
-    return Response.json({ advice: extractText(msg) });
+    return Response.json({ advice });
   } catch (e) {
     return errorJSON(e);
   }

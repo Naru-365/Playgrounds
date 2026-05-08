@@ -1,4 +1,4 @@
-import { getClient, MODELS, extractText, extractJSON, errorJSON } from "@/lib/anthropic";
+import { getClient, MODELS, generateJSONFromImage, errorJSON } from "@/lib/llm";
 
 export const runtime = "nodejs";
 
@@ -22,7 +22,7 @@ const SYSTEM = `あなたは料理写真から食品を識別し栄養素を推�
       "calcium": number,
       "iron": number,
       "vitC": number,
-      "confidence": number  // 0..1
+      "confidence": number
     }
   ]
 }`;
@@ -33,34 +33,22 @@ export async function POST(req: Request) {
     if (!image) {
       return Response.json({ error: "image is required" }, { status: 400 });
     }
-    const allowed = ["image/jpeg", "image/png", "image/gif", "image/webp"] as const;
-    type AllowedMedia = (typeof allowed)[number];
-    const media: AllowedMedia = (allowed as readonly string[]).includes(mediaType)
-      ? (mediaType as AllowedMedia)
-      : "image/jpeg";
-    const client = getClient(req);
-    const msg = await client.messages.create({
+    const allowed = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    const mime = allowed.includes(mediaType) ? mediaType : "image/jpeg";
+
+    const ai = getClient(req);
+    const { data, raw } = await generateJSONFromImage<{ items: unknown[] }>(ai, {
       model: MODELS.smart,
-      max_tokens: 1500,
-      system: [{ type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }],
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "image",
-              source: { type: "base64", media_type: media, data: image },
-            },
-            { type: "text", text: "この写真の料理を識別し、上記スキーマで返してください。" },
-          ],
-        },
-      ],
+      system: SYSTEM,
+      prompt: "この写真の料理を識別し、上記スキーマで返してください。",
+      image,
+      mimeType: mime,
+      maxOutputTokens: 1500,
     });
-    const out = extractJSON<{ items: unknown[] }>(extractText(msg));
-    if (!out?.items) {
-      return Response.json({ error: "AIの応答を解釈できませんでした", raw: extractText(msg) }, { status: 502 });
+    if (!data?.items) {
+      return Response.json({ error: "AIの応答を解釈できませんでした", raw }, { status: 502 });
     }
-    return Response.json(out);
+    return Response.json(data);
   } catch (e) {
     return errorJSON(e);
   }

@@ -138,15 +138,16 @@ export default function ProfilePage() {
         </div>
       </Card>
 
-      <Card title="Anthropic API キー (任意)">
+      <Card title="Gemini API キー (任意)">
         <p className="mb-2 text-[11px] text-[var(--ink-soft)]">
-          サーバ側の環境変数 <code>ANTHROPIC_API_KEY</code> を設定するのが推奨です。<br />
-          ここに入れた場合、ヘッダー <code>x-anthropic-key</code> でリクエストごとに渡します（端末ローカル保存）。
+          サーバ側の環境変数 <code>GEMINI_API_KEY</code> を設定するのが推奨です。<br />
+          ここに入れた場合、ヘッダー <code>x-gemini-key</code> でリクエストごとに渡します（端末ローカル保存）。
+          キーは <a className="underline" href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer">Google AI Studio</a> で発行できます。
         </p>
         <input
           value={p.apiKey ?? ""}
           onChange={(e) => updateProfile({ apiKey: e.target.value })}
-          placeholder="sk-ant-..."
+          placeholder="AIza..."
           type="password"
           className="input w-full"
         />

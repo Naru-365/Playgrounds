@@ -60,7 +60,7 @@ export default function CoachPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(data.profile.apiKey ? { "x-anthropic-key": data.profile.apiKey } : {}),
+          ...(data.profile.apiKey ? { "x-gemini-key": data.profile.apiKey } : {}),
         },
         body: JSON.stringify({
           profile: data.profile,

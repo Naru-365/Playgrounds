@@ -20,14 +20,14 @@
 ```bash
 npm install
 cp .env.example .env.local
-# .env.local に ANTHROPIC_API_KEY=sk-ant-... を入れる
+# .env.local に GEMINI_API_KEY=AIza... を入れる (https://aistudio.google.com/apikey で発行)
 npm run dev
 ```
 
 ブラウザで http://localhost:3000 を開く。スマホブラウザでホーム画面に追加して使う想定。
 
 API キーは設定画面（/profile）から個人ローカルに保存することもできます。
-推奨はサーバ環境変数 `ANTHROPIC_API_KEY` を使うこと。
+推奨はサーバ環境変数 `GEMINI_API_KEY` を使うこと。
 
 ## ディレクトリ
 
@@ -44,16 +44,14 @@ lib/
   foods.ts            内蔵食品 DB
   nutrition.ts        栄養素計算 / BMR / 目標値
   store.ts            LocalStorage 永続化フック
-  anthropic.ts        Anthropic SDK ラッパ
+  llm.ts              Google Gemini SDK ラッパ
 docs/design-spec.md   要件 / UI仕様（Designer引き継ぎ用）
 ```
 
 ## 使用モデル
 
-- 高速・軽量タスク（テキスト解析・チャット・アドバイス）: `claude-haiku-4-5`
-- 重めの推論（写真認識・週次プラン生成）: `claude-sonnet-4-6`
-
-System prompt には `ephemeral` キャッシュを設定してプロンプトキャッシュを活用。
+全機能で `gemini-2.5-flash-lite` を使用（テキスト・vision とも $0.10 / $0.40 per 1M tokens）。
+JSON 出力は `responseMimeType: "application/json"` で構造化。
 
 ## デプロイ
 
