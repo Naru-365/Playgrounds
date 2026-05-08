@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f7f7f4;
+  --surface: #ffffff;
+  --ink: #1f2933;
+  --ink-soft: #6b7280;
+  --line: #ececeb;
+  --primary: #2eb872;
+  --primary-soft: #d8f1e3;
+  --accent: #f2994a;
+  --warn: #eb5757;
+  --good: #27ae60;
+  --caution: #f2c94c;
+  --shadow: 0 6px 24px rgba(15, 23, 42, 0.06);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-primary: var(--primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-warn: var(--warn);
+  --color-good: var(--good);
+  --color-caution: var(--caution);
+  --font-sans: var(--font-noto-jp), system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, monospace;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "palt";
+}
+
+body {
+  font-family: var(--font-noto-jp), system-ui, "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
+.card {
+  background: var(--surface);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1116;
+    --surface: #161a21;
+    --ink: #e8eaee;
+    --ink-soft: #9aa1ab;
+    --line: #232830;
+    --primary-soft: #163a2a;
+    --shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  }
+}
