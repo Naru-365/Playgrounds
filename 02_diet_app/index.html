@@ -163,6 +163,8 @@
     display: flex; align-items: center; justify-content: center; padding: 18px;
     opacity: 0; pointer-events: none; transition: opacity 0.25s; }
   .overlay.show { opacity: 1; pointer-events: auto; }
+  /* fully opaque cover so nothing shows through during handoff */
+  .overlay.solid { background: radial-gradient(120% 90% at 50% 0%, #1c7a4a 0%, #12603a 42%, #0c3d25 100%); }
   .sheet { width: 100%; max-width: 400px; max-height: 86vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
     background: linear-gradient(165deg, #1d4a34, #0e2c1d); border: 1px solid rgba(242,193,78,0.4);
     border-radius: 18px; padding: 20px 18px calc(18px + var(--safe-b)); box-shadow: 0 20px 50px rgba(0,0,0,0.6);
@@ -311,6 +313,18 @@
   </div>
 </div>
 
+<!-- Handoff / privacy cover -->
+<div class="overlay solid" id="handoffOverlay">
+  <div class="sheet" style="text-align:center">
+    <div style="font-size:52px; line-height:1">🔒</div>
+    <h2 id="handoffName" style="font-size:22px; margin-top:10px">○○ の番</h2>
+    <div class="sub" id="handoffRole" style="margin-bottom:4px">ほかの人は画面を見ないでね 👀</div>
+    <p style="font-size:12px; color:rgba(246,236,214,0.65); line-height:1.7; margin:10px 4px 4px;">
+      端末を <b id="handoffWho">この人</b> に渡してから、下のボタンを押して自分だけ役を確認しよう。</p>
+    <button class="sheet-btn" id="handoffReveal">わたしの番をはじめる 🎲</button>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -394,6 +408,31 @@
     panel: document.getElementById("panel")
   };
   [1, 5, 3].forEach(function (v, i) { renderDie(el.dice[i], v); });
+  function clearDice() { el.dice.forEach(function (d) { renderDie(d, 0); }); } // blank = hidden/not rolled
+
+  // ---- handoff / privacy cover (pass-and-play secrecy) ----
+  var handoffOverlay = document.getElementById("handoffOverlay");
+  var pendingReveal = null;
+  function goHandoff(name, role, onReveal) {
+    // blank the stage first so nothing sensitive shows behind the fading-in cover
+    clearDice();
+    setBanner("&nbsp;", false);
+    el.attempt.textContent = "";
+    document.getElementById("handoffName").innerHTML = escapeHtml(name) + " の番";
+    document.getElementById("handoffRole").textContent = role;
+    document.getElementById("handoffWho").textContent = name;
+    pendingReveal = onReveal;
+    handoffOverlay.classList.add("show");
+  }
+  document.getElementById("handoffReveal").addEventListener("click", function () {
+    handoffOverlay.classList.remove("show");
+    clearDice();                 // hide the previous player's faces
+    el.attempt.textContent = "";
+    setBanner("&nbsp;", false);
+    var fn = pendingReveal; pendingReveal = null;
+    haptic(10);
+    if (fn) fn();
+  });
 
   function fmt(n) { return n.toLocaleString("ja-JP"); }
   function aliveCount() { return G.players.filter(function (p) { return p.alive; }).length; }
@@ -560,17 +599,6 @@
     render();
   }
 
-  function nextChild() {
-    G.childPos++;
-    if (G.childPos >= G.order.length) {
-      settleRound();
-    } else {
-      G.bet = defaultBet();
-      G.phase = "childBet";
-      render();
-    }
-  }
-
   function nextRound() {
     G.parentIdx = nextAlive(G.parentIdx);
     G.round++;
@@ -593,23 +621,29 @@
     if (G.phase === "intro") {
       el.attempt.textContent = "";
       setBanner('第 ' + G.round + ' 局 &nbsp;·&nbsp; 親は <span class="em">' + escapeHtml(G.players[G.parentIdx].name) + '</span>', true);
-      panelButton("局スタート", "btn", function () { G.phase = "parentRoll"; render(); });
+      panelButton("局スタート", "btn", function () {
+        goHandoff(G.players[G.parentIdx].name, "親（ディーラー）— 自分だけ役を確認", function () {
+          G.phase = "parentRoll"; render();
+        });
+      });
       return;
     }
 
     if (G.phase === "parentRoll") {
       el.attempt.textContent = "";
-      setBanner('<span class="em">' + escapeHtml(G.players[G.parentIdx].name) + '</span>（親）の番', true);
-      panelButton(escapeHtml(G.players[G.parentIdx].name) + " が振る 🎲", "btn", doParentRoll, "端末を渡して振ってもらおう（端末を振ってもOK）");
+      setBanner('<span class="em">' + escapeHtml(G.players[G.parentIdx].name) + '</span>（親）の番 🔒', true);
+      panelButton(escapeHtml(G.players[G.parentIdx].name) + " が振る 🎲", "btn", doParentRoll, "自分だけ見えるように振ろう（端末を振ってもOK）");
       return;
     }
 
     if (G.phase === "parentDone") {
-      setBanner('親の役：<span class="big">' + G.parentHand.label + '</span>', true);
-      el.attempt.textContent = "出目 " + G.parentHand.dice.join(" ・ ");
+      setBanner('あなたの役：<span class="big">' + G.parentHand.label + '</span>', true);
+      el.attempt.textContent = "出目 " + G.parentHand.dice.join(" ・ ") + "（他の人には見せないで）";
       var firstChild = G.players[G.order[0]];
-      panelButton(escapeHtml(firstChild.name) + " の番へ", "btn", function () {
-        G.bet = defaultBet(); G.childPos = 0; G.phase = "childBet"; render();
+      panelButton(escapeHtml(firstChild.name) + " に渡す 🔒", "btn", function () {
+        goHandoff(firstChild.name, "子 — 自分だけ役を確認", function () {
+          G.bet = defaultBet(); G.childPos = 0; G.phase = "childBet"; render();
+        });
       });
       return;
     }
@@ -621,8 +655,8 @@
       var cap = Math.min(child.points, parent.points);
       if (G.bet > cap) G.bet = cap;
       if (G.bet < 1) G.bet = Math.min(100, cap);
-      setBanner('<span class="em">' + escapeHtml(child.name) + '</span> の番 &nbsp;·&nbsp; 親の役 ' + G.parentHand.label, true);
-      el.attempt.textContent = "持ち点 " + fmt(child.points) + " ／ 親 " + fmt(parent.points);
+      setBanner('<span class="em">' + escapeHtml(child.name) + '</span> の番 🔒 親の役は伏せられています', true);
+      el.attempt.textContent = "持ち点 " + fmt(child.points) + " ／ 親 " + fmt(parent.points) + " 点";
       renderBetPanel(child, cap);
       return;
     }
@@ -630,8 +664,8 @@
     if (G.phase === "childShown") {
       var childIdx2 = G.order[G.childPos];
       var child2 = G.players[childIdx2];
-      setBanner('<span class="big">' + escapeHtml(child2.name) + '：' + G.childHand.label + '</span>', true);
-      el.attempt.textContent = "出目 " + G.childHand.dice.join(" ・ ") + " ／ 親 " + G.parentHand.label;
+      setBanner('あなたの役：<span class="big">' + G.childHand.label + '</span>', true);
+      el.attempt.textContent = "出目 " + G.childHand.dice.join(" ・ ") + "（他の人には見せないで）";
       renderChildShownPanel();
       return;
     }
@@ -696,11 +730,20 @@
     el.panel.appendChild(sub);
 
     var isLast = G.childPos >= G.order.length - 1;
-    var nextName = isLast ? null : G.players[G.order[G.childPos + 1]].name;
     var b = document.createElement("button");
     b.className = "btn";
-    b.innerHTML = isLast ? "全員の役で清算する 💰" : escapeHtml(nextName) + " の番へ";
-    b.addEventListener("click", nextChild);
+    if (isLast) {
+      b.innerHTML = "全員の役で清算する 💰";
+      b.addEventListener("click", settleRound);
+    } else {
+      var nextName = G.players[G.order[G.childPos + 1]].name;
+      b.innerHTML = escapeHtml(nextName) + " に渡す 🔒";
+      b.addEventListener("click", function () {
+        goHandoff(nextName, "子 — 自分だけ役を確認", function () {
+          G.childPos++; G.bet = defaultBet(); G.phase = "childBet"; render();
+        });
+      });
+    }
     el.panel.appendChild(b);
   }
 
@@ -832,7 +875,8 @@
   // ---- shake to roll ----
   var lastShake = 0, shakeEnabled = false;
   function anyOverlayOpen() {
-    return setupOverlay.classList.contains("show") || rulesOverlay.classList.contains("show") || rankOverlay.classList.contains("show");
+    return setupOverlay.classList.contains("show") || rulesOverlay.classList.contains("show") ||
+      rankOverlay.classList.contains("show") || handoffOverlay.classList.contains("show");
   }
   function currentRollAction() {
     if (G.rolling || anyOverlayOpen()) return null;
