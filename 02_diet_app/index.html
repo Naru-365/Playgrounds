@@ -1,0 +1,918 @@
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="theme-color" content="#0f2417" />
+<title>チンチロ パーティー 〜丁半どんぶり〜</title>
+
+<style>
+  :root {
+    --felt: #12603a;
+    --felt-dark: #0c3d25;
+    --wood: #6b3d1f;
+    --gold: #f2c14e;
+    --gold-deep: #d99b2b;
+    --cream: #f6ecd6;
+    --red: #d7263d;
+    --ink: #14110c;
+    --shadow: rgba(0, 0, 0, 0.45);
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --safe-t: env(safe-area-inset-top, 0px);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    overflow: hidden; overscroll-behavior: none; touch-action: manipulation;
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic",
+      "Noto Sans JP", -apple-system, system-ui, sans-serif;
+    color: var(--cream); user-select: none; -webkit-user-select: none;
+  }
+  body {
+    background: radial-gradient(120% 90% at 50% 0%, #1c7a4a 0%, var(--felt) 42%, var(--felt-dark) 100%);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255,255,255,0.04) 0 1px, transparent 1px),
+      radial-gradient(circle at 70% 60%, rgba(0,0,0,0.06) 0 1px, transparent 1px);
+    background-size: 7px 7px, 9px 9px; opacity: 0.6; z-index: 0;
+  }
+  #app {
+    position: relative; z-index: 1; width: 100%; max-width: 480px; height: 100%;
+    display: flex; flex-direction: column;
+    padding: calc(var(--safe-t) + 8px) 12px calc(var(--safe-b) + 10px);
+  }
+
+  /* ---------- Header ---------- */
+  header { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0; }
+  .title { font-size: 17px; font-weight: 800; letter-spacing: 0.06em; color: var(--gold);
+    text-shadow: 0 1px 0 var(--ink), 0 2px 6px rgba(0,0,0,0.5); }
+  .title small { display: block; font-size: 9px; font-weight: 600; letter-spacing: 0.28em;
+    color: rgba(246,236,214,0.6); margin-top: 1px; }
+  .hbtns { display: flex; gap: 6px; }
+  .hbtn {
+    border: 1px solid rgba(242,193,78,0.5); background: rgba(0,0,0,0.25); color: var(--gold);
+    font-size: 12px; font-weight: 700; padding: 7px 11px; border-radius: 999px; cursor: pointer;
+  }
+  .hbtn:active { transform: scale(0.94); }
+
+  /* ---------- Scoreboard (players) ---------- */
+  .board { display: flex; gap: 6px; margin-top: 10px; flex-shrink: 0; }
+  .pcard {
+    flex: 1 1 0; min-width: 0;
+    background: linear-gradient(160deg, rgba(0,0,0,0.28), rgba(0,0,0,0.12));
+    border: 1px solid rgba(242,193,78,0.24); border-radius: 12px;
+    padding: 7px 5px 6px; text-align: center; position: relative;
+    transition: box-shadow 0.3s, border-color 0.3s, opacity 0.3s;
+  }
+  .pcard.active { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), 0 0 14px rgba(242,193,78,0.35); }
+  .pcard.dead { opacity: 0.38; }
+  .pcard .crown { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); font-size: 15px;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.5)); }
+  .pcard .nm { font-size: 11px; font-weight: 700; color: rgba(246,236,214,0.85);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pcard .pt { font-size: 18px; font-weight: 800; color: var(--cream); font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .pcard .pt.win { color: #7be88a; } .pcard .pt.lose { color: #ff8a8a; }
+  .pcard .oya { font-size: 8px; font-weight: 800; letter-spacing: 0.1em; color: var(--gold-deep); }
+
+  /* ---------- Stage ---------- */
+  .stage { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 0; position: relative; }
+  .banner { min-height: 44px; display: flex; align-items: center; justify-content: center; text-align: center;
+    font-weight: 800; font-size: 15px; letter-spacing: 0.03em; color: var(--cream);
+    text-shadow: 0 1px 3px #000; padding: 0 6px; }
+  .banner .big { font-size: 20px; color: var(--gold); }
+  .banner .em { color: var(--gold); }
+  .banner.pop { animation: pop 0.45s cubic-bezier(.2,1.4,.4,1); }
+  @keyframes pop { 0% { transform: scale(0.6); opacity: 0; } 60% { transform: scale(1.12); } 100% { transform: scale(1); opacity: 1; } }
+
+  .bowl {
+    position: relative; width: min(66vw, 268px); aspect-ratio: 1/1; border-radius: 50%;
+    background: radial-gradient(circle at 50% 34%, #f3ede0 0%, #e6dcc6 40%, #cdbf9f 68%, #a8946f 100%);
+    box-shadow: inset 0 10px 22px rgba(255,255,255,0.55), inset 0 -22px 40px rgba(120,92,52,0.55),
+      inset 0 0 0 10px rgba(255,255,255,0.12), 0 18px 34px var(--shadow);
+    display: flex; align-items: center; justify-content: center; transition: transform 0.12s;
+  }
+  .bowl::after { content: ""; position: absolute; inset: 12%; border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.35), rgba(160,130,90,0.15) 70%, rgba(90,70,45,0.25));
+    box-shadow: inset 0 6px 18px rgba(120,92,52,0.4); pointer-events: none; }
+  .bowl.shake { animation: shakeBowl 0.5s ease; }
+  @keyframes shakeBowl { 0%,100%{transform:translate(0,0) rotate(0);} 15%{transform:translate(-6px,3px) rotate(-3deg);}
+    30%{transform:translate(6px,-3px) rotate(3deg);} 45%{transform:translate(-5px,-2px) rotate(-2deg);}
+    60%{transform:translate(5px,3px) rotate(2deg);} 80%{transform:translate(-3px,1px) rotate(-1deg);} }
+
+  .dice-tray { position: relative; z-index: 2; display: flex; gap: min(3.2vw, 13px); align-items: center; justify-content: center; }
+  .die {
+    width: min(15vw, 58px); height: min(15vw, 58px); border-radius: 20%;
+    background: linear-gradient(145deg, #fffdf6, #e7ddc8);
+    box-shadow: inset 0 2px 3px rgba(255,255,255,0.95), inset 0 -3px 6px rgba(150,130,95,0.5),
+      inset 0 0 0 1px rgba(120,95,55,0.12), 0 5px 9px rgba(0,0,0,0.42);
+    display: grid; grid-template-columns: repeat(3,1fr); grid-template-rows: repeat(3,1fr); padding: 9%; gap: 2%;
+  }
+  .die .pip { align-self: center; justify-self: center; width: 84%; aspect-ratio: 1/1; border-radius: 50%;
+    background: radial-gradient(circle at 34% 28%, #40403f 0%, #101010 72%);
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.28), inset 0 -1px 2px rgba(0,0,0,0.5), 0 1px 1px rgba(0,0,0,0.3); }
+  .die .pip.red { background: radial-gradient(circle at 34% 28%, #ff6a7d 0%, #c81e33 72%);
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.35), inset 0 -1px 2px rgba(120,10,25,0.55), 0 1px 2px rgba(150,20,35,0.45); }
+  .p1{grid-area:1/1;}.p2{grid-area:1/2;}.p3{grid-area:1/3;}.p4{grid-area:2/1;}.p5{grid-area:2/2;}
+  .p6{grid-area:2/3;}.p7{grid-area:3/1;}.p8{grid-area:3/2;}.p9{grid-area:3/3;}
+  .die.rolling { animation: tumble 0.5s linear infinite; }
+  @keyframes tumble { 0%{transform:rotate(0) translateY(0) scale(1);} 25%{transform:rotate(90deg) translateY(-10px) scale(1.05);}
+    50%{transform:rotate(180deg) translateY(0) scale(.96);} 75%{transform:rotate(270deg) translateY(-8px) scale(1.05);}
+    100%{transform:rotate(360deg) translateY(0) scale(1);} }
+  .die.landed { animation: land 0.32s cubic-bezier(.2,1.5,.4,1); }
+  @keyframes land { 0%{transform:scale(1.25) translateY(-14px);} 70%{transform:scale(.92) translateY(2px);} 100%{transform:scale(1) translateY(0);} }
+
+  .attempt { min-height: 16px; font-size: 12px; color: rgba(246,236,214,0.66); text-align: center; margin-top: 12px; }
+
+  /* ---------- Panel (context controls) ---------- */
+  .panel { flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; margin-top: 4px; min-height: 118px; justify-content: flex-end; }
+  .bet-row { display: flex; align-items: center; gap: 8px; }
+  .bet-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: rgba(246,236,214,0.72); }
+  .bet-value { font-size: 21px; font-weight: 800; color: var(--gold); font-variant-numeric: tabular-nums; min-width: 72px; text-align: right; }
+  .chips { display: flex; gap: 6px; flex: 1; justify-content: flex-end; }
+  .chip { flex: 0 0 auto; border: none; border-radius: 999px; font-weight: 800; font-size: 12px; padding: 8px 10px;
+    cursor: pointer; color: #2a1c05; background: linear-gradient(160deg, var(--gold), var(--gold-deep));
+    box-shadow: 0 3px 0 #a5741a, 0 4px 8px rgba(0,0,0,0.35); }
+  .chip.dark { color: var(--cream); background: linear-gradient(160deg, #3a5a48, #223c30); box-shadow: 0 3px 0 #16281f, 0 4px 8px rgba(0,0,0,0.35); }
+  .chip:active { transform: translateY(2px); box-shadow: 0 1px 0 #a5741a; }
+
+  .btn { width: 100%; border: none; border-radius: 16px; font-weight: 800; font-size: 17px; letter-spacing: 0.06em;
+    padding: 15px 10px; cursor: pointer; color: #2a1c05; background: linear-gradient(160deg, #ffdd7a, var(--gold-deep));
+    box-shadow: 0 5px 0 #a5741a, 0 8px 16px rgba(0,0,0,0.4); transition: transform 0.08s, box-shadow 0.08s; }
+  .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #a5741a; }
+  .btn.dark { color: var(--cream); background: linear-gradient(160deg, #4a3220, #2e1e12); box-shadow: 0 5px 0 #1a1008, 0 8px 16px rgba(0,0,0,0.4); }
+  .btn:disabled { opacity: 0.5; filter: grayscale(0.3); }
+  .subhint { text-align: center; font-size: 11px; color: rgba(246,236,214,0.6); min-height: 14px; }
+
+  .result-line { text-align: center; font-weight: 800; font-size: 20px; }
+  .result-line.win { color: #7be88a; } .result-line.lose { color: #ff8a8a; } .result-line.draw { color: var(--gold); }
+  .result-sub { text-align: center; font-size: 13px; color: rgba(246,236,214,0.8); margin-top: -4px; }
+
+  /* summary list */
+  .sumlist { display: flex; flex-direction: column; gap: 5px; max-height: 30vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .sumrow { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.22); border-radius: 10px; padding: 7px 10px; }
+  .sumrow .snm { flex: 1; font-weight: 700; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sumrow .shand { font-size: 12px; color: rgba(246,236,214,0.75); }
+  .sumrow .sdelta { font-weight: 800; font-size: 14px; font-variant-numeric: tabular-nums; min-width: 62px; text-align: right; }
+  .sdelta.win { color: #7be88a; } .sdelta.lose { color: #ff8a8a; } .sdelta.draw { color: rgba(246,236,214,0.6); }
+
+  /* ---------- Overlays ---------- */
+  .overlay { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,0.66);
+    display: flex; align-items: center; justify-content: center; padding: 18px;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+  .overlay.show { opacity: 1; pointer-events: auto; }
+  /* fully opaque cover so nothing shows through during handoff */
+  .overlay.solid { background: radial-gradient(120% 90% at 50% 0%, #1c7a4a 0%, #12603a 42%, #0c3d25 100%); }
+  .sheet { width: 100%; max-width: 400px; max-height: 86vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    background: linear-gradient(165deg, #1d4a34, #0e2c1d); border: 1px solid rgba(242,193,78,0.4);
+    border-radius: 18px; padding: 20px 18px calc(18px + var(--safe-b)); box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    transform: translateY(16px) scale(0.98); transition: transform 0.25s; }
+  .overlay.show .sheet { transform: none; }
+  .sheet h2 { margin: 0 0 4px; color: var(--gold); font-size: 19px; text-align: center; }
+  .sheet .sub { text-align: center; font-size: 11px; color: rgba(246,236,214,0.6); margin-bottom: 16px; letter-spacing: 0.14em; }
+
+  /* setup */
+  .field-label { font-size: 12px; font-weight: 700; color: rgba(246,236,214,0.8); margin: 12px 2px 6px; letter-spacing: 0.06em; }
+  .count-row { display: flex; gap: 8px; }
+  .count-opt { flex: 1; border: 1px solid rgba(242,193,78,0.35); background: rgba(0,0,0,0.2); color: var(--cream);
+    font-weight: 800; font-size: 16px; padding: 12px 0; border-radius: 12px; cursor: pointer; }
+  .count-opt.sel { background: linear-gradient(160deg, var(--gold), var(--gold-deep)); color: #2a1c05; border-color: var(--gold); }
+  .count-opt:active { transform: scale(0.96); }
+  .name-input { width: 100%; margin-bottom: 8px; padding: 12px 12px; border-radius: 11px; border: 1px solid rgba(242,193,78,0.3);
+    background: rgba(0,0,0,0.28); color: var(--cream); font-size: 15px; font-family: inherit; }
+  .name-input:focus { outline: none; border-color: var(--gold); }
+  .name-input::placeholder { color: rgba(246,236,214,0.4); }
+  .points-row { display: flex; gap: 8px; }
+  .points-opt { flex: 1; border: 1px solid rgba(242,193,78,0.35); background: rgba(0,0,0,0.2); color: var(--cream);
+    font-weight: 700; font-size: 14px; padding: 11px 0; border-radius: 11px; cursor: pointer; }
+  .points-opt.sel { background: linear-gradient(160deg, var(--gold), var(--gold-deep)); color: #2a1c05; border-color: var(--gold); }
+  .sheet-btn { margin-top: 18px; width: 100%; border: none; border-radius: 14px; padding: 15px; font-weight: 800; font-size: 16px;
+    color: #2a1c05; background: linear-gradient(160deg, #ffdd7a, var(--gold-deep)); cursor: pointer; }
+  .sheet-btn:active { transform: scale(0.97); }
+  .sheet-btn.dark { color: var(--cream); background: linear-gradient(160deg,#4a3220,#2e1e12); }
+
+  /* rules */
+  .rule-item { display: flex; align-items: center; gap: 10px; padding: 9px 4px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .rule-item .name { font-weight: 800; font-size: 14px; color: var(--cream); flex: 1; }
+  .rule-item .name span { display: block; font-size: 10px; font-weight: 600; color: rgba(246,236,214,0.55); letter-spacing: 0.08em; }
+  .rule-item .mult { font-weight: 800; font-size: 13px; padding: 3px 9px; border-radius: 999px; background: rgba(242,193,78,0.16); color: var(--gold); white-space: nowrap; }
+  .rule-item .mult.neg { background: rgba(215,38,61,0.2); color: #ff8a8a; }
+  .mini-dice { display: flex; gap: 3px; }
+  .mini-dice i { width: 16px; height: 16px; border-radius: 4px; background: linear-gradient(145deg,#fffef8,#e4dbc7);
+    display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; color: #222;
+    box-shadow: inset 0 -1px 2px rgba(150,130,95,0.4); }
+  .mini-dice i.r { color: var(--red); }
+
+  /* ranking */
+  .rank-row { display: flex; align-items: center; gap: 10px; padding: 11px 8px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .rank-row .medal { font-size: 20px; width: 26px; text-align: center; }
+  .rank-row .rnm { flex: 1; font-weight: 800; font-size: 15px; }
+  .rank-row .rpt { font-weight: 800; font-size: 16px; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .rank-row.out .rnm { color: rgba(246,236,214,0.5); }
+
+  #toast { position: fixed; left: 50%; bottom: calc(var(--safe-b) + 18px); transform: translateX(-50%) translateY(20px);
+    background: rgba(20,17,12,0.9); border: 1px solid rgba(242,193,78,0.4); color: var(--cream); font-size: 13px; font-weight: 700;
+    padding: 9px 16px; border-radius: 999px; z-index: 60; opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s; }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-height: 700px) {
+    .bowl { width: min(54vw, 214px); }
+    .die { width: min(12vw, 46px); height: min(12vw, 46px); }
+    .pcard .pt { font-size: 16px; }
+    .banner { min-height: 36px; }
+    .panel { min-height: 104px; }
+  }
+</style>
+
+<div id="app">
+  <header>
+    <div class="title">チンチロ パーティー<small>DONBURI DICE · 2-4P</small></div>
+    <div class="hbtns">
+      <button class="hbtn" id="rankBtn">順位</button>
+      <button class="hbtn" id="rulesBtn">役</button>
+    </div>
+  </header>
+
+  <div class="board" id="board"></div>
+
+  <div class="stage">
+    <div class="banner pop" id="banner">プレイヤーを設定してね</div>
+    <div class="bowl" id="bowl">
+      <div class="dice-tray" id="tray">
+        <div class="die" data-i="0"></div>
+        <div class="die" data-i="1"></div>
+        <div class="die" data-i="2"></div>
+      </div>
+    </div>
+    <div class="attempt" id="attempt"></div>
+  </div>
+
+  <div class="panel" id="panel"></div>
+</div>
+
+<!-- Setup overlay -->
+<div class="overlay show" id="setupOverlay">
+  <div class="sheet">
+    <h2>チンチロ パーティー</h2>
+    <div class="sub">端末を回して2〜4人で対戦</div>
+
+    <div class="field-label">人数</div>
+    <div class="count-row" id="countRow">
+      <button class="count-opt" data-n="2">2人</button>
+      <button class="count-opt sel" data-n="3">3人</button>
+      <button class="count-opt" data-n="4">4人</button>
+    </div>
+
+    <div class="field-label">プレイヤー名</div>
+    <div id="nameInputs"></div>
+
+    <div class="field-label">持ち点</div>
+    <div class="points-row" id="pointsRow">
+      <button class="points-opt" data-p="500">500</button>
+      <button class="points-opt sel" data-p="1000">1000</button>
+      <button class="points-opt" data-p="3000">3000</button>
+    </div>
+
+    <button class="sheet-btn" id="startBtn">はじめる</button>
+  </div>
+</div>
+
+<!-- Rules overlay -->
+<div class="overlay" id="rulesOverlay">
+  <div class="sheet">
+    <h2>役とルール</h2>
+    <div class="sub">親の役に子が挑戦 · 勝った役の倍率でやり取り</div>
+    <div class="rule-item"><div class="mini-dice"><i class="r">1</i><i class="r">1</i><i class="r">1</i></div>
+      <div class="name">ピンゾロ<span>1のゾロ目 · 最強</span></div><div class="mult">×5</div></div>
+    <div class="rule-item"><div class="mini-dice"><i>6</i><i>6</i><i>6</i></div>
+      <div class="name">アラシ（ゾロ目）<span>同じ目3つ · 数が大きいほど強い</span></div><div class="mult">×3</div></div>
+    <div class="rule-item"><div class="mini-dice"><i>4</i><i>5</i><i>6</i></div>
+      <div class="name">シゴロ<span>4・5・6 のそろい</span></div><div class="mult">×2</div></div>
+    <div class="rule-item"><div class="mini-dice"><i>3</i><i>3</i><i>5</i></div>
+      <div class="name">目（1〜6）<span>2つ同じ+1つ · 残り目が大きいほど強い</span></div><div class="mult">×1</div></div>
+    <div class="rule-item"><div class="mini-dice"><i>2</i><i>4</i><i>5</i></div>
+      <div class="name">目なし（ブタ）<span>役なし · 3回まで振り直し</span></div><div class="mult">−</div></div>
+    <div class="rule-item"><div class="mini-dice"><i class="r">1</i><i>2</i><i>3</i></div>
+      <div class="name">ヒフミ<span>1・2・3 · 最弱（払い2倍）</span></div><div class="mult neg">×2 支払</div></div>
+    <p style="font-size:11px; color:rgba(246,236,214,0.6); line-height:1.7; margin:12px 2px 0;">
+      各局ごとに<b>親</b>が交代します。まず親が振って役を決め、子は一人ずつ賭け金を決めて親の役に挑戦。勝った側の役の倍率で点をやり取りします（引き分けは±0、ヒフミは負け＋2倍払い）。持ち点が0になると脱落、最後まで残った人が勝ちです。</p>
+    <button class="sheet-btn dark" id="rulesClose">閉じる</button>
+  </div>
+</div>
+
+<!-- Ranking overlay -->
+<div class="overlay" id="rankOverlay">
+  <div class="sheet">
+    <h2 id="rankTitle">順位</h2>
+    <div class="sub" id="rankSub">現在のスコア</div>
+    <div id="rankList"></div>
+    <button class="sheet-btn" id="rankAction">つづける</button>
+    <button class="sheet-btn dark" id="rankRestart" style="margin-top:8px">最初から（設定に戻る）</button>
+  </div>
+</div>
+
+<!-- Handoff / privacy cover -->
+<div class="overlay solid" id="handoffOverlay">
+  <div class="sheet" style="text-align:center">
+    <div style="font-size:52px; line-height:1">🔒</div>
+    <h2 id="handoffName" style="font-size:22px; margin-top:10px">○○ の番</h2>
+    <div class="sub" id="handoffRole" style="margin-bottom:4px">ほかの人は画面を見ないでね 👀</div>
+    <p style="font-size:12px; color:rgba(246,236,214,0.65); line-height:1.7; margin:10px 4px 4px;">
+      端末を <b id="handoffWho">この人</b> に渡してから、下のボタンを押して自分だけ役を確認しよう。</p>
+    <button class="sheet-btn" id="handoffReveal">わたしの番をはじめる 🎲</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var PIPS = { 1:[5], 2:[1,9], 3:[1,5,9], 4:[1,3,7,9], 5:[1,3,5,7,9], 6:[1,3,4,6,7,9] };
+  function renderDie(elm, value) {
+    elm.innerHTML = "";
+    var pos = PIPS[value] || [];
+    for (var i = 0; i < pos.length; i++) {
+      var pip = document.createElement("div");
+      pip.className = "pip p" + pos[i] + (value === 1 ? " red" : "");
+      elm.appendChild(pip);
+    }
+  }
+
+  // ---- hand evaluation ----
+  function evaluate(d) {
+    var s = d.slice().sort(function (a, b) { return a - b; });
+    var a = s[0], b = s[1], c = s[2];
+    if (a === b && b === c) {
+      if (a === 1) return { key: "pinzoro", label: "ピンゾロ", mult: 5, strength: 100, dice: s };
+      return { key: "arashi", label: "アラシ(" + a + ")", mult: 3, strength: 60 + a, dice: s };
+    }
+    if (a === 4 && b === 5 && c === 6) return { key: "shigoro", label: "シゴロ", mult: 2, strength: 50, dice: s };
+    if (a === 1 && b === 2 && c === 3) return { key: "hifumi", label: "ヒフミ", mult: 2, strength: -10, dice: s };
+    var eye = 0;
+    if (a === b) eye = c; else if (b === c) eye = a; else if (a === c) eye = b;
+    if (eye) return { key: "me", label: "目 " + eye, mult: 1, strength: 10 + eye, dice: s };
+    return { key: "buta", label: "目なし", mult: 0, strength: 0, dice: s };
+  }
+  function rnd() { return 1 + Math.floor(Math.random() * 6); }
+  function rollHand() {
+    var tries = [], final = null;
+    for (var t = 0; t < 3; t++) {
+      var d = [rnd(), rnd(), rnd()];
+      tries.push(d);
+      final = evaluate(d);
+      if (final.key !== "buta") break;
+    }
+    return { dice: final.dice, hand: final, tries: tries };
+  }
+  // judge child vs parent -> outcome for the child
+  function judge(child, parent) {
+    var outcome, mult = 1;
+    if (child.strength === parent.strength) outcome = "draw";
+    else if (child.strength > parent.strength) { outcome = "win"; mult = child.mult; }
+    else { outcome = "lose"; mult = parent.mult; }
+    if (child.key === "hifumi" && parent.key !== "hifumi") { outcome = "lose"; mult = 2; }
+    else if (parent.key === "hifumi" && child.key !== "hifumi") { outcome = "win"; mult = 2; }
+    if (mult < 1 && outcome !== "draw") mult = 1;
+    return { outcome: outcome, mult: mult };
+  }
+
+  // ---- state ----
+  var G = {
+    players: [],       // {name, points, alive}
+    startPoints: 1000,
+    count: 3,
+    parentIdx: 0,
+    round: 1,
+    phase: "setup",    // setup|intro|parentRoll|parentDone|childBet|childShown|summary|over
+    bet: 100,
+    order: [],         // child indices this round
+    childPos: 0,
+    parentHand: null,
+    childHand: null,
+    childRolls: [],    // {idx, hand, bet} recorded during rolling, settled together
+    parentStart: 0,    // parent points at round start (for net flash)
+    roundLog: [],      // {idx, name, hand, outcome, delta}
+    rolling: false
+  };
+
+  var el = {
+    board: document.getElementById("board"),
+    banner: document.getElementById("banner"),
+    bowl: document.getElementById("bowl"),
+    dice: [].slice.call(document.querySelectorAll(".die")),
+    attempt: document.getElementById("attempt"),
+    panel: document.getElementById("panel")
+  };
+  [1, 5, 3].forEach(function (v, i) { renderDie(el.dice[i], v); });
+  function clearDice() { el.dice.forEach(function (d) { renderDie(d, 0); }); } // blank = hidden/not rolled
+
+  // ---- handoff / privacy cover (pass-and-play secrecy) ----
+  var handoffOverlay = document.getElementById("handoffOverlay");
+  var pendingReveal = null;
+  function goHandoff(name, role, onReveal) {
+    // blank the stage first so nothing sensitive shows behind the fading-in cover
+    clearDice();
+    setBanner("&nbsp;", false);
+    el.attempt.textContent = "";
+    document.getElementById("handoffName").innerHTML = escapeHtml(name) + " の番";
+    document.getElementById("handoffRole").textContent = role;
+    document.getElementById("handoffWho").textContent = name;
+    pendingReveal = onReveal;
+    handoffOverlay.classList.add("show");
+  }
+  document.getElementById("handoffReveal").addEventListener("click", function () {
+    handoffOverlay.classList.remove("show");
+    clearDice();                 // hide the previous player's faces
+    el.attempt.textContent = "";
+    setBanner("&nbsp;", false);
+    var fn = pendingReveal; pendingReveal = null;
+    haptic(10);
+    if (fn) fn();
+  });
+
+  function fmt(n) { return n.toLocaleString("ja-JP"); }
+  function aliveCount() { return G.players.filter(function (p) { return p.alive; }).length; }
+  function nextAlive(from) {
+    for (var k = 1; k <= G.players.length; k++) {
+      var i = (from + k) % G.players.length;
+      if (G.players[i].alive) return i;
+    }
+    return from;
+  }
+
+  // ---- toast & haptics ----
+  var toastEl = document.getElementById("toast"), toastTimer = null;
+  function toast(msg) {
+    toastEl.textContent = msg; toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, 1600);
+  }
+  function haptic(ms) { if (navigator.vibrate) { try { navigator.vibrate(ms); } catch (e) {} } }
+
+  function setBanner(html, pop) {
+    el.banner.innerHTML = html;
+    if (pop) { el.banner.classList.remove("pop"); void el.banner.offsetWidth; el.banner.classList.add("pop"); }
+  }
+
+  // ---- board render ----
+  function renderBoard() {
+    el.board.innerHTML = "";
+    G.players.forEach(function (p, i) {
+      var c = document.createElement("div");
+      c.className = "pcard" + (p.alive ? "" : " dead");
+      var isParent = (i === G.parentIdx);
+      var isActive = false;
+      if (G.phase === "parentRoll" || G.phase === "parentDone") isActive = isParent;
+      else if (G.phase === "childBet" || G.phase === "childShown") isActive = (i === G.order[G.childPos]);
+      if (isActive) c.className += " active";
+      c.innerHTML =
+        (isParent ? '<div class="crown">👑</div>' : "") +
+        '<div class="nm">' + escapeHtml(p.name) + '</div>' +
+        '<div class="pt' + (p._flash || "") + '">' + fmt(p.points) + '</div>' +
+        '<div class="oya">' + (isParent ? "親" : "&nbsp;") + '</div>';
+      el.board.appendChild(c);
+    });
+  }
+  function escapeHtml(s) { return String(s).replace(/[&<>"]/g, function (m) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]; }); }
+
+  // ---- animate a hand ----
+  function animateHand(handResult, onEach, done) {
+    var tries = handResult.tries, idx = 0;
+    function step() {
+      el.dice.forEach(function (die) { die.classList.remove("landed"); die.classList.add("rolling"); });
+      el.bowl.classList.remove("shake"); void el.bowl.offsetWidth; el.bowl.classList.add("shake");
+      haptic([12, 30, 12]);
+      // spin the pips through random faces so the dice visibly "roll"
+      var spin = setInterval(function () {
+        el.dice.forEach(function (die) { renderDie(die, rnd()); });
+      }, 65);
+      setTimeout(function () {
+        clearInterval(spin);
+        var d = tries[idx];
+        el.dice.forEach(function (die, i) { die.classList.remove("rolling"); renderDie(die, d[i]); die.classList.add("landed"); });
+        haptic(20);
+        if (onEach) onEach(idx, d, tries.length);
+        idx++;
+        if (idx < tries.length) setTimeout(step, 600);
+        else setTimeout(done, 480);
+      }, 560);
+    }
+    step();
+  }
+
+  // ================= GAME FLOW =================
+  function beginRound() {
+    if (aliveCount() <= 1) { G.phase = "over"; render(); return; }
+    if (!G.players[G.parentIdx].alive) G.parentIdx = nextAlive(G.parentIdx);
+    G.order = [];
+    for (var k = 1; k <= G.players.length; k++) {
+      var i = (G.parentIdx + k) % G.players.length;
+      if (i !== G.parentIdx && G.players[i].alive) G.order.push(i);
+    }
+    G.childPos = 0;
+    G.parentHand = null;
+    G.childHand = null;
+    G.roundLog = [];
+    G.childRolls = [];          // {idx, hand, bet} recorded during rolling; settled all at once
+    G.parentStart = G.players[G.parentIdx].points;
+    G.players.forEach(function (p) { p._flash = ""; });
+    G.phase = "intro";
+    render();
+  }
+
+  function doParentRoll() {
+    if (G.rolling) return;
+    G.rolling = true;
+    var res = rollHand();
+    G.parentHand = res.hand;
+    setBanner('<span class="em">' + escapeHtml(G.players[G.parentIdx].name) + '</span>（親）が振る！', true);
+    animateHand(res,
+      function (i, d, total) {
+        var h = evaluate(d);
+        el.attempt.textContent = (h.key === "buta" && i < total - 1)
+          ? "目なし… 振り直し " + (i + 2) + "/3" : "親：" + h.label;
+      },
+      function () {
+        G.rolling = false;
+        G.phase = "parentDone";
+        render();
+      });
+  }
+
+  function doChildRoll() {
+    if (G.rolling) return;
+    var childIdx = G.order[G.childPos];
+    var child = G.players[childIdx];
+    var parent = G.players[G.parentIdx];
+    var cap = Math.min(child.points, parent.points);
+    if (G.bet > cap) G.bet = cap;
+    if (G.bet <= 0) { toast("賭け金がありません"); }
+    G.rolling = true;
+    var res = rollHand();
+    G.childHand = res.hand;
+    setBanner('<span class="em">' + escapeHtml(child.name) + '</span> が振る！', true);
+    animateHand(res,
+      function (i, d, total) {
+        var h = evaluate(d);
+        el.attempt.textContent = (h.key === "buta" && i < total - 1)
+          ? "目なし… 振り直し " + (i + 2) + "/3" : child.name + "：" + h.label;
+      },
+      function () {
+        // just record the roll — no payout yet; settle once everyone has rolled
+        G.childRolls.push({ idx: childIdx, hand: res.hand, bet: G.bet });
+        haptic(20);
+        G.rolling = false;
+        G.phase = "childShown";
+        render();
+      });
+  }
+
+  // settle every child against the parent's hand, all at once
+  function settleRound() {
+    var parent = G.players[G.parentIdx];
+    G.roundLog = [];
+    G.childRolls.forEach(function (rec) {
+      var child = G.players[rec.idx];
+      var j = judge(rec.hand, G.parentHand);
+      var delta = rec.bet * j.mult;
+      if (j.outcome === "win") delta = Math.min(delta, parent.points);
+      else if (j.outcome === "lose") delta = Math.min(delta, child.points);
+      else delta = 0;
+
+      if (j.outcome === "win") { child.points += delta; parent.points -= delta; child._flash = " win"; }
+      else if (j.outcome === "lose") { child.points -= delta; parent.points += delta; child._flash = " lose"; }
+
+      if (child.points <= 0) { child.points = 0; child.alive = false; }
+      if (parent.points <= 0) { parent.points = 0; parent.alive = false; }
+
+      G.roundLog.push({ idx: rec.idx, name: child.name, hand: rec.hand, outcome: j.outcome, delta: delta });
+    });
+    // parent flash reflects net change over the whole round
+    parent._flash = parent.points > G.parentStart ? " win" : parent.points < G.parentStart ? " lose" : "";
+    haptic([20, 40, 20, 40, 60]);
+    G.phase = "summary";
+    render();
+  }
+
+  function nextRound() {
+    G.parentIdx = nextAlive(G.parentIdx);
+    G.round++;
+    G.bet = defaultBet();
+    beginRound();
+  }
+
+  function defaultBet() {
+    // sensible default: 10% of the smaller stake, min 100 (or the cap if below 100)
+    if (!G.order.length) return 100;
+    return 100;
+  }
+
+  // ================= RENDER =================
+  function render() {
+    renderBoard();
+
+    if (G.phase === "over") { showRanking(true); return; }
+
+    if (G.phase === "intro") {
+      el.attempt.textContent = "";
+      setBanner('第 ' + G.round + ' 局 &nbsp;·&nbsp; 親は <span class="em">' + escapeHtml(G.players[G.parentIdx].name) + '</span>', true);
+      panelButton("局スタート", "btn", function () {
+        goHandoff(G.players[G.parentIdx].name, "親（ディーラー）— 自分だけ役を確認", function () {
+          G.phase = "parentRoll"; render();
+        });
+      });
+      return;
+    }
+
+    if (G.phase === "parentRoll") {
+      el.attempt.textContent = "";
+      setBanner('<span class="em">' + escapeHtml(G.players[G.parentIdx].name) + '</span>（親）の番 🔒', true);
+      panelButton(escapeHtml(G.players[G.parentIdx].name) + " が振る 🎲", "btn", doParentRoll, "自分だけ見えるように振ろう（端末を振ってもOK）");
+      return;
+    }
+
+    if (G.phase === "parentDone") {
+      setBanner('あなたの役：<span class="big">' + G.parentHand.label + '</span>', true);
+      el.attempt.textContent = "出目 " + G.parentHand.dice.join(" ・ ") + "（他の人には見せないで）";
+      var firstChild = G.players[G.order[0]];
+      panelButton(escapeHtml(firstChild.name) + " に渡す 🔒", "btn", function () {
+        goHandoff(firstChild.name, "子 — 自分だけ役を確認", function () {
+          G.bet = defaultBet(); G.childPos = 0; G.phase = "childBet"; render();
+        });
+      });
+      return;
+    }
+
+    if (G.phase === "childBet") {
+      var childIdx = G.order[G.childPos];
+      var child = G.players[childIdx];
+      var parent = G.players[G.parentIdx];
+      var cap = Math.min(child.points, parent.points);
+      if (G.bet > cap) G.bet = cap;
+      if (G.bet < 1) G.bet = Math.min(100, cap);
+      setBanner('<span class="em">' + escapeHtml(child.name) + '</span> の番 🔒 親の役は伏せられています', true);
+      el.attempt.textContent = "持ち点 " + fmt(child.points) + " ／ 親 " + fmt(parent.points) + " 点";
+      renderBetPanel(child, cap);
+      return;
+    }
+
+    if (G.phase === "childShown") {
+      var childIdx2 = G.order[G.childPos];
+      var child2 = G.players[childIdx2];
+      setBanner('あなたの役：<span class="big">' + G.childHand.label + '</span>', true);
+      el.attempt.textContent = "出目 " + G.childHand.dice.join(" ・ ") + "（他の人には見せないで）";
+      renderChildShownPanel();
+      return;
+    }
+
+    if (G.phase === "summary") {
+      setBanner('第 ' + G.round + ' 局 清算', true);
+      el.attempt.textContent = "";
+      renderSummaryPanel();
+      return;
+    }
+  }
+
+  // ---- panel builders ----
+  function clearPanel() { el.panel.innerHTML = ""; }
+  function panelButton(label, cls, onClick, hint) {
+    clearPanel();
+    if (hint) {
+      var h = document.createElement("div"); h.className = "subhint"; h.textContent = hint; el.panel.appendChild(h);
+    }
+    var b = document.createElement("button");
+    b.className = cls; b.innerHTML = label; b.addEventListener("click", onClick);
+    el.panel.appendChild(b);
+  }
+
+  function renderBetPanel(child, cap) {
+    clearPanel();
+    var row = document.createElement("div"); row.className = "bet-row";
+    row.innerHTML = '<span class="bet-label">賭け金</span>' +
+      '<div class="chips">' +
+        '<button class="chip dark" data-b="-100">−100</button>' +
+        '<button class="chip" data-b="100">+100</button>' +
+        '<button class="chip" data-b="500">+500</button>' +
+        '<button class="chip dark" data-b="max">MAX</button>' +
+      '</div>' +
+      '<span class="bet-value" id="betValue">' + fmt(G.bet) + '</span>';
+    el.panel.appendChild(row);
+    row.querySelector(".chips").addEventListener("click", function (e) {
+      var btn = e.target.closest(".chip"); if (!btn) return;
+      var v = btn.getAttribute("data-b");
+      if (v === "max") G.bet = cap; else G.bet += parseInt(v, 10);
+      if (G.bet > cap) G.bet = cap; if (G.bet < 0) G.bet = 0;
+      row.querySelector("#betValue").textContent = fmt(G.bet);
+      haptic(8);
+    });
+    var b = document.createElement("button");
+    b.className = "btn"; b.innerHTML = escapeHtml(child.name) + " が振る 🎲";
+    b.addEventListener("click", doChildRoll);
+    el.panel.appendChild(b);
+    var hint = document.createElement("div"); hint.className = "subhint";
+    hint.textContent = cap <= 0 ? "賭けられる点がありません" : "端末を振ってもOK";
+    el.panel.appendChild(hint);
+  }
+
+  function renderChildShownPanel() {
+    clearPanel();
+    var line = document.createElement("div");
+    line.className = "result-line draw";
+    line.textContent = "役が出ました 🎲";
+    el.panel.appendChild(line);
+    var sub = document.createElement("div"); sub.className = "result-sub";
+    sub.textContent = "勝敗と点のやり取りは全員が振ったあと";
+    el.panel.appendChild(sub);
+
+    var isLast = G.childPos >= G.order.length - 1;
+    var b = document.createElement("button");
+    b.className = "btn";
+    if (isLast) {
+      b.innerHTML = "全員の役で清算する 💰";
+      b.addEventListener("click", settleRound);
+    } else {
+      var nextName = G.players[G.order[G.childPos + 1]].name;
+      b.innerHTML = escapeHtml(nextName) + " に渡す 🔒";
+      b.addEventListener("click", function () {
+        goHandoff(nextName, "子 — 自分だけ役を確認", function () {
+          G.childPos++; G.bet = defaultBet(); G.phase = "childBet"; render();
+        });
+      });
+    }
+    el.panel.appendChild(b);
+  }
+
+  function renderSummaryPanel() {
+    clearPanel();
+    var list = document.createElement("div"); list.className = "sumlist";
+    var parent = G.players[G.parentIdx];
+    var head = document.createElement("div"); head.className = "sumrow";
+    head.innerHTML = '<div class="snm">👑 ' + escapeHtml(parent.name) + '（親）</div>' +
+      '<div class="shand">' + (G.parentHand ? G.parentHand.label : "-") + '</div>' +
+      '<div class="sdelta draw">' + fmt(parent.points) + '</div>';
+    list.appendChild(head);
+    G.roundLog.forEach(function (r) {
+      var row = document.createElement("div"); row.className = "sumrow";
+      var dc = r.outcome === "win" ? "win" : r.outcome === "lose" ? "lose" : "draw";
+      var dtxt = r.outcome === "draw" ? "±0" : (r.outcome === "win" ? "+" : "−") + fmt(r.delta);
+      row.innerHTML = '<div class="snm">' + escapeHtml(r.name) + '</div>' +
+        '<div class="shand">' + r.hand.label + '</div>' +
+        '<div class="sdelta ' + dc + '">' + dtxt + '</div>';
+      list.appendChild(row);
+    });
+    el.panel.appendChild(list);
+
+    var b = document.createElement("button");
+    b.className = "btn";
+    if (aliveCount() <= 1) { b.innerHTML = "最終順位へ 🏆"; b.addEventListener("click", function () { G.phase = "over"; render(); }); }
+    else {
+      var np = nextAlive(G.parentIdx);
+      b.innerHTML = "次の局へ（親：" + escapeHtml(G.players[np].name) + "）";
+      b.addEventListener("click", nextRound);
+    }
+    el.panel.appendChild(b);
+  }
+
+  // ================= RANKING =================
+  var rankOverlay = document.getElementById("rankOverlay");
+  function showRanking(isFinal) {
+    var sorted = G.players.map(function (p, i) { return { p: p, i: i }; })
+      .sort(function (a, b) { return b.p.points - a.p.points; });
+    var medals = ["🥇", "🥈", "🥉", "4️⃣"];
+    var listEl = document.getElementById("rankList");
+    listEl.innerHTML = "";
+    sorted.forEach(function (o, rank) {
+      var row = document.createElement("div");
+      row.className = "rank-row" + (o.p.alive ? "" : " out");
+      row.innerHTML = '<div class="medal">' + medals[rank] + '</div>' +
+        '<div class="rnm">' + escapeHtml(o.p.name) + (o.p.alive ? "" : " <span style=\'font-size:11px\'>(脱落)</span>") + '</div>' +
+        '<div class="rpt">' + fmt(o.p.points) + '</div>';
+      listEl.appendChild(row);
+    });
+    document.getElementById("rankTitle").textContent = isFinal ? "最終順位 🏆" : "現在の順位";
+    document.getElementById("rankSub").textContent = isFinal
+      ? "勝者は " + sorted[0].p.name + " ！" : "第 " + G.round + " 局終了時点";
+    var action = document.getElementById("rankAction");
+    if (isFinal) { action.textContent = "もう一度あそぶ（同じ設定）"; action.onclick = restartSame; }
+    else { action.textContent = "つづける"; action.onclick = function () { rankOverlay.classList.remove("show"); }; }
+    rankOverlay.classList.add("show");
+  }
+  function restartSame() {
+    G.players.forEach(function (p) { p.points = G.startPoints; p.alive = true; });
+    G.parentIdx = 0; G.round = 1; G.bet = 100;
+    rankOverlay.classList.remove("show");
+    beginRound();
+  }
+
+  document.getElementById("rankBtn").addEventListener("click", function () {
+    if (G.phase === "setup") { toast("ゲーム開始後に見られます"); return; }
+    showRanking(false);
+  });
+  document.getElementById("rankRestart").addEventListener("click", function () {
+    rankOverlay.classList.remove("show");
+    document.getElementById("setupOverlay").classList.add("show");
+    G.phase = "setup";
+  });
+
+  // ================= SETUP =================
+  var setupOverlay = document.getElementById("setupOverlay");
+  var nameInputsEl = document.getElementById("nameInputs");
+  var chosenCount = 3, chosenPoints = 1000;
+
+  function renderNameInputs() {
+    var prev = [];
+    nameInputsEl.querySelectorAll("input").forEach(function (inp) { prev.push(inp.value); });
+    nameInputsEl.innerHTML = "";
+    for (var i = 0; i < chosenCount; i++) {
+      var inp = document.createElement("input");
+      inp.className = "name-input"; inp.type = "text"; inp.maxLength = 8;
+      inp.placeholder = "プレイヤー" + (i + 1);
+      inp.value = prev[i] || "";
+      nameInputsEl.appendChild(inp);
+    }
+  }
+  renderNameInputs();
+
+  document.getElementById("countRow").addEventListener("click", function (e) {
+    var b = e.target.closest(".count-opt"); if (!b) return;
+    chosenCount = parseInt(b.getAttribute("data-n"), 10);
+    [].forEach.call(this.children, function (c) { c.classList.toggle("sel", c === b); });
+    renderNameInputs();
+  });
+  document.getElementById("pointsRow").addEventListener("click", function (e) {
+    var b = e.target.closest(".points-opt"); if (!b) return;
+    chosenPoints = parseInt(b.getAttribute("data-p"), 10);
+    [].forEach.call(this.children, function (c) { c.classList.toggle("sel", c === b); });
+  });
+
+  document.getElementById("startBtn").addEventListener("click", function () {
+    var inputs = nameInputsEl.querySelectorAll("input");
+    G.players = [];
+    for (var i = 0; i < inputs.length; i++) {
+      var nm = inputs[i].value.trim() || ("プレイヤー" + (i + 1));
+      G.players.push({ name: nm, points: chosenPoints, alive: true });
+    }
+    G.startPoints = chosenPoints;
+    G.count = chosenCount;
+    G.parentIdx = 0; G.round = 1; G.bet = 100;
+    setupOverlay.classList.remove("show");
+    beginRound();
+  });
+
+  // ---- rules ----
+  var rulesOverlay = document.getElementById("rulesOverlay");
+  document.getElementById("rulesBtn").addEventListener("click", function () { rulesOverlay.classList.add("show"); });
+  document.getElementById("rulesClose").addEventListener("click", function () { rulesOverlay.classList.remove("show"); });
+  [rulesOverlay, rankOverlay].forEach(function (o) {
+    o.addEventListener("click", function (e) { if (e.target === o) o.classList.remove("show"); });
+  });
+
+  // ---- shake to roll ----
+  var lastShake = 0, shakeEnabled = false;
+  function anyOverlayOpen() {
+    return setupOverlay.classList.contains("show") || rulesOverlay.classList.contains("show") ||
+      rankOverlay.classList.contains("show") || handoffOverlay.classList.contains("show");
+  }
+  function currentRollAction() {
+    if (G.rolling || anyOverlayOpen()) return null;
+    if (G.phase === "parentRoll") return doParentRoll;
+    if (G.phase === "childBet") return doChildRoll;
+    return null;
+  }
+  function onMotion(e) {
+    var ac = e.accelerationIncludingGravity; if (!ac) return;
+    var mag = Math.abs(ac.x || 0) + Math.abs(ac.y || 0) + Math.abs(ac.z || 0);
+    var now = Date.now();
+    if (mag > 32 && now - lastShake > 1200) {
+      lastShake = now;
+      var act = currentRollAction();
+      if (act) act();
+    }
+  }
+  function enableShake() {
+    if (shakeEnabled) return;
+    if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") {
+      DeviceMotionEvent.requestPermission().then(function (res) {
+        if (res === "granted") { window.addEventListener("devicemotion", onMotion); shakeEnabled = true; }
+      }).catch(function () {});
+    } else if (typeof DeviceMotionEvent !== "undefined") {
+      window.addEventListener("devicemotion", onMotion); shakeEnabled = true;
+    }
+  }
+  document.body.addEventListener("touchend", enableShake, { once: true });
+  document.body.addEventListener("click", enableShake, { once: true });
+
+  // tap bowl to trigger current roll
+  el.bowl.addEventListener("click", function () {
+    var act = currentRollAction(); if (act) act();
+  });
+
+  // initial idle render
+  renderBoard();
+})();
+</script>
