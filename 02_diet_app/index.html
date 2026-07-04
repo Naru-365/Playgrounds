@@ -373,13 +373,14 @@
     count: 3,
     parentIdx: 0,
     round: 1,
-    phase: "setup",    // setup|intro|parentRoll|parentDone|childBet|childResult|summary|over
+    phase: "setup",    // setup|intro|parentRoll|parentDone|childBet|childShown|summary|over
     bet: 100,
     order: [],         // child indices this round
     childPos: 0,
     parentHand: null,
     childHand: null,
-    lastResult: null,  // {outcome, mult, delta}
+    childRolls: [],    // {idx, hand, bet} recorded during rolling, settled together
+    parentStart: 0,    // parent points at round start (for net flash)
     roundLog: [],      // {idx, name, hand, outcome, delta}
     rolling: false
   };
@@ -427,7 +428,7 @@
       var isParent = (i === G.parentIdx);
       var isActive = false;
       if (G.phase === "parentRoll" || G.phase === "parentDone") isActive = isParent;
-      else if (G.phase === "childBet" || G.phase === "childResult") isActive = (i === G.order[G.childPos]);
+      else if (G.phase === "childBet" || G.phase === "childShown") isActive = (i === G.order[G.childPos]);
       if (isActive) c.className += " active";
       c.innerHTML =
         (isParent ? '<div class="crown">👑</div>' : "") +
@@ -478,6 +479,9 @@
     G.parentHand = null;
     G.childHand = null;
     G.roundLog = [];
+    G.childRolls = [];          // {idx, hand, bet} recorded during rolling; settled all at once
+    G.parentStart = G.players[G.parentIdx].points;
+    G.players.forEach(function (p) { p._flash = ""; });
     G.phase = "intro";
     render();
   }
@@ -520,47 +524,51 @@
           ? "目なし… 振り直し " + (i + 2) + "/3" : child.name + "：" + h.label;
       },
       function () {
-        settleChild(childIdx, res.hand);
+        // just record the roll — no payout yet; settle once everyone has rolled
+        G.childRolls.push({ idx: childIdx, hand: res.hand, bet: G.bet });
+        haptic(20);
+        G.rolling = false;
+        G.phase = "childShown";
+        render();
       });
   }
 
-  function settleChild(childIdx, childHand) {
-    var child = G.players[childIdx];
+  // settle every child against the parent's hand, all at once
+  function settleRound() {
     var parent = G.players[G.parentIdx];
-    var j = judge(childHand, G.parentHand);
-    var delta = G.bet * j.mult;
-    if (j.outcome === "win") delta = Math.min(delta, parent.points);
-    else if (j.outcome === "lose") delta = Math.min(delta, child.points);
-    else delta = 0;
+    G.roundLog = [];
+    G.childRolls.forEach(function (rec) {
+      var child = G.players[rec.idx];
+      var j = judge(rec.hand, G.parentHand);
+      var delta = rec.bet * j.mult;
+      if (j.outcome === "win") delta = Math.min(delta, parent.points);
+      else if (j.outcome === "lose") delta = Math.min(delta, child.points);
+      else delta = 0;
 
-    if (j.outcome === "win") { child.points += delta; parent.points -= delta; }
-    else if (j.outcome === "lose") { child.points -= delta; parent.points += delta; }
+      if (j.outcome === "win") { child.points += delta; parent.points -= delta; child._flash = " win"; }
+      else if (j.outcome === "lose") { child.points -= delta; parent.points += delta; child._flash = " lose"; }
 
-    if (child.points <= 0) { child.points = 0; child.alive = false; }
-    if (parent.points <= 0) { parent.points = 0; parent.alive = false; }
+      if (child.points <= 0) { child.points = 0; child.alive = false; }
+      if (parent.points <= 0) { parent.points = 0; parent.alive = false; }
 
-    G.lastResult = { outcome: j.outcome, mult: j.mult, delta: delta };
-    G.roundLog.push({ idx: childIdx, name: child.name, hand: childHand, outcome: j.outcome, delta: delta });
-
-    if (j.outcome === "win") haptic([20, 40, 20, 40, 60]);
-    else if (j.outcome === "lose") haptic(120);
-    else haptic(30);
-
-    G.rolling = false;
-    G.phase = "childResult";
+      G.roundLog.push({ idx: rec.idx, name: child.name, hand: rec.hand, outcome: j.outcome, delta: delta });
+    });
+    // parent flash reflects net change over the whole round
+    parent._flash = parent.points > G.parentStart ? " win" : parent.points < G.parentStart ? " lose" : "";
+    haptic([20, 40, 20, 40, 60]);
+    G.phase = "summary";
     render();
   }
 
   function nextChild() {
     G.childPos++;
-    // stop early if parent busted mid-round
-    if (!G.players[G.parentIdx].alive || G.childPos >= G.order.length) {
-      G.phase = "summary";
+    if (G.childPos >= G.order.length) {
+      settleRound();
     } else {
       G.bet = defaultBet();
       G.phase = "childBet";
+      render();
     }
-    render();
   }
 
   function nextRound() {
@@ -619,19 +627,17 @@
       return;
     }
 
-    if (G.phase === "childResult") {
-      var r = G.lastResult;
+    if (G.phase === "childShown") {
       var childIdx2 = G.order[G.childPos];
       var child2 = G.players[childIdx2];
-      var word = r.outcome === "win" ? "勝ち！ 🎉" : r.outcome === "lose" ? "負け… 😵" : "引き分け 🤝";
-      setBanner('<span class="big">' + child2.name + '：' + G.childHand.label + '</span>', true);
-      el.attempt.textContent = "あなた " + G.childHand.dice.join("・") + " ／ 親 " + G.parentHand.dice.join("・");
-      renderResultPanel(word, r, childIdx2);
+      setBanner('<span class="big">' + escapeHtml(child2.name) + '：' + G.childHand.label + '</span>', true);
+      el.attempt.textContent = "出目 " + G.childHand.dice.join(" ・ ") + " ／ 親 " + G.parentHand.label;
+      renderChildShownPanel();
       return;
     }
 
     if (G.phase === "summary") {
-      setBanner('第 ' + G.round + ' 局 終了', true);
+      setBanner('第 ' + G.round + ' 局 清算', true);
       el.attempt.textContent = "";
       renderSummaryPanel();
       return;
@@ -679,22 +685,21 @@
     el.panel.appendChild(hint);
   }
 
-  function renderResultPanel(word, r, childIdx) {
+  function renderChildShownPanel() {
     clearPanel();
     var line = document.createElement("div");
-    line.className = "result-line " + r.outcome;
-    line.textContent = word;
+    line.className = "result-line draw";
+    line.textContent = "役が出ました 🎲";
     el.panel.appendChild(line);
     var sub = document.createElement("div"); sub.className = "result-sub";
-    if (r.outcome === "draw") sub.textContent = "±0";
-    else sub.innerHTML = (r.outcome === "win" ? "+" : "−") + fmt(r.delta) + " <span style='opacity:.7'>（×" + r.mult + "）</span>";
+    sub.textContent = "勝敗と点のやり取りは全員が振ったあと";
     el.panel.appendChild(sub);
 
-    var isLast = G.childPos >= G.order.length - 1 || !G.players[G.parentIdx].alive;
+    var isLast = G.childPos >= G.order.length - 1;
     var nextName = isLast ? null : G.players[G.order[G.childPos + 1]].name;
     var b = document.createElement("button");
     b.className = "btn";
-    b.innerHTML = isLast ? "局の結果を見る" : escapeHtml(nextName) + " の番へ";
+    b.innerHTML = isLast ? "全員の役で清算する 💰" : escapeHtml(nextName) + " の番へ";
     b.addEventListener("click", nextChild);
     el.panel.appendChild(b);
   }
