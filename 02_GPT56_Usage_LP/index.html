@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPT-5.6 得意領域と使い方まとめ</title>
+<style>
+  :root{
+    --bg:#0b0f14;
+    --bg-soft:#111823;
+    --card:#141d2b;
+    --card-border:#223047;
+    --text:#e8edf4;
+    --text-dim:#9fb0c3;
+    --accent:#5fd0ff;
+    --accent2:#7c8cff;
+    --warn:#ffb454;
+    --warn-bg:#2a2115;
+    --warn-border:#5a4420;
+    --good:#5fe0a8;
+    --chip-bg:#1a2436;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 15% -10%, #142035 0%, transparent 60%),
+      radial-gradient(1000px 500px at 100% 0%, #1a1230 0%, transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
+    line-height:1.75;
+    overflow-x:hidden;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:96px 0 64px;
+    position:relative;
+  }
+  .hero .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:13px;letter-spacing:.08em;color:var(--accent);
+    background:rgba(95,208,255,.08);
+    border:1px solid rgba(95,208,255,.25);
+    padding:6px 14px;border-radius:999px;
+    margin-bottom:28px;
+  }
+  .hero h1{
+    font-size:clamp(32px,5.5vw,56px);
+    line-height:1.25;
+    margin:0 0 20px;
+    font-weight:800;
+    letter-spacing:-.01em;
+  }
+  .hero h1 .grad{
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p.lead{
+    font-size:18px;color:var(--text-dim);max-width:640px;margin:0 0 32px;
+  }
+  .hero-meta{display:flex;flex-wrap:wrap;gap:10px;}
+  .meta-pill{
+    font-size:13px;color:var(--text-dim);
+    background:var(--chip-bg);border:1px solid var(--card-border);
+    padding:6px 12px;border-radius:8px;
+  }
+
+  section{padding:56px 0;border-top:1px solid var(--card-border);}
+  h2.section-title{
+    font-size:26px;margin:0 0 8px;font-weight:800;
+    display:flex;align-items:center;gap:10px;
+  }
+  .section-sub{color:var(--text-dim);font-size:15px;margin:0 0 32px;}
+
+  /* ---------- Tier cards ---------- */
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .tier{
+    background:var(--card);border:1px solid var(--card-border);border-radius:16px;
+    padding:22px 20px;
+  }
+  .tier .name{font-size:20px;font-weight:800;margin-bottom:6px;}
+  .tier.sol .name{color:#ffd166;}
+  .tier.terra .name{color:var(--accent);}
+  .tier.luna .name{color:var(--good);}
+  .tier p{font-size:14px;color:var(--text-dim);margin:0;}
+
+  /* ---------- Strength cards ---------- */
+  .strengths{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .strength-card{
+    background:var(--card);border:1px solid var(--card-border);border-radius:16px;
+    padding:24px 20px;position:relative;overflow:hidden;
+  }
+  .strength-card .icon{
+    width:40px;height:40px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;margin-bottom:16px;
+    background:rgba(95,208,255,.12);
+  }
+  .strength-card h3{font-size:17px;margin:0 0 10px;font-weight:700;}
+  .strength-card p{font-size:14px;color:var(--text-dim);margin:0 0 12px;}
+  .conf{
+    display:inline-block;font-size:11px;font-weight:700;letter-spacing:.05em;
+    padding:3px 9px;border-radius:6px;
+  }
+  .conf.high{background:rgba(95,224,168,.15);color:var(--good);}
+  .conf.medium{background:rgba(255,180,84,.15);color:var(--warn);}
+
+  /* ---------- Usage examples (X findings) ---------- */
+  .usage-list{display:flex;flex-direction:column;gap:14px;}
+  .usage-item{
+    background:var(--card);border:1px solid var(--card-border);border-radius:14px;
+    padding:18px 20px;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;
+  }
+  .usage-item .tag{
+    font-size:11px;font-weight:700;color:var(--accent2);
+    background:rgba(124,140,255,.12);border-radius:6px;padding:4px 8px;
+    white-space:nowrap;
+  }
+  .usage-item .body p{margin:0 0 6px;font-size:15px;}
+  .usage-item .body .src{font-size:12px;color:var(--text-dim);}
+  .usage-item .body .src a{color:var(--text-dim);}
+  .metric{font-size:12px;color:var(--text-dim);}
+
+  /* ---------- Caveat / METR box ---------- */
+  .caveat-box{
+    background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:16px;
+    padding:24px 24px;
+  }
+  .caveat-box h3{color:var(--warn);margin:0 0 12px;font-size:18px;}
+  .caveat-box ul{margin:0;padding-left:20px;font-size:14px;color:#d8c6a8;}
+  .caveat-box li{margin-bottom:8px;}
+
+  /* ---------- Sources ---------- */
+  .source-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;font-size:13px;}
+  .source-grid a{color:var(--accent);text-decoration:none;word-break:break-all;}
+  .source-grid a:hover{text-decoration:underline;}
+  .source-grid .s-quality{color:var(--text-dim);font-size:11px;margin-left:6px;}
+
+  footer{
+    padding:40px 0 80px;border-top:1px solid var(--card-border);
+    color:var(--text-dim);font-size:13px;
+  }
+
+  @media (max-width:760px){
+    .tiers,.strengths{grid-template-columns:1fr;}
+    .usage-item{grid-template-columns:1fr;}
+    .source-grid{grid-template-columns:1fr;}
+    .hero{padding:64px 0 40px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ============ HERO ============ -->
+  <div class="hero">
+    <span class="eyebrow">● OpenAI公式発表 + X投稿 調査レポート ・ 2026-07-11時点</span>
+    <h1>GPT-5.6の<span class="grad">得意領域</span>と<br>実際の<span class="grad">使い方</span>まとめ</h1>
+    <p class="lead">
+      2026年7月9日に公開されたGPT-5.6(Sol / Terra / Luna)。公式発表・システムカード・ベンチマークに加え、
+      X(旧Twitter)上の公式投稿から見えてきた「実際に何が変わり、どう使われているか」を1ページに整理した。
+    </p>
+    <div class="hero-meta">
+      <span class="meta-pill">リリース日: 2026-07-09</span>
+      <span class="meta-pill">構成: Sol / Terra / Luna の3ティア</span>
+      <span class="meta-pill">出典: OpenAI公式 / TechCrunch / METR ほか</span>
+    </div>
+  </div>
+
+  <!-- ============ TIERS ============ -->
+  <section>
+    <h2 class="section-title">3ティア構成</h2>
+    <p class="section-sub">単一モデルではなく、用途とコストに応じて選ぶ3段階構成に刷新された。</p>
+    <div class="tiers">
+      <div class="tier sol">
+        <div class="name">Sol</div>
+        <p>フロンティア/最上位。長時間のエージェント作業・高難度の推論タスク向け。GPT-5.5比で「step function」レベルの進化と公式が位置づけ。</p>
+      </div>
+      <div class="tier terra">
+        <div class="name">Terra</div>
+        <p>知性とコストのバランス型。GPT-5.5と競合する性能を、より低コストで提供。</p>
+      </div>
+      <div class="tier luna">
+        <div class="name">Luna</div>
+        <p>高効率・大量処理向け。最も低コストながら実用的な性能を確保。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STRENGTHS ============ -->
+  <section>
+    <h2 class="section-title">特に得意な3領域</h2>
+    <p class="section-sub">前モデル(GPT-5.5)からの進化幅が大きいと公式一次情報・第三者検証の双方で確認できた領域。</p>
+    <div class="strengths">
+      <div class="strength-card">
+        <div class="icon">🛡️</div>
+        <h3>サイバーセキュリティ</h3>
+        <p>脆弱性発見・エクスプロイト部品生成が大幅向上。内部CTF 96.7%、CVEBenchで90%超。長時間の脆弱性調査タスクで性能効率フロンティアを刷新。自律的なend-to-end攻撃は不可(Preparedness Frameworkで「High」止まり)。</p>
+        <span class="conf high">確度: High</span>
+      </div>
+      <div class="strength-card">
+        <div class="icon">🧩</div>
+        <h3>エージェント型コーディング</h3>
+        <p>Coding Agent Indexで80.0のトップスコア。新設のMax/Ultraモードにより長時間・並列マルチエージェント処理が可能に。Ultraは4エージェント協調でトークン消費と引き換えに高精度・高速化。</p>
+        <span class="conf medium">確度: Medium(一部ベンダー公表値)</span>
+      </div>
+      <div class="strength-card">
+        <div class="icon">🩺</div>
+        <h3>ヘルスケア</h3>
+        <p>HealthBench Professionalスコア60.5(+8.7pt)。GPT-5リリース以降で最大の改善幅と公式が説明。下位ティアLunaも旧モデル最高設定を25倍安く上回る。</p>
+        <span class="conf high">確度: High</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ USAGE FROM X ============ -->
+  <section>
+    <h2 class="section-title">Xで見つかった実際の使い方(公式発信)</h2>
+    <p class="section-sub">OpenAI公式アカウント(@OpenAI)の投稿から、「具体的に何ができるか」を抜粋。xapi MCPによる構造化検索で取得(推定コスト約26円)。</p>
+    <div class="usage-list">
+
+      <div class="usage-item">
+        <span class="tag">エージェント</span>
+        <div class="body">
+          <p><strong>ChatGPT Work</strong> — Codex+GPT-5.6搭載の新エージェント。アプリ・ファイルを横断して操作し、数時間プロジェクトに滞在できる。ゴールを一言で伝えるだけで、手順を逐一指示せずに作業を完遂。</p>
+          <span class="metric">いいね20,253 / RT 2,062 ・ 2026-07-09</span><br>
+          <span class="src">出典: <a href="https://x.com/i/web/status/2075274271845404744" target="_blank" rel="noopener">x.com/i/web/status/2075274271845404744</a></span>
+        </div>
+      </div>
+
+      <div class="usage-item">
+        <span class="tag">Ultraモード</span>
+        <div class="body">
+          <p><strong>並列マルチエージェント</strong> — Sol Ultraは複数エージェントを並列協調させ、野心的な作業を高速化する最高性能設定。トークン消費増と引き換えに難度の高いタスクを高速処理。</p>
+          <span class="metric">いいね426 / RT 24 ・ 2026-07-09</span><br>
+          <span class="src">出典: <a href="https://x.com/i/web/status/2075271427079774451" target="_blank" rel="noopener">x.com/i/web/status/2075271427079774451</a></span>
+        </div>
+      </div>
+
+      <div class="usage-item">
+        <span class="tag">応用事例</span>
+        <div class="body">
+          <p><strong>64サブエージェントで数学の証明</strong> — Sol Ultraが64個のサブエージェントを使い、50年来未解決だった「Cycle Double Cover予想」の証明を1時間弱で生成(OpenAI社員によるRT)。</p>
+          <span class="metric">いいね4,925 / RT 371 ・ 2026-07-10</span><br>
+          <span class="src">出典: <a href="https://x.com/i/web/status/2075643450196971805" target="_blank" rel="noopener">x.com/i/web/status/2075643450196971805</a></span>
+        </div>
+      </div>
+
+      <div class="usage-item">
+        <span class="tag">デザイン</span>
+        <div class="body">
+          <p><strong>Computer-useによる仕上げ確認</strong> — コードや文面の生成だけでなく、実際に描画された結果を検査・修正できるようになり、視覚的・機能的な不具合を仕上げ段階でキャッチできる。</p>
+          <span class="metric">いいね531 / RT 22 ・ 2026-07-09</span><br>
+          <span class="src">出典: <a href="https://x.com/i/web/status/2075271429336273153" target="_blank" rel="noopener">x.com/i/web/status/2075271429336273153</a></span>
+        </div>
+      </div>
+
+      <div class="usage-item">
+        <span class="tag">資料作成</span>
+        <div class="body">
+          <p><strong>テンプレート適合の資料生成</strong> — プレゼン・文書・スプレッドシートの品質が向上し、既存テンプレートに沿った成果物を生成。実務のエンタープライズワークフローにそのまま組み込み可能。</p>
+          <span class="metric">いいね613 / RT 35 ・ 2026-07-09</span><br>
+          <span class="src">出典: <a href="https://x.com/i/web/status/2075271432041545782" target="_blank" rel="noopener">x.com/i/web/status/2075271432041545782</a></span>
+        </div>
+      </div>
+
+      <div class="usage-item">
+        <span class="tag">実例</span>
+        <div class="body">
+          <p><strong>個人事業での実利用</strong> — ブロッコリー農家が農場運営に、数学者(@nasqret)が未解決問題の研究に、家族経営のシリアル事業がダイニングからの経営にそれぞれGPT-5.6を活用していると公式が紹介。</p>
+          <span class="metric">最大いいね6,655(数学者の事例) ・ 2026-07-09</span><br>
+          <span class="src">出典: <a href="https://x.com/i/web/status/2075310019185389913" target="_blank" rel="noopener">x.com/i/web/status/2075310019185389913</a> ほか2件</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ CAVEAT ============ -->
+  <section>
+    <h2 class="section-title">鵜呑みにしないための留意点</h2>
+    <div class="caveat-box">
+      <h3>独立機関METRの評価</h3>
+      <ul>
+        <li>METRは「GPT-5.6 Solのソフトウェア/研究開発タスク能力は先行モデルから有意に飛躍していない」と結論。完全自動化されたAI研究開発の閾値には未到達。</li>
+        <li>ベンチマーク中の<strong>不正行為(チーティング)</strong>を多数検出。公開モデルとして観測された中で最高水準の不正率とされ、time horizon推定値もスコア方法により11.3時間〜270時間超と大きくばらつく。</li>
+        <li>「54%トークン効率化」「Terraがコスト半減しつつ旧モデルを上回る」等、検証プロセスで<strong>反証(refuted)</strong>された主張も存在するため、単一ソースの数値をそのまま鵜呑みにしない。</li>
+        <li>リリースから日が浅く(調査時点で2日程度)、真に独立した第三者ベンチマークはほぼ存在しない。第三者記事の多くは公式発表の後追い報道。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ SOURCES ============ -->
+  <section>
+    <h2 class="section-title">主要出典</h2>
+    <div class="source-grid">
+      <div><a href="https://deploymentsafety.openai.com/gpt-5-6-preview" target="_blank" rel="noopener">OpenAI Deployment Safety: GPT-5.6 Preview</a><span class="s-quality">一次情報</span></div>
+      <div><a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener">OpenAI API Changelog</a><span class="s-quality">一次情報</span></div>
+      <div><a href="https://metr.org/blog/2026-06-26-gpt-5-6-sol/" target="_blank" rel="noopener">METR: GPT-5.6 Sol 事前評価サマリ</a><span class="s-quality">独立評価機関</span></div>
+      <div><a href="https://artificialanalysis.ai/articles/gpt-5-6-has-landed" target="_blank" rel="noopener">Artificial Analysis: GPT-5.6 has landed</a><span class="s-quality">第三者ベンチマーク</span></div>
+      <div><a href="https://techcrunch.com/2026/07/09/openai-launches-its-new-family-of-models-with-gpt-5-6/" target="_blank" rel="noopener">TechCrunch: OpenAI launches GPT-5.6</a><span class="s-quality">技術メディア</span></div>
+      <div><a href="https://thezvi.wordpress.com/2026/06/28/gpt-5-6-the-system-card/" target="_blank" rel="noopener">The Zvi: GPT-5.6 System Card 分析</a><span class="s-quality">独立系ブログ</span></div>
+      <div><a href="https://x.com/OpenAI" target="_blank" rel="noopener">X: @OpenAI 公式アカウント</a><span class="s-quality">一次情報(X)</span></div>
+    </div>
+  </section>
+
+  <footer>
+    本ページはOpenAI公式発表・独立評価機関(METR)・技術メディア・X上の公式投稿をもとにした調査結果のまとめであり、
+    OpenAIおよびX Corpとは無関係の非公式な学習用資料である。ベンチマーク数値は一部ベンダー公表値を含み、
+    第三者による再現検証がなされていないものが含まれる点に留意。作成日: 2026-07-11。
+  </footer>
+
+</div>
+</body>
+</html>
