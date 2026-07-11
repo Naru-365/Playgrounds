@@ -139,6 +139,11 @@ button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
 .sum-anon{display:inline-flex;align-items:center;gap:5px;color:var(--teal);font-weight:bold}
 .edit-link{font-size:12.5px;color:var(--teal);text-decoration:underline;cursor:pointer}
 .done-foot{font-size:10px;color:var(--faint);margin-top:22px}
+.vote-btn{display:block;padding:15px 0;border-radius:99px;background:var(--accent);color:#fff;font-size:14.5px;font-weight:bold;text-decoration:none;box-shadow:0 5px 16px rgba(44,39,64,.3);margin-bottom:18px}
+.vote-btn:hover{color:#fff}
+.wait-note{display:flex;align-items:center;justify-content:center;gap:7px;font-size:11.5px;color:var(--muted);margin-bottom:18px}
+.wait-dot{width:7px;height:7px;border-radius:99px;background:var(--teal);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
 
 [hidden]{display:none !important}
 </style>
@@ -158,8 +163,8 @@ button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
         <div class="hd-sub">飲み会コンシェルジュ</div>
       </div>
       <div class="hd-event">
-        <div class="hd-event-name">7月度 チーム懇親会</div>
-        <div class="hd-event-info">7/24(金) 19:00〜 ・ 6名</div>
+        <div class="hd-event-name" id="hdEventName">7月度 チーム懇親会</div>
+        <div class="hd-event-info" id="hdEventInfo">7/24(金) 19:00〜 ・ 6名</div>
       </div>
     </div>
   </div>
@@ -173,6 +178,7 @@ button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
     <div class="done-title">ご回答、確かに承りました。</div>
     <div class="done-sub">皆さまの条件が揃いましたら、<br>コンシェルジュがお店をお選びします。</div>
     <div class="sum">
+      <div class="sum-row"><span class="k">お名前</span><span class="v strong" id="sumName"></span></div>
       <div class="sum-row"><span class="k">出発駅</span><span class="v strong" id="sumStation"></span></div>
       <div class="sum-row"><span class="k">好み</span><span class="v" id="sumGenre"></span></div>
       <div class="sum-row"><span class="k">おたばこ</span><span class="v" id="sumSmoke"></span></div>
@@ -180,6 +186,8 @@ button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
         <span class="sum-anon"><svg width="10" height="12" viewBox="0 0 12 14" fill="none"><rect x="1" y="6" width="10" height="7" rx="1.5" fill="#3c6470"></rect><path d="M3.5 6V4.5a2.5 2.5 0 0 1 5 0V6" stroke="#3c6470" stroke-width="1.6" fill="none"></path></svg>回答済み(匿名)</span>
       </div>
     </div>
+    <div class="wait-note" id="waitNote"><span class="wait-dot"></span>皆さまの回答が揃うのを待っています…</div>
+    <a class="vote-btn" id="voteLink" href="vote.html" hidden>候補が届きました。投票へ進む →</a>
     <div><a href="#" class="edit-link" id="editAgain">回答を修正する</a></div>
     <div class="done-foot">回答内容はいつでも修正できます。</div>
   </div>
@@ -201,7 +209,18 @@ button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
     <!-- progress -->
     <div class="prog">
       <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
-      <div class="prog-label" id="progLabel">0 / 4</div>
+      <div class="prog-label" id="progLabel">0 / 5</div>
+    </div>
+
+    <!-- 00 お名前 -->
+    <div class="qcard">
+      <div class="qhead">
+        <span class="qnum">00</span>
+        <span class="qtitle">お名前をどうぞ</span>
+        <span class="check" id="check0">✓</span>
+      </div>
+      <input class="note-input" id="nameInput" placeholder="ニックネームでOK(例: まつ)" autocomplete="off" maxlength="30">
+      <div class="privacy-note">投票のときに、どなたの回答かが分かるように表示されます。</div>
     </div>
 
     <!-- 01 出発駅 -->
@@ -273,6 +292,8 @@ button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
 </div>
 </div>
 
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
 <script>
 (function () {
   'use strict';
@@ -290,15 +311,17 @@ button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
   ];
 
   var state = {
-    station: '', from: 'work', genres: [], anyGenre: false,
+    name: '', station: '', from: 'work', genres: [], anyGenre: false,
     mood: null, moodNote: '', smoke: null, budget: null,
-    submitted: false, focusStation: false, error: ''
+    submitted: false, focusStation: false, error: '', sending: false,
+    eventStatus: 'collecting'
   };
 
   function loadState() {
     try {
       var saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
       if (saved && typeof saved === 'object') {
+        state.name = typeof saved.name === 'string' ? saved.name : '';
         state.station = typeof saved.station === 'string' ? saved.station : '';
         state.from = saved.from === 'home' ? 'home' : 'work';
         state.genres = Array.isArray(saved.genres) ? saved.genres.filter(function (g) { return GENRES.indexOf(g) >= 0; }) : [];
@@ -315,6 +338,7 @@ button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
   function saveState() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        name: state.name,
         station: state.station, from: state.from, genres: state.genres, anyGenre: state.anyGenre,
         mood: state.mood, moodNote: state.moodNote, smoke: state.smoke, budget: state.budget,
         submitted: state.submitted
@@ -324,10 +348,32 @@ button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
 
   var $ = function (id) { return document.getElementById(id); };
   var viewForm = $('viewForm'), viewDone = $('viewDone');
+  var nameInput = $('nameInput');
   var stationInput = $('stationInput'), suggestBox = $('suggestBox');
   var moodNoteInput = $('moodNote');
   var errBox = $('errBox'), submitBtn = $('submitBtn');
   var progFill = $('progFill'), progLabel = $('progLabel');
+  var voteLink = $('voteLink'), waitNote = $('waitNote');
+
+  // 予算の匿名回答を同じ端末から上書きするためだけの乱数キー(名前とは紐づかない)
+  function clientKey() {
+    var k = localStorage.getItem('nomicierge-client-key');
+    if (!k) {
+      if (crypto.randomUUID) {
+        k = crypto.randomUUID();
+      } else {
+        // 非セキュアコンテキスト用フォールバック(uuid 形式を維持する)
+        var b = new Uint8Array(16);
+        crypto.getRandomValues(b);
+        b[6] = (b[6] & 0x0f) | 0x40;
+        b[8] = (b[8] & 0x3f) | 0x80;
+        var h = Array.prototype.map.call(b, function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
+        k = h.slice(0, 8) + '-' + h.slice(8, 12) + '-' + h.slice(12, 16) + '-' + h.slice(16, 20) + '-' + h.slice(20);
+      }
+      localStorage.setItem('nomicierge-client-key', k);
+    }
+    return k;
+  }
 
   /* --- 選択肢ボタンの生成 --- */
   var fromBtns = [{ key: 'work', label: '職場から' }, { key: 'home', label: '自宅から' }].map(function (f) {
@@ -399,6 +445,13 @@ button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
     return { key: bd.label, el: b };
   });
 
+  /* --- お名前 --- */
+  nameInput.addEventListener('input', function () {
+    state.name = nameInput.value;
+    state.error = '';
+    update();
+  });
+
   /* --- 駅名入力とサジェスト --- */
   stationInput.addEventListener('input', function () {
     state.station = stationInput.value;
@@ -445,9 +498,11 @@ button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
 
   /* --- 送信 --- */
   submitBtn.addEventListener('click', function () {
+    if (state.sending) return;
     var a = answered();
     if (!a.ready) {
       var miss = [];
+      if (!a.a0) miss.push('お名前');
       if (!a.a1) miss.push('出発駅');
       if (!a.a3) miss.push('おたばこのご希望');
       if (!a.a4) miss.push('ご予算');
@@ -456,9 +511,44 @@ button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
       return;
     }
     state.error = '';
-    state.submitted = true;
-    saveState();
+
+    if (!NomiApi.enabled()) {
+      // Supabase 未設定時はローカルのみで完結(開発・プレビュー用)
+      state.submitted = true;
+      saveState();
+      update();
+      return;
+    }
+
+    state.sending = true;
     update();
+    Promise.all([
+      NomiApi.upsert('responses', {
+        participant_name: state.name.trim(),
+        from_type: state.from,
+        station: state.station.trim(),
+        genres: state.genres,
+        any_genre: state.anyGenre,
+        mood: state.mood,
+        mood_note: state.moodNote.trim(),
+        smoke: state.smoke,
+        updated_at: new Date().toISOString()
+      }, 'event_id,participant_name'),
+      // 予算は名前を持たない別テーブルへ(匿名)
+      NomiApi.upsert('budget_votes', {
+        budget: state.budget,
+        client_key: clientKey()
+      }, 'event_id,client_key')
+    ]).then(function () {
+      state.sending = false;
+      state.submitted = true;
+      saveState();
+      update();
+    }, function (e) {
+      state.sending = false;
+      state.error = '送信に失敗しました(' + e.message + ')。電波の良いところでもう一度お試しください。';
+      update();
+    });
   });
 
   $('editAgain').addEventListener('click', function (e) {
@@ -470,15 +560,16 @@ button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
 
   /* --- 回答状況の判定 --- */
   function answered() {
+    var a0 = state.name.trim().length > 0;
     var a1 = state.station.trim().length > 0;
     var a2 = state.anyGenre || state.genres.length > 0 || !!state.mood || state.moodNote.trim().length > 0;
     var a3 = !!state.smoke;
     var a4 = !!state.budget;
-    var requiredLeft = [a1, a3, a4].filter(function (x) { return !x; }).length;
+    var requiredLeft = [a0, a1, a3, a4].filter(function (x) { return !x; }).length;
     return {
-      a1: a1, a2: a2, a3: a3, a4: a4,
+      a0: a0, a1: a1, a2: a2, a3: a3, a4: a4,
       requiredLeft: requiredLeft,
-      doneCount: [a1, a2, a3, a4].filter(Boolean).length,
+      doneCount: [a0, a1, a2, a3, a4].filter(Boolean).length,
       ready: requiredLeft === 0
     };
   }
@@ -491,11 +582,16 @@ button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
     viewDone.hidden = !state.submitted;
 
     if (state.submitted) {
+      $('sumName').textContent = state.name.trim();
       $('sumStation').textContent = (state.from === 'work' ? '職場から・' : '自宅から・') + state.station.trim() + '駅';
       $('sumGenre').textContent = state.anyGenre
         ? 'なんでもOK'
         : (state.genres.concat(state.mood ? [state.mood] : []).join('・') || '指定なし');
       $('sumSmoke').textContent = state.smoke || '—';
+      var voting = state.eventStatus === 'voting' || state.eventStatus === 'decided';
+      voteLink.hidden = !voting;
+      voteLink.textContent = state.eventStatus === 'decided' ? '決定しました。結果を見る →' : '候補が届きました。投票へ進む →';
+      waitNote.hidden = voting || !NomiApi.enabled();
       return;
     }
 
@@ -519,30 +615,49 @@ button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
     smokeBtns.forEach(function (b) { b.el.classList.toggle('sel', state.smoke === b.key); });
     budgetBtns.forEach(function (b) { b.el.classList.toggle('sel', state.budget === b.key); });
 
+    $('check0').classList.toggle('done', a.a0);
     $('check1').classList.toggle('done', a.a1);
     $('check2').classList.toggle('done', a.a2);
     $('check3').classList.toggle('done', a.a3);
     $('check4').classList.toggle('done', a.a4);
 
-    progFill.style.width = (a.doneCount / 4 * 100) + '%';
-    progLabel.textContent = a.doneCount + ' / 4';
+    progFill.style.width = (a.doneCount / 5 * 100) + '%';
+    progLabel.textContent = a.doneCount + ' / 5';
 
     errBox.hidden = !state.error;
     errBox.textContent = state.error;
 
     submitBtn.classList.toggle('ready', a.ready);
-    submitBtn.textContent = a.ready
-      ? 'この内容で回答する'
-      : 'この内容で回答する(あと' + a.requiredLeft + '項目)';
+    submitBtn.textContent = state.sending
+      ? '送信中…'
+      : (a.ready
+        ? 'この内容で回答する'
+        : 'この内容で回答する(あと' + a.requiredLeft + '項目)');
 
     renderSuggestions();
     saveState();
   }
 
   loadState();
+  nameInput.value = state.name;
   stationInput.value = state.station;
   moodNoteInput.value = state.moodNote;
   update();
+
+  /* --- イベント情報の取得とステータスのポーリング --- */
+  if (NomiApi.enabled()) {
+    var refreshEvent = function () {
+      NomiApi.getEvent().then(function (ev) {
+        $('hdEventName').textContent = ev.name;
+        $('hdEventInfo').textContent = ev.event_info || '';
+        if (ev.status !== state.eventStatus) {
+          state.eventStatus = ev.status;
+          update();
+        }
+      }, function () { /* 一時的な通信エラーは無視して次のポーリングに任せる */ });
+    };
+    NomiApi.startPolling(refreshEvent, 10000);
+  }
 })();
 </script>
 </body>
