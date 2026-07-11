@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nomicierge｜幹事ダッシュボード</title>
+<meta name="description" content="飲み会コンシェルジュ Nomicierge。幹事が回答状況の確認・AI候補生成・投票管理・決定を行う画面。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#d9573b;
+  --navy:#2c2a4e;
+  --ink:#2c2740;
+  --ink-sub:#635e73;
+  --muted:#8a8598;
+  --faint:#a8a4b2;
+  --disabled:#c0bcc8;
+  --sel:#33305a;
+  --teal:#3c6470;
+  --teal-bg:#e8eff1;
+  --paper:#f7f5f2;
+  --field:#fdfcfa;
+  --err:#ad3f4b;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:#e9e6e0;font-family:"Meiryo UI","Hiragino Kaku Gothic ProN",sans-serif;color:var(--ink)}
+.serif{font-family:'Shippori Mincho',"Hiragino Mincho ProN","Yu Mincho",serif}
+a{color:var(--teal)}a:hover{color:var(--ink)}
+input{font-family:"Meiryo UI","Hiragino Kaku Gothic ProN",sans-serif}
+input:focus{outline:2px solid var(--sel);outline-offset:1px}
+button{font-family:inherit}
+button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+@keyframes bellsway{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}60%{transform:rotate(5deg)}}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){*{transition:none !important;animation:none !important}}
+
+.wrap{min-height:100vh;display:flex;justify-content:center;padding:28px 12px 48px}
+.card{width:100%;max-width:430px;background:var(--paper);border-radius:20px;box-shadow:0 12px 40px rgba(44,39,64,.16);overflow:hidden;position:relative}
+
+.hd{background:var(--navy);padding:20px 24px 18px}
+.hd-row{display:flex;align-items:center;gap:11px}
+.hd-logo{width:38px;height:38px;border-radius:99px;background:rgba(247,245,242,.08);border:1px solid rgba(247,245,242,.18);display:flex;align-items:center;justify-content:center}
+.hd-logo svg{animation:bellsway 4.5s ease-in-out infinite;transform-origin:50% 20%}
+.hd-name{font-size:16.5px;font-weight:600;color:var(--paper);letter-spacing:.06em}
+.hd-sub{font-size:10px;letter-spacing:.14em;color:rgba(247,245,242,.55)}
+.hd-event{text-align:right}
+.hd-event-name{font-size:10px;color:rgba(247,245,242,.5);margin-bottom:2px}
+.hd-event-info{font-size:11px;color:rgba(247,245,242,.8)}
+.accent-line{height:2px;background:linear-gradient(90deg,var(--accent) 0%,rgba(217,87,59,0) 70%)}
+.role-band{background:rgba(60,100,112,.12);color:var(--teal);font-size:10.5px;letter-spacing:.12em;text-align:center;padding:6px 0;font-weight:bold}
+
+.body{padding:20px 20px 28px}
+
+.stepper{display:flex;gap:4px;margin-bottom:18px}
+.step{flex:1;text-align:center;font-size:10px;color:var(--faint);padding:7px 0;border-radius:8px;background:rgba(51,48,90,.05)}
+.step.on{background:var(--sel);color:#fff;font-weight:bold}
+.step.done{background:var(--teal-bg);color:var(--teal)}
+
+.sec{background:#fff;border:1px solid rgba(51,48,90,.1);border-radius:16px;padding:18px 18px 16px;margin-bottom:14px;box-shadow:0 2px 10px rgba(44,39,64,.04)}
+.sec-head{display:flex;align-items:baseline;gap:9px;margin-bottom:12px}
+.sec-title{font-family:'Shippori Mincho',"Hiragino Mincho ProN","Yu Mincho",serif;font-size:15px;font-weight:600;color:var(--ink);flex:1}
+.sec-meta{font-size:11px;color:var(--muted)}
+
+.resp-row{display:flex;gap:8px;padding:8px 0;border-bottom:1px solid rgba(51,48,90,.07);font-size:12px;align-items:baseline}
+.resp-row:last-child{border-bottom:none}
+.resp-name{font-weight:bold;color:var(--sel);flex:none;min-width:64px}
+.resp-detail{color:var(--ink-sub);line-height:1.7}
+.empty-note{font-size:12px;color:var(--muted);padding:6px 0}
+
+.bud-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11.5px}
+.bud-label{width:104px;flex:none;color:var(--ink-sub)}
+.bud-bar{flex:1;height:14px;border-radius:99px;background:rgba(51,48,90,.06);overflow:hidden}
+.bud-fill{height:100%;border-radius:99px;background:var(--teal);transition:width .4s}
+.bud-n{width:30px;flex:none;text-align:right;color:var(--muted)}
+.bud-median{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:11.5px;color:var(--teal)}
+.anon-mini{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted);margin-top:8px}
+
+.big-btn{width:100%;padding:15px 0;border-radius:99px;border:none;cursor:pointer;font-size:14px;font-weight:bold;color:#fff;background:var(--accent);box-shadow:0 5px 16px rgba(44,39,64,.3);transition:background .25s}
+.big-btn:disabled{background:var(--disabled);box-shadow:none;cursor:default}
+.big-btn.teal{background:var(--teal)}
+.sub-btn{padding:9px 16px;border-radius:99px;border:1.5px solid rgba(51,48,90,.25);background:var(--field);color:var(--sel);font-size:12px;cursor:pointer}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:99px;animation:spin .8s linear infinite;vertical-align:-2px;margin-right:7px}
+.gen-note{font-size:11px;color:var(--muted);text-align:center;margin-top:9px;line-height:1.7}
+.errbox{font-size:11.5px;color:var(--err);background:rgba(173,63,75,.07);border:1px solid rgba(173,63,75,.22);border-radius:9px;padding:9px 12px;margin-bottom:10px}
+
+.ccard{position:relative;background:var(--field);border:1.5px solid rgba(51,48,90,.14);border-radius:14px;padding:14px;margin-bottom:10px}
+.ccard.winner{border:2px solid var(--teal);background:var(--teal-bg)}
+.ccard .pos{font:600 11px ui-monospace,Menlo,monospace;color:var(--accent)}
+.ccard .nm{font-family:'Shippori Mincho',"Hiragino Mincho ProN","Yu Mincho",serif;font-size:15px;font-weight:600;margin:2px 0 7px}
+.ccard .tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.ccard .tag{font-size:10px;color:var(--teal);background:var(--teal-bg);border-radius:99px;padding:2px 8px}
+.ccard.winner .tag{background:#fff}
+.ccard .reason{font-size:11.5px;line-height:1.7;color:var(--ink-sub);margin-bottom:8px}
+.ccard .link{font-size:11px;margin-bottom:8px}
+.ccard .edited{font-size:9.5px;color:var(--faint);margin-left:6px}
+.ccard .row-btns{display:flex;gap:8px;flex-wrap:wrap}
+.edit-area{border-top:1px dashed rgba(51,48,90,.18);margin-top:10px;padding-top:10px}
+.edit-area label{display:block;font-size:10.5px;color:var(--muted);margin:7px 0 3px}
+.edit-input{width:100%;padding:9px 11px;font-size:12.5px;border:1.5px solid rgba(51,48,90,.18);border-radius:8px;background:#fff;color:var(--ink)}
+.voters{display:flex;flex-wrap:wrap;align-items:center;gap:5px;border-top:1px solid rgba(51,48,90,.08);padding-top:8px;margin-top:4px;font-size:10.5px;color:var(--muted)}
+.voters .cnt{font-weight:bold;color:var(--teal)}
+.voter-chip{font-size:10.5px;color:var(--sel);background:rgba(51,48,90,.07);border-radius:99px;padding:2px 8px}
+
+.wait-note{display:flex;align-items:center;justify-content:center;gap:7px;font-size:11.5px;color:var(--muted);padding:10px 0}
+.wait-dot{width:7px;height:7px;border-radius:99px;background:var(--teal);animation:pulse 1.6s ease-in-out infinite}
+.center-msg{padding:46px 28px;text-align:center;font-size:13px;line-height:2;color:var(--ink-sub)}
+
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="card">
+
+  <div class="hd">
+    <div class="hd-row">
+      <div class="hd-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5.4" r="1.4" style="fill:var(--accent)"></circle><path d="M4.8 17a7.2 7.2 0 0 1 14.4 0Z" fill="#f7f5f2"></path><rect x="3.4" y="17.6" width="17.2" height="1.9" rx=".95" fill="#f7f5f2"></rect></svg>
+      </div>
+      <div style="flex:1">
+        <div class="hd-name serif">Nomicierge</div>
+        <div class="hd-sub">飲み会コンシェルジュ</div>
+      </div>
+      <div class="hd-event">
+        <div class="hd-event-name" id="hdEventName">…</div>
+        <div class="hd-event-info" id="hdEventInfo"></div>
+      </div>
+    </div>
+  </div>
+  <div class="accent-line"></div>
+  <div class="role-band">幹 事 ダ ッ シ ュ ボ ー ド</div>
+
+  <div class="center-msg" id="viewNoAuth" hidden>
+    幹事トークンが見つかりません。<br>
+    <code style="font-size:11px">organizer.html?key=&lt;ORGANIZER_TOKEN&gt;</code><br>
+    の形式で開いてください(トークンは setup.sql の実行結果に表示されます)。
+  </div>
+
+  <div class="center-msg" id="viewNoConfig" hidden>
+    Supabase の設定がまだのようです。<br>
+    <code style="font-size:11px">supabase/README.md</code> の手順でセットアップし、<br>
+    <code style="font-size:11px">js/config.js</code> に接続情報を貼ってください。
+  </div>
+
+  <div class="body" id="viewMain" hidden>
+
+    <div class="stepper">
+      <div class="step" id="step1">1 条件収集</div>
+      <div class="step" id="step2">2 候補確認</div>
+      <div class="step" id="step3">3 投票中</div>
+      <div class="step" id="step4">4 決定</div>
+    </div>
+
+    <!-- 回答状況 -->
+    <div class="sec">
+      <div class="sec-head">
+        <span class="sec-title">回答状況</span>
+        <span class="sec-meta" id="respCount">0名回答済み</span>
+      </div>
+      <div id="respList"><div class="empty-note">まだ回答がありません。参加者に index.html の URL を配りましょう。</div></div>
+    </div>
+
+    <!-- 予算(匿名集計) -->
+    <div class="sec">
+      <div class="sec-head">
+        <span class="sec-title">ご予算(匿名集計)</span>
+      </div>
+      <div id="budgetBars"><div class="empty-note">まだ回答がありません。</div></div>
+      <div class="anon-mini">
+        <svg width="10" height="12" viewBox="0 0 12 14" fill="none"><rect x="1" y="6" width="10" height="7" rx="1.5" fill="#a8a4b2"></rect><path d="M3.5 6V4.5a2.5 2.5 0 0 1 5 0V6" stroke="#a8a4b2" stroke-width="1.6" fill="none"></path></svg>
+        個人の回答は幹事にも表示されません。分布と中央値のみです。
+      </div>
+    </div>
+
+    <!-- AI 候補 -->
+    <div class="sec">
+      <div class="sec-head">
+        <span class="sec-title">候補のお店</span>
+        <span class="sec-meta" id="candMeta"></span>
+      </div>
+      <div class="errbox" id="genErr" hidden></div>
+      <div id="candList"></div>
+      <div id="genArea">
+        <button class="big-btn" id="genBtn">AIに候補を3つ出してもらう</button>
+        <div class="gen-note" id="genNote">集まった条件をもとにコンシェルジュ(Claude)が Web 検索でお店を探します。<br>30〜90秒ほどかかります。</div>
+      </div>
+      <div id="startVoteArea" hidden style="margin-top:12px">
+        <button class="big-btn teal" id="startVoteBtn">この3つで投票を開始する</button>
+        <div class="gen-note">店名・URL を確認してから開始してください。開始すると参加者の画面に候補が表示されます。</div>
+      </div>
+    </div>
+
+    <div class="wait-note" id="pollNote"><span class="wait-dot"></span>5秒ごとに自動更新しています</div>
+  </div>
+
+</div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var TOKEN = new URLSearchParams(location.search).get('key') || '';
+  var BUDGET_ORDER = ['〜3,000円', '3,000〜5,000円', '5,000〜8,000円', '8,000円〜'];
+
+  var state = {
+    status: 'collecting',
+    decidedId: null,
+    responses: [],
+    budgets: [],
+    candidates: [],
+    votes: [],
+    generating: false,
+    genError: '',
+    editingId: null,
+    busy: false
+  };
+
+  function esc(s) {
+    var d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+
+  if (!NomiApi.enabled()) { $('viewNoConfig').hidden = false; return; }
+  if (!TOKEN) { $('viewNoAuth').hidden = false; return; }
+  $('viewMain').hidden = false;
+
+  /* --- 描画 --- */
+  function renderStepper() {
+    var order = ['collecting', 'review', 'voting', 'decided'];
+    var idx = order.indexOf(state.status);
+    ['step1', 'step2', 'step3', 'step4'].forEach(function (id, i) {
+      var el = $(id);
+      el.classList.toggle('on', i === idx);
+      el.classList.toggle('done', i < idx);
+    });
+  }
+
+  function renderResponses() {
+    $('respCount').textContent = state.responses.length + '名回答済み';
+    var box = $('respList');
+    if (!state.responses.length) {
+      box.innerHTML = '<div class="empty-note">まだ回答がありません。参加者に index.html の URL を配りましょう。</div>';
+      return;
+    }
+    box.innerHTML = state.responses.map(function (r) {
+      var parts = [];
+      parts.push((r.from_type === 'home' ? '自宅' : '職場') + 'から・' + esc(r.station) + '駅');
+      var genres = r.any_genre ? 'なんでもOK' : ((r.genres || []).concat(r.mood ? [r.mood] : []).join('・') || '指定なし');
+      parts.push(esc(genres));
+      if (r.smoke) parts.push(esc(r.smoke));
+      if (r.mood_note) parts.push('「' + esc(r.mood_note) + '」');
+      return '<div class="resp-row"><span class="resp-name">' + esc(r.participant_name) + '</span>' +
+        '<span class="resp-detail">' + parts.join(' / ') + '</span></div>';
+    }).join('');
+  }
+
+  function renderBudgets() {
+    var box = $('budgetBars');
+    if (!state.budgets.length) {
+      box.innerHTML = '<div class="empty-note">まだ回答がありません。</div>';
+      return;
+    }
+    var max = 0;
+    var counts = BUDGET_ORDER.map(function (b) {
+      var n = state.budgets.filter(function (x) { return x === b; }).length;
+      if (n > max) max = n;
+      return n;
+    });
+    var sorted = state.budgets
+      .filter(function (b) { return BUDGET_ORDER.indexOf(b) >= 0; })
+      .sort(function (a, b) { return BUDGET_ORDER.indexOf(a) - BUDGET_ORDER.indexOf(b); });
+    var median = sorted[Math.floor((sorted.length - 1) / 2)];
+    box.innerHTML = BUDGET_ORDER.map(function (b, i) {
+      var w = max ? (counts[i] / max * 100) : 0;
+      return '<div class="bud-row"><span class="bud-label">' + esc(b) + '</span>' +
+        '<span class="bud-bar"><span class="bud-fill" style="width:' + w + '%"></span></span>' +
+        '<span class="bud-n">' + counts[i] + '票</span></div>';
+    }).join('') +
+      '<div class="bud-median"><svg width="10" height="12" viewBox="0 0 12 14" fill="none"><rect x="1" y="6" width="10" height="7" rx="1.5" fill="#3c6470"></rect><path d="M3.5 6V4.5a2.5 2.5 0 0 1 5 0V6" stroke="#3c6470" stroke-width="1.6" fill="none"></path></svg><b>中央値: ' + esc(median) + '</b>(' + state.budgets.length + '名回答)</div>';
+  }
+
+  function candidateCard(c) {
+    var div = document.createElement('div');
+    div.className = 'ccard';
+    if (state.status === 'decided' && c.id === state.decidedId) div.classList.add('winner');
+    var votersHere = state.votes.filter(function (v) { return v.candidate_id === c.id; });
+    var tags = [c.genre, c.area, c.budget_range, c.smoke].filter(Boolean)
+      .map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('');
+    var chips = votersHere.map(function (v) { return '<span class="voter-chip">' + esc(v.voter_name) + '</span>'; }).join('');
+
+    var html =
+      '<div class="pos">0' + c.position + (c.edited_by_organizer ? '<span class="edited">✎ 幹事編集済み</span>' : '') + '</div>' +
+      '<div class="nm">' + esc(c.name) + (state.status === 'decided' && c.id === state.decidedId ? ' ★' : '') + '</div>' +
+      (tags ? '<div class="tags">' + tags + '</div>' : '') +
+      (c.reason ? '<div class="reason">' + esc(c.reason) + '</div>' : '') +
+      (c.url ? '<div class="link"><a href="' + esc(c.url) + '" target="_blank" rel="noopener">URL を開いて実在をご確認ください ↗</a></div>' : '');
+
+    if (state.status === 'review') {
+      html += '<div class="row-btns"><button type="button" class="sub-btn" data-act="edit">' +
+        (state.editingId === c.id ? '編集を閉じる' : '編集する') + '</button></div>';
+      if (state.editingId === c.id) {
+        html += '<div class="edit-area">' +
+          '<label>店名</label><input class="edit-input" data-f="name" value="' + esc(c.name) + '">' +
+          '<label>URL</label><input class="edit-input" data-f="url" value="' + esc(c.url || '') + '">' +
+          '<label>コメント(参加者に表示されます)</label><input class="edit-input" data-f="reason" value="' + esc(c.reason || '') + '">' +
+          '<div class="row-btns" style="margin-top:10px"><button type="button" class="sub-btn" data-act="save" style="background:var(--sel);color:#fff;border-color:var(--sel)">保存する</button></div>' +
+          '</div>';
+      }
+    }
+
+    if (state.status === 'voting' || state.status === 'decided') {
+      html += '<div class="voters"><span class="cnt">' + votersHere.length + '票</span>' + (chips || '<span>まだ投票がありません</span>') + '</div>';
+      if (state.status === 'voting') {
+        html += '<div class="row-btns" style="margin-top:10px"><button type="button" class="sub-btn" data-act="decide" style="border-color:var(--teal);color:var(--teal)">★ この店に決定する</button></div>';
+      }
+    }
+
+    div.innerHTML = html;
+
+    div.addEventListener('click', function (e) {
+      var act = e.target.getAttribute && e.target.getAttribute('data-act');
+      if (act === 'edit') {
+        state.editingId = state.editingId === c.id ? null : c.id;
+        render();
+      } else if (act === 'save') {
+        var inputs = div.querySelectorAll('.edit-input');
+        var values = { edited_by_organizer: true };
+        inputs.forEach(function (inp) { values[inp.getAttribute('data-f')] = inp.value.trim(); });
+        if (!values.name) { alert('店名は必須です'); return; }
+        NomiApi.patch('candidates', 'id=eq.' + c.id, values).then(function () {
+          state.editingId = null;
+          refresh();
+        }, function (err) { alert('保存に失敗しました: ' + err.message); });
+      } else if (act === 'decide') {
+        if (state.busy) return;
+        if (!confirm('「' + c.name + '」に決定します。参加者の画面が決定表示に切り替わります。よろしいですか?')) return;
+        state.busy = true;
+        NomiApi.setEvent({ status: 'decided', decided_candidate_id: c.id }).then(function () {
+          state.busy = false;
+          refresh();
+        }, function (err) {
+          state.busy = false;
+          alert('決定の保存に失敗しました: ' + err.message);
+        });
+      }
+    });
+    return div;
+  }
+
+  function renderCandidates() {
+    var list = $('candList');
+    list.textContent = '';
+    state.candidates.forEach(function (c) { list.appendChild(candidateCard(c)); });
+
+    $('candMeta').textContent =
+      state.status === 'collecting' ? '未生成' :
+      state.status === 'review' ? '確認・編集できます' :
+      state.status === 'voting' ? '投票受付中' : '決定済み';
+
+    // 生成ボタン: collecting / review(再生成)で表示。voting 以降は非表示。
+    var canGen = state.status === 'collecting' || state.status === 'review';
+    $('genArea').hidden = !canGen;
+    var btn = $('genBtn');
+    btn.disabled = state.generating || !state.responses.length;
+    btn.innerHTML = state.generating
+      ? '<span class="spinner"></span>コンシェルジュが探しています…'
+      : (state.status === 'review' ? 'もう一度提案してもらう(投票はリセットされます)' : 'AIに候補を3つ出してもらう');
+    $('genNote').hidden = state.generating || state.status === 'review';
+    $('genErr').hidden = !state.genError;
+    $('genErr').textContent = state.genError;
+
+    $('startVoteArea').hidden = !(state.status === 'review' && state.candidates.length === 3 && !state.generating);
+  }
+
+  function render() {
+    renderStepper();
+    renderResponses();
+    renderBudgets();
+    renderCandidates();
+  }
+
+  /* --- AI 候補生成 --- */
+  $('genBtn').addEventListener('click', function () {
+    if (state.generating) return;
+    state.generating = true;
+    state.genError = '';
+    render();
+    NomiApi.suggestCandidates(TOKEN).then(function () {
+      state.generating = false;
+      refresh();
+    }, function (e) {
+      state.generating = false;
+      state.genError = e.message;
+      render();
+    });
+  });
+
+  /* --- 投票開始 --- */
+  $('startVoteBtn').addEventListener('click', function () {
+    if (state.busy) return;
+    state.busy = true;
+    NomiApi.setEvent({ status: 'voting' }).then(function () {
+      state.busy = false;
+      refresh();
+    }, function (e) {
+      state.busy = false;
+      alert('投票開始に失敗しました: ' + e.message);
+    });
+  });
+
+  /* --- データ取得(5秒ポーリング) --- */
+  function refresh() {
+    // 編集フォームを開いている間は再描画で入力が消えないようスキップ
+    if (state.editingId !== null) return;
+    Promise.all([
+      NomiApi.getEvent(),
+      NomiApi.select('responses', 'order=updated_at.asc'),
+      NomiApi.select('budget_votes', 'select=budget'),
+      NomiApi.select('candidates', 'order=position.asc'),
+      NomiApi.select('votes', 'order=updated_at.asc')
+    ]).then(function (r) {
+      var ev = r[0];
+      $('hdEventName').textContent = ev.name;
+      $('hdEventInfo').textContent = ev.event_info || '';
+      state.status = ev.status;
+      state.decidedId = ev.decided_candidate_id;
+      state.responses = r[1];
+      state.budgets = r[2].map(function (b) { return b.budget; });
+      state.candidates = r[3];
+      state.votes = r[4];
+      render();
+    }, function (e) {
+      $('genErr').hidden = false;
+      $('genErr').textContent = '読み込みに失敗しました: ' + e.message;
+    });
+  }
+
+  render();
+  NomiApi.startPolling(refresh, 5000);
+})();
+</script>
+</body>
+</html>

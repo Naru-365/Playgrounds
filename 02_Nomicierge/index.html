@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nomicierge｜条件入力</title>
+<meta name="description" content="飲み会コンシェルジュ Nomicierge。参加者の条件(出発駅・好み・喫煙・予算)を匿名で回答する画面。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#d9573b;
+  --navy:#2c2a4e;
+  --ink:#2c2740;
+  --ink-sub:#635e73;
+  --muted:#8a8598;
+  --faint:#a8a4b2;
+  --disabled:#c0bcc8;
+  --sel:#33305a;
+  --teal:#3c6470;
+  --teal-bg:#e8eff1;
+  --paper:#f7f5f2;
+  --field:#fdfcfa;
+  --err:#ad3f4b;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:#e9e6e0;font-family:"Meiryo UI","Hiragino Kaku Gothic ProN",sans-serif;color:var(--ink)}
+.serif{font-family:'Shippori Mincho',"Hiragino Mincho ProN","Yu Mincho",serif}
+a{color:var(--teal)}a:hover{color:var(--ink)}
+input{font-family:"Meiryo UI","Hiragino Kaku Gothic ProN",sans-serif}
+input:focus{outline:2px solid var(--sel);outline-offset:1px}
+button{font-family:inherit}
+button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes bellsway{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}60%{transform:rotate(5deg)}}
+@media (prefers-reduced-motion: reduce){*{transition:none !important;animation:none !important}}
+
+.wrap{min-height:100vh;display:flex;justify-content:center;padding:28px 12px 48px}
+.card{width:100%;max-width:430px;background:var(--paper);border-radius:20px;box-shadow:0 12px 40px rgba(44,39,64,.16);overflow:hidden;position:relative}
+
+/* header */
+.hd{background:var(--navy);padding:20px 24px 18px}
+.hd-row{display:flex;align-items:center;gap:11px}
+.hd-logo{width:38px;height:38px;border-radius:99px;background:rgba(247,245,242,.08);border:1px solid rgba(247,245,242,.18);display:flex;align-items:center;justify-content:center}
+.hd-logo svg{animation:bellsway 4.5s ease-in-out infinite;transform-origin:50% 20%}
+.hd-name{font-size:16.5px;font-weight:600;color:var(--paper);letter-spacing:.06em}
+.hd-sub{font-size:10px;letter-spacing:.14em;color:rgba(247,245,242,.55)}
+.hd-event{text-align:right}
+.hd-event-name{font-size:10px;color:rgba(247,245,242,.5);margin-bottom:2px}
+.hd-event-info{font-size:11px;color:rgba(247,245,242,.8)}
+.accent-line{height:2px;background:linear-gradient(90deg,var(--accent) 0%,rgba(217,87,59,0) 70%)}
+
+/* greeting */
+.greet{display:flex;gap:10px;margin-bottom:18px}
+.greet-icon{width:30px;height:30px;border-radius:99px;background:var(--navy);flex:none;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.greet-bubble{background:#fff;border:1px solid rgba(51,48,90,.12);border-radius:14px 14px 14px 0;padding:13px 16px;box-shadow:0 2px 8px rgba(44,39,64,.05)}
+.greet-bubble .txt{font-size:13.5px;line-height:2;color:var(--ink)}
+.greet-bubble .sub{color:var(--muted);font-size:12px}
+
+/* progress */
+.prog{display:flex;align-items:center;gap:10px;margin:0 2px 18px}
+.prog-bar{flex:1;height:3px;border-radius:99px;background:rgba(51,48,90,.1);overflow:hidden}
+.prog-fill{height:100%;border-radius:99px;background:var(--accent);width:0;transition:width .4s cubic-bezier(.2,.8,.2,1)}
+.prog-label{font:600 10.5px ui-monospace,Menlo,monospace;color:var(--ink-sub);letter-spacing:.05em}
+
+/* question cards */
+.form-body{padding:20px 20px 8px}
+.qcard{background:#fff;border:1px solid rgba(51,48,90,.1);border-radius:16px;padding:18px 18px 16px;margin-bottom:14px;box-shadow:0 2px 10px rgba(44,39,64,.04)}
+.qcard.budget{border-color:rgba(60,100,112,.35);margin-bottom:6px}
+.qhead{display:flex;align-items:center;gap:9px;margin-bottom:13px}
+.qcard.budget .qhead{margin-bottom:10px}
+.qnum{font:600 11px ui-monospace,Menlo,monospace;color:var(--accent);letter-spacing:.05em}
+.qtitle{font-family:'Shippori Mincho',"Hiragino Mincho ProN","Yu Mincho",serif;font-size:15px;font-weight:600;color:var(--ink);flex:1}
+.check{width:18px;height:18px;border-radius:99px;flex:none;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;background:rgba(51,48,90,.08);color:rgba(51,48,90,.25);transition:background .25s,color .25s}
+.check.done{background:var(--teal);color:#fff}
+
+/* 01 from + station */
+.from-row{display:flex;gap:8px;margin-bottom:10px}
+.pill{flex:1;padding:10px 0;border-radius:99px;font-size:12.5px;cursor:pointer;min-height:40px;border:1.5px solid rgba(51,48,90,.22);background:var(--field);color:var(--sel);transition:background .15s,color .15s}
+.pill.sel{border-color:var(--sel);background:var(--sel);color:#fff;font-weight:bold}
+.station-box{position:relative}
+.station-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%)}
+.station-input{width:100%;padding:13px 14px 13px 36px;font-size:14px;border:1.5px solid rgba(51,48,90,.22);border-radius:11px;background:var(--field);color:var(--ink)}
+.suggest{position:absolute;top:calc(100% + 5px);left:0;right:0;background:#fff;border:1px solid rgba(51,48,90,.16);border-radius:11px;box-shadow:0 8px 24px rgba(44,39,64,.18);overflow:hidden;z-index:20}
+.sitem{padding:12px 15px;font-size:13.5px;color:var(--ink);cursor:pointer;display:flex;align-items:baseline;gap:8px}
+.sitem:hover{background:#f2f0ec}
+.sitem .dot{width:6px;height:6px;border-radius:99px;background:var(--teal);flex:none;position:relative;top:-2px}
+.sitem .eki{font-size:10.5px;color:var(--faint)}
+.privacy-note{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted);margin-top:8px}
+
+/* 02 chips */
+.chip-label{font-size:11px;color:var(--muted);margin-bottom:8px}
+.chip-label .opt{color:var(--disabled)}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip-row.genres{margin-bottom:16px}
+.chip-row.moods{margin-bottom:12px}
+.chip{padding:9px 15px;border-radius:99px;font-size:12.5px;cursor:pointer;min-height:38px;border:1.5px solid rgba(51,48,90,.22);background:var(--field);color:var(--sel);box-shadow:none;transition:background .15s,color .15s,box-shadow .15s}
+.chip.dashed{border:1.5px dashed rgba(51,48,90,.38)}
+.chip.sel{border:1.5px solid var(--sel);background:var(--sel);color:#fff;box-shadow:0 2px 8px rgba(51,48,90,.25)}
+.note-input{width:100%;padding:12px 14px;font-size:13px;border:1.5px solid rgba(51,48,90,.16);border-radius:11px;background:var(--field);color:var(--ink)}
+
+/* 03 segmented */
+.seg{display:flex;background:#f2f0ec;border-radius:11px;padding:4px;gap:4px}
+.segbtn{flex:1;padding:11px 2px;border-radius:8px;font-size:12px;cursor:pointer;min-height:42px;border:none;background:transparent;color:var(--sel);transition:background .18s,color .18s,box-shadow .18s}
+.segbtn.sel{background:var(--sel);color:#fff;font-weight:bold;box-shadow:0 2px 8px rgba(51,48,90,.28)}
+
+/* 04 budget */
+.anon-note{display:flex;align-items:flex-start;gap:8px;background:var(--teal-bg);border-radius:10px;padding:11px 13px;margin-bottom:13px}
+.anon-note svg{flex:none;margin-top:1px}
+.anon-note span{font-size:11.5px;line-height:1.7;color:var(--teal)}
+.budget-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.bcard{position:relative;padding:13px 12px 12px 34px;border-radius:12px;cursor:pointer;text-align:left;min-height:62px;border:1.5px solid rgba(51,48,90,.18);background:var(--field);color:var(--ink);transition:border-color .15s,background .15s}
+.bcard.sel{border:2px solid var(--teal);background:var(--teal-bg);color:var(--teal)}
+.bdot{position:absolute;left:12px;top:15px;width:14px;height:14px;border-radius:99px;border:1.5px solid rgba(51,48,90,.3);background:#fff;display:inline-flex;align-items:center;justify-content:center}
+.bcard.sel .bdot{border-color:var(--teal)}
+.bdot-in{width:7px;height:7px;border-radius:99px;background:transparent;transition:background .15s}
+.bcard.sel .bdot-in{background:var(--teal)}
+.blabel{display:block;font-size:13.5px;font-weight:bold;margin-bottom:2px}
+.bsub{font-size:10.5px;opacity:.65}
+
+/* sticky submit */
+.sticky{position:sticky;bottom:0;background:rgba(247,245,242,.92);backdrop-filter:blur(8px);border-top:1px solid rgba(51,48,90,.08);padding:14px 20px 16px}
+.errbox{font-size:11.5px;color:var(--err);background:rgba(173,63,75,.07);border:1px solid rgba(173,63,75,.22);border-radius:9px;padding:9px 12px;margin-bottom:10px}
+.submit{width:100%;padding:16px 0;border-radius:99px;border:none;cursor:pointer;font-size:15px;font-weight:bold;color:#fff;background:var(--disabled);box-shadow:none;transition:background .25s,box-shadow .25s}
+.submit.ready{background:var(--accent);box-shadow:0 5px 16px rgba(44,39,64,.3)}
+.foot-note{text-align:center;font-size:10px;color:var(--faint);margin-top:9px}
+
+/* done view */
+.done{padding:46px 30px 44px;text-align:center;animation:rise .45s ease both}
+.done-icon{width:68px;height:68px;border-radius:99px;background:var(--navy);display:inline-flex;align-items:center;justify-content:center;margin-bottom:20px}
+.done-title{font-family:'Shippori Mincho',"Hiragino Mincho ProN","Yu Mincho",serif;font-size:20px;font-weight:600;color:var(--ink);line-height:1.9;margin-bottom:10px}
+.done-sub{font-size:12.5px;line-height:1.9;color:var(--ink-sub);margin-bottom:26px}
+.sum{text-align:left;background:#fff;border:1px solid rgba(51,48,90,.1);border-radius:14px;padding:16px 18px;margin-bottom:22px}
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(51,48,90,.07);font-size:12px}
+.sum-row:last-child{border-bottom:none}
+.sum-row .k{color:var(--muted)}
+.sum-row .v{color:var(--ink)}
+.sum-row .v.strong{font-weight:bold}
+.sum-anon{display:inline-flex;align-items:center;gap:5px;color:var(--teal);font-weight:bold}
+.edit-link{font-size:12.5px;color:var(--teal);text-decoration:underline;cursor:pointer}
+.done-foot{font-size:10px;color:var(--faint);margin-top:22px}
+.vote-btn{display:block;padding:15px 0;border-radius:99px;background:var(--accent);color:#fff;font-size:14.5px;font-weight:bold;text-decoration:none;box-shadow:0 5px 16px rgba(44,39,64,.3);margin-bottom:18px}
+.vote-btn:hover{color:#fff}
+.wait-note{display:flex;align-items:center;justify-content:center;gap:7px;font-size:11.5px;color:var(--muted);margin-bottom:18px}
+.wait-dot{width:7px;height:7px;border-radius:99px;background:var(--teal);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
+
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="card">
+
+  <!-- header -->
+  <div class="hd">
+    <div class="hd-row">
+      <div class="hd-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5.4" r="1.4" style="fill:var(--accent)"></circle><path d="M4.8 17a7.2 7.2 0 0 1 14.4 0Z" fill="#f7f5f2"></path><rect x="3.4" y="17.6" width="17.2" height="1.9" rx=".95" fill="#f7f5f2"></rect></svg>
+      </div>
+      <div style="flex:1">
+        <div class="hd-name serif">Nomicierge</div>
+        <div class="hd-sub">飲み会コンシェルジュ</div>
+      </div>
+      <div class="hd-event">
+        <div class="hd-event-name" id="hdEventName">7月度 チーム懇親会</div>
+        <div class="hd-event-info" id="hdEventInfo">7/24(金) 19:00〜 ・ 6名</div>
+      </div>
+    </div>
+  </div>
+  <div class="accent-line"></div>
+
+  <!-- ===== 送信完了 ===== -->
+  <div class="done" id="viewDone" hidden>
+    <div class="done-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5.4" r="1.4" style="fill:var(--accent)"></circle><path d="M4.8 17a7.2 7.2 0 0 1 14.4 0Z" fill="#f7f5f2"></path><rect x="3.4" y="17.6" width="17.2" height="1.9" rx=".95" fill="#f7f5f2"></rect></svg>
+    </div>
+    <div class="done-title">ご回答、確かに承りました。</div>
+    <div class="done-sub">皆さまの条件が揃いましたら、<br>コンシェルジュがお店をお選びします。</div>
+    <div class="sum">
+      <div class="sum-row"><span class="k">お名前</span><span class="v strong" id="sumName"></span></div>
+      <div class="sum-row"><span class="k">出発駅</span><span class="v strong" id="sumStation"></span></div>
+      <div class="sum-row"><span class="k">好み</span><span class="v" id="sumGenre"></span></div>
+      <div class="sum-row"><span class="k">おたばこ</span><span class="v" id="sumSmoke"></span></div>
+      <div class="sum-row"><span class="k">ご予算</span>
+        <span class="sum-anon"><svg width="10" height="12" viewBox="0 0 12 14" fill="none"><rect x="1" y="6" width="10" height="7" rx="1.5" fill="#3c6470"></rect><path d="M3.5 6V4.5a2.5 2.5 0 0 1 5 0V6" stroke="#3c6470" stroke-width="1.6" fill="none"></path></svg>回答済み(匿名)</span>
+      </div>
+    </div>
+    <div class="wait-note" id="waitNote"><span class="wait-dot"></span>皆さまの回答が揃うのを待っています…</div>
+    <a class="vote-btn" id="voteLink" href="vote.html" hidden>候補が届きました。投票へ進む →</a>
+    <div><a href="#" class="edit-link" id="editAgain">回答を修正する</a></div>
+    <div class="done-foot">回答内容はいつでも修正できます。</div>
+  </div>
+
+  <!-- ===== 入力フォーム ===== -->
+  <div id="viewForm">
+  <div class="form-body">
+
+    <!-- concierge greeting -->
+    <div class="greet">
+      <div class="greet-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5.4" r="1.4" style="fill:var(--accent)"></circle><path d="M4.8 17a7.2 7.2 0 0 1 14.4 0Z" fill="#f7f5f2"></path><rect x="3.4" y="17.6" width="17.2" height="1.9" rx=".95" fill="#f7f5f2"></rect></svg>
+      </div>
+      <div class="greet-bubble">
+        <div class="txt serif">ようこそ。ご条件を4つだけお伺いします。<br><span class="sub">— 3分ほどで終わります。</span></div>
+      </div>
+    </div>
+
+    <!-- progress -->
+    <div class="prog">
+      <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+      <div class="prog-label" id="progLabel">0 / 5</div>
+    </div>
+
+    <!-- 00 お名前 -->
+    <div class="qcard">
+      <div class="qhead">
+        <span class="qnum">00</span>
+        <span class="qtitle">お名前をどうぞ</span>
+        <span class="check" id="check0">✓</span>
+      </div>
+      <input class="note-input" id="nameInput" placeholder="ニックネームでOK(例: まつ)" autocomplete="off" maxlength="30">
+      <div class="privacy-note">投票のときに、どなたの回答かが分かるように表示されます。</div>
+    </div>
+
+    <!-- 01 出発駅 -->
+    <div class="qcard">
+      <div class="qhead">
+        <span class="qnum">01</span>
+        <span class="qtitle">どちらから向かいますか</span>
+        <span class="check" id="check1">✓</span>
+      </div>
+      <div class="from-row" id="fromRow"></div>
+      <div class="station-box">
+        <svg class="station-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="5" y="4" width="14" height="13" rx="3" stroke="#8a8598" stroke-width="1.8"></rect><path d="M9 21l1.5-3M15 21l-1.5-3" stroke="#8a8598" stroke-width="1.8" stroke-linecap="round"></path><circle cx="9" cy="13" r="1" fill="#8a8598"></circle><circle cx="15" cy="13" r="1" fill="#8a8598"></circle><path d="M5 9.5h14" stroke="#8a8598" stroke-width="1.8"></path></svg>
+        <input class="station-input" id="stationInput" placeholder="駅名を入力(例: 神田)" autocomplete="off">
+        <div class="suggest" id="suggestBox" hidden></div>
+      </div>
+      <div class="privacy-note">
+        <svg width="10" height="12" viewBox="0 0 12 14" fill="none"><rect x="1" y="6" width="10" height="7" rx="1.5" fill="#a8a4b2"></rect><path d="M3.5 6V4.5a2.5 2.5 0 0 1 5 0V6" stroke="#a8a4b2" stroke-width="1.6" fill="none"></path></svg>
+        駅名のみお伺いします。住所や現在地は使いません。
+      </div>
+    </div>
+
+    <!-- 02 好み -->
+    <div class="qcard">
+      <div class="qhead">
+        <span class="qnum">02</span>
+        <span class="qtitle">食べたいもの・雰囲気は</span>
+        <span class="check" id="check2">✓</span>
+      </div>
+      <div class="chip-label">ジャンル <span class="opt">/ 複数OK・任意</span></div>
+      <div class="chip-row genres" id="genreRow"></div>
+      <div class="chip-label">雰囲気</div>
+      <div class="chip-row moods" id="moodRow"></div>
+      <input class="note-input" id="moodNote" placeholder="ひとことあれば(例: 日本酒が豊富だと嬉しい)">
+    </div>
+
+    <!-- 03 喫煙 -->
+    <div class="qcard">
+      <div class="qhead">
+        <span class="qnum">03</span>
+        <span class="qtitle">おたばこは</span>
+        <span class="check" id="check3">✓</span>
+      </div>
+      <div class="seg" id="smokeSeg"></div>
+    </div>
+
+    <!-- 04 予算(匿名) -->
+    <div class="qcard budget">
+      <div class="qhead">
+        <span class="qnum">04</span>
+        <span class="qtitle">ご予算の本音を</span>
+        <span class="check" id="check4">✓</span>
+      </div>
+      <div class="anon-note">
+        <svg width="13" height="15" viewBox="0 0 12 14" fill="none"><rect x="1" y="6" width="10" height="7" rx="1.5" fill="#3c6470"></rect><path d="M3.5 6V4.5a2.5 2.5 0 0 1 5 0V6" stroke="#3c6470" stroke-width="1.6" fill="none"></path></svg>
+        <span><b>この回答は幹事にも表示されません。</b><br>共有されるのは全員の集計(中央値・分布)のみです。</span>
+      </div>
+      <div class="budget-grid" id="budgetGrid"></div>
+    </div>
+  </div>
+
+  <!-- sticky submit -->
+  <div class="sticky">
+    <div class="errbox" id="errBox" hidden></div>
+    <button class="submit" id="submitBtn">この内容で回答する</button>
+    <div class="foot-note">登録・ログインは不要です。</div>
+  </div>
+  </div>
+
+</div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var STORAGE_KEY = 'nomicierge-s02';
+  var STATIONS = ['神田', '神保町', '新宿', '新橋', '渋谷', '品川', '池袋', '東京', '秋葉原', '御茶ノ水', '恵比寿', '中野', '五反田', '飯田橋'];
+  var GENRES = ['和食', 'イタリアン', '中華', '焼肉', '居酒屋', 'その他'];
+  var MOODS = ['ワイワイ', '落ち着いた個室', 'おしゃれ'];
+  var SMOKES = ['喫煙席が欲しい', '禁煙がよい', 'どちらでも'];
+  var BUDGETS = [
+    { label: '〜3,000円', sub: 'サクッと' },
+    { label: '3,000〜5,000円', sub: 'ほどよく' },
+    { label: '5,000〜8,000円', sub: 'しっかり' },
+    { label: '8,000円〜', sub: 'ちゃんとした席' }
+  ];
+
+  var state = {
+    name: '', station: '', from: 'work', genres: [], anyGenre: false,
+    mood: null, moodNote: '', smoke: null, budget: null,
+    submitted: false, focusStation: false, error: '', sending: false,
+    eventStatus: 'collecting'
+  };
+
+  function loadState() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (saved && typeof saved === 'object') {
+        state.name = typeof saved.name === 'string' ? saved.name : '';
+        state.station = typeof saved.station === 'string' ? saved.station : '';
+        state.from = saved.from === 'home' ? 'home' : 'work';
+        state.genres = Array.isArray(saved.genres) ? saved.genres.filter(function (g) { return GENRES.indexOf(g) >= 0; }) : [];
+        state.anyGenre = !!saved.anyGenre;
+        state.mood = MOODS.indexOf(saved.mood) >= 0 ? saved.mood : null;
+        state.moodNote = typeof saved.moodNote === 'string' ? saved.moodNote : '';
+        state.smoke = SMOKES.indexOf(saved.smoke) >= 0 ? saved.smoke : null;
+        state.budget = BUDGETS.some(function (b) { return b.label === saved.budget; }) ? saved.budget : null;
+        state.submitted = !!saved.submitted;
+      }
+    } catch (e) { /* 破損データは無視して初期状態で開始 */ }
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        name: state.name,
+        station: state.station, from: state.from, genres: state.genres, anyGenre: state.anyGenre,
+        mood: state.mood, moodNote: state.moodNote, smoke: state.smoke, budget: state.budget,
+        submitted: state.submitted
+      }));
+    } catch (e) { /* プライベートモード等では保存しない */ }
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  var viewForm = $('viewForm'), viewDone = $('viewDone');
+  var nameInput = $('nameInput');
+  var stationInput = $('stationInput'), suggestBox = $('suggestBox');
+  var moodNoteInput = $('moodNote');
+  var errBox = $('errBox'), submitBtn = $('submitBtn');
+  var progFill = $('progFill'), progLabel = $('progLabel');
+  var voteLink = $('voteLink'), waitNote = $('waitNote');
+
+  // 予算の匿名回答を同じ端末から上書きするためだけの乱数キー(名前とは紐づかない)
+  function clientKey() {
+    var k = localStorage.getItem('nomicierge-client-key');
+    if (!k) {
+      if (crypto.randomUUID) {
+        k = crypto.randomUUID();
+      } else {
+        // 非セキュアコンテキスト用フォールバック(uuid 形式を維持する)
+        var b = new Uint8Array(16);
+        crypto.getRandomValues(b);
+        b[6] = (b[6] & 0x0f) | 0x40;
+        b[8] = (b[8] & 0x3f) | 0x80;
+        var h = Array.prototype.map.call(b, function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
+        k = h.slice(0, 8) + '-' + h.slice(8, 12) + '-' + h.slice(12, 16) + '-' + h.slice(16, 20) + '-' + h.slice(20);
+      }
+      localStorage.setItem('nomicierge-client-key', k);
+    }
+    return k;
+  }
+
+  /* --- 選択肢ボタンの生成 --- */
+  var fromBtns = [{ key: 'work', label: '職場から' }, { key: 'home', label: '自宅から' }].map(function (f) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'pill';
+    b.textContent = f.label;
+    b.addEventListener('click', function () { state.from = f.key; update(); });
+    $('fromRow').appendChild(b);
+    return { key: f.key, el: b };
+  });
+
+  var genreBtns = GENRES.map(function (g) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip';
+    b.addEventListener('click', function () {
+      state.anyGenre = false;
+      var i = state.genres.indexOf(g);
+      if (i >= 0) state.genres.splice(i, 1); else state.genres.push(g);
+      update();
+    });
+    $('genreRow').appendChild(b);
+    return { key: g, el: b };
+  });
+
+  var anyChipBtn = document.createElement('button');
+  anyChipBtn.type = 'button';
+  anyChipBtn.className = 'chip dashed';
+  anyChipBtn.addEventListener('click', function () {
+    state.anyGenre = !state.anyGenre;
+    state.genres = [];
+    update();
+  });
+  $('genreRow').appendChild(anyChipBtn);
+
+  var moodBtns = MOODS.map(function (m) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip';
+    b.addEventListener('click', function () {
+      state.mood = state.mood === m ? null : m;
+      update();
+    });
+    $('moodRow').appendChild(b);
+    return { key: m, el: b };
+  });
+
+  var smokeBtns = SMOKES.map(function (k) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'segbtn';
+    b.textContent = k;
+    b.addEventListener('click', function () { state.smoke = k; update(); });
+    $('smokeSeg').appendChild(b);
+    return { key: k, el: b };
+  });
+
+  var budgetBtns = BUDGETS.map(function (bd) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'bcard';
+    b.innerHTML = '<span class="bdot"><span class="bdot-in"></span></span>' +
+      '<span class="blabel"></span><span class="bsub"></span>';
+    b.querySelector('.blabel').textContent = bd.label;
+    b.querySelector('.bsub').textContent = bd.sub;
+    b.addEventListener('click', function () { state.budget = bd.label; update(); });
+    $('budgetGrid').appendChild(b);
+    return { key: bd.label, el: b };
+  });
+
+  /* --- お名前 --- */
+  nameInput.addEventListener('input', function () {
+    state.name = nameInput.value;
+    state.error = '';
+    update();
+  });
+
+  /* --- 駅名入力とサジェスト --- */
+  stationInput.addEventListener('input', function () {
+    state.station = stationInput.value;
+    state.error = '';
+    update();
+  });
+  stationInput.addEventListener('focus', function () { state.focusStation = true; update(); });
+  stationInput.addEventListener('blur', function () {
+    setTimeout(function () { state.focusStation = false; update(); }, 120);
+  });
+
+  function renderSuggestions() {
+    var q = state.station.trim();
+    var list = (state.focusStation && q.length > 0)
+      ? STATIONS.filter(function (n) { return n.indexOf(q) === 0 && n !== q; }).slice(0, 4)
+      : [];
+    suggestBox.hidden = list.length === 0;
+    suggestBox.textContent = '';
+    list.forEach(function (name) {
+      var item = document.createElement('div');
+      item.className = 'sitem';
+      var dot = document.createElement('span');
+      dot.className = 'dot';
+      var eki = document.createElement('span');
+      eki.className = 'eki';
+      eki.textContent = '駅';
+      item.appendChild(dot);
+      item.appendChild(document.createTextNode(name));
+      item.appendChild(eki);
+      item.addEventListener('mousedown', function () {
+        state.station = name;
+        state.focusStation = false;
+        stationInput.value = name;
+        update();
+      });
+      suggestBox.appendChild(item);
+    });
+  }
+
+  moodNoteInput.addEventListener('input', function () {
+    state.moodNote = moodNoteInput.value;
+    update();
+  });
+
+  /* --- 送信 --- */
+  submitBtn.addEventListener('click', function () {
+    if (state.sending) return;
+    var a = answered();
+    if (!a.ready) {
+      var miss = [];
+      if (!a.a0) miss.push('お名前');
+      if (!a.a1) miss.push('出発駅');
+      if (!a.a3) miss.push('おたばこのご希望');
+      if (!a.a4) miss.push('ご予算');
+      state.error = miss.join('・') + ' をお聞かせください。';
+      update();
+      return;
+    }
+    state.error = '';
+
+    if (!NomiApi.enabled()) {
+      // Supabase 未設定時はローカルのみで完結(開発・プレビュー用)
+      state.submitted = true;
+      saveState();
+      update();
+      return;
+    }
+
+    state.sending = true;
+    update();
+    Promise.all([
+      NomiApi.upsert('responses', {
+        participant_name: state.name.trim(),
+        from_type: state.from,
+        station: state.station.trim(),
+        genres: state.genres,
+        any_genre: state.anyGenre,
+        mood: state.mood,
+        mood_note: state.moodNote.trim(),
+        smoke: state.smoke,
+        updated_at: new Date().toISOString()
+      }, 'event_id,participant_name'),
+      // 予算は名前を持たない別テーブルへ(匿名)
+      NomiApi.upsert('budget_votes', {
+        budget: state.budget,
+        client_key: clientKey()
+      }, 'event_id,client_key')
+    ]).then(function () {
+      state.sending = false;
+      state.submitted = true;
+      saveState();
+      update();
+    }, function (e) {
+      state.sending = false;
+      state.error = '送信に失敗しました(' + e.message + ')。電波の良いところでもう一度お試しください。';
+      update();
+    });
+  });
+
+  $('editAgain').addEventListener('click', function (e) {
+    e.preventDefault();
+    state.submitted = false;
+    saveState();
+    update();
+  });
+
+  /* --- 回答状況の判定 --- */
+  function answered() {
+    var a0 = state.name.trim().length > 0;
+    var a1 = state.station.trim().length > 0;
+    var a2 = state.anyGenre || state.genres.length > 0 || !!state.mood || state.moodNote.trim().length > 0;
+    var a3 = !!state.smoke;
+    var a4 = !!state.budget;
+    var requiredLeft = [a0, a1, a3, a4].filter(function (x) { return !x; }).length;
+    return {
+      a0: a0, a1: a1, a2: a2, a3: a3, a4: a4,
+      requiredLeft: requiredLeft,
+      doneCount: [a0, a1, a2, a3, a4].filter(Boolean).length,
+      ready: requiredLeft === 0
+    };
+  }
+
+  /* --- 状態 → DOM 反映 --- */
+  function update() {
+    var a = answered();
+
+    viewForm.hidden = state.submitted;
+    viewDone.hidden = !state.submitted;
+
+    if (state.submitted) {
+      $('sumName').textContent = state.name.trim();
+      $('sumStation').textContent = (state.from === 'work' ? '職場から・' : '自宅から・') + state.station.trim() + '駅';
+      $('sumGenre').textContent = state.anyGenre
+        ? 'なんでもOK'
+        : (state.genres.concat(state.mood ? [state.mood] : []).join('・') || '指定なし');
+      $('sumSmoke').textContent = state.smoke || '—';
+      var voting = state.eventStatus === 'voting' || state.eventStatus === 'decided';
+      voteLink.hidden = !voting;
+      voteLink.textContent = state.eventStatus === 'decided' ? '決定しました。結果を見る →' : '候補が届きました。投票へ進む →';
+      waitNote.hidden = voting || !NomiApi.enabled();
+      return;
+    }
+
+    fromBtns.forEach(function (b) { b.el.classList.toggle('sel', state.from === b.key); });
+
+    genreBtns.forEach(function (b) {
+      var sel = !state.anyGenre && state.genres.indexOf(b.key) >= 0;
+      b.el.classList.toggle('sel', sel);
+      b.el.textContent = sel ? '✓ ' + b.key : b.key;
+    });
+    anyChipBtn.classList.toggle('sel', state.anyGenre);
+    anyChipBtn.classList.toggle('dashed', !state.anyGenre);
+    anyChipBtn.textContent = state.anyGenre ? '✓ なんでもOK' : 'なんでもOK';
+
+    moodBtns.forEach(function (b) {
+      var sel = state.mood === b.key;
+      b.el.classList.toggle('sel', sel);
+      b.el.textContent = sel ? '✓ ' + b.key : b.key;
+    });
+
+    smokeBtns.forEach(function (b) { b.el.classList.toggle('sel', state.smoke === b.key); });
+    budgetBtns.forEach(function (b) { b.el.classList.toggle('sel', state.budget === b.key); });
+
+    $('check0').classList.toggle('done', a.a0);
+    $('check1').classList.toggle('done', a.a1);
+    $('check2').classList.toggle('done', a.a2);
+    $('check3').classList.toggle('done', a.a3);
+    $('check4').classList.toggle('done', a.a4);
+
+    progFill.style.width = (a.doneCount / 5 * 100) + '%';
+    progLabel.textContent = a.doneCount + ' / 5';
+
+    errBox.hidden = !state.error;
+    errBox.textContent = state.error;
+
+    submitBtn.classList.toggle('ready', a.ready);
+    submitBtn.textContent = state.sending
+      ? '送信中…'
+      : (a.ready
+        ? 'この内容で回答する'
+        : 'この内容で回答する(あと' + a.requiredLeft + '項目)');
+
+    renderSuggestions();
+    saveState();
+  }
+
+  loadState();
+  nameInput.value = state.name;
+  stationInput.value = state.station;
+  moodNoteInput.value = state.moodNote;
+  update();
+
+  /* --- イベント情報の取得とステータスのポーリング --- */
+  if (NomiApi.enabled()) {
+    var refreshEvent = function () {
+      NomiApi.getEvent().then(function (ev) {
+        $('hdEventName').textContent = ev.name;
+        $('hdEventInfo').textContent = ev.event_info || '';
+        if (ev.status !== state.eventStatus) {
+          state.eventStatus = ev.status;
+          update();
+        }
+      }, function () { /* 一時的な通信エラーは無視して次のポーリングに任せる */ });
+    };
+    NomiApi.startPolling(refreshEvent, 10000);
+  }
+})();
+</script>
+</body>
+</html>
