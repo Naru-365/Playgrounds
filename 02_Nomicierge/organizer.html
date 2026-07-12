@@ -533,7 +533,7 @@
       '<div class="nm">' + esc(c.name) + (state.status === 'decided' && c.id === state.decidedId ? ' ★' : '') + '</div>' +
       (tags ? '<div class="tags">' + tags + '</div>' : '') +
       (c.reason ? '<div class="reason">' + esc(c.reason) + '</div>' : '') +
-      (c.url ? '<div class="link"><a href="' + esc(c.url) + '" target="_blank" rel="noopener">URL を開いて実在をご確認ください ↗</a></div>' : '');
+      (c.url ? '<div class="link"><a href="' + esc(c.url) + '" target="_blank" rel="noopener noreferrer">URL を開いて実在をご確認ください ↗</a></div>' : '');
 
     if (state.status === 'review') {
       html += '<div class="row-btns"><button type="button" class="btn-sub" data-act="edit">' +

@@ -23,6 +23,8 @@ const INFO_MAX = 200;
 const COUNT_MIN = 2;
 const COUNT_MAX = 50;
 const RATE_LIMIT = 20; // 直近1時間の作成上限
+// 内部エラーの詳細はログのみに出し、匿名の呼び出し元へは返さない
+const GENERIC_ERROR = "サーバーエラーが発生しました。時間をおいて再度お試しください。";
 
 type CreatePayload = {
   name?: unknown;
@@ -123,17 +125,6 @@ Deno.serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
 
-  // --- 簡易アビューズ対策: 直近1時間の作成件数 ---
-  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-  const { count, error: countErr } = await supabase
-    .from("events")
-    .select("id", { count: "exact", head: true })
-    .gte("created_at", oneHourAgo);
-  if (countErr) return json(500, { error: countErr.message });
-  if ((count ?? 0) > RATE_LIMIT) {
-    return json(429, { error: "作成が集中しています。しばらくしてからお試しください。" });
-  }
-
   // --- events を作成 ---
   const { data: event, error: insErr } = await supabase
     .from("events")
@@ -146,7 +137,30 @@ Deno.serve(async (req) => {
     })
     .select("id")
     .single();
-  if (insErr) return json(500, { error: insErr.message });
+  if (insErr) {
+    console.error("create-event: events insert failed:", insErr);
+    return json(500, { error: GENERIC_ERROR });
+  }
+
+  // --- 簡易アビューズ対策: 直近1時間の作成件数(自分の行を含めて数える) ---
+  // 挿入後にカウントすることで、並行リクエストがチェックをすり抜ける
+  // TOCTOU を防ぐ。上限超過なら自分の行を取り消して 429 を返す。
+  // グローバル上限のため、悪用時は正規利用者も巻き込まれる制約が残る
+  // (IP 単位の制限はスキーマ追加が必要なためフォローアップ)。
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const { count, error: countErr } = await supabase
+    .from("events")
+    .select("id", { count: "exact", head: true })
+    .gte("created_at", oneHourAgo);
+  if (countErr || (count ?? 0) > RATE_LIMIT) {
+    const { error: undoErr } = await supabase.from("events").delete().eq("id", event.id);
+    if (undoErr) console.error("create-event: rollback delete failed:", undoErr);
+    if (countErr) {
+      console.error("create-event: rate-limit count failed:", countErr);
+      return json(500, { error: GENERIC_ERROR });
+    }
+    return json(429, { error: "作成が集中しています。しばらくしてからお試しください。" });
+  }
 
   // --- 幹事トークンを発行して organizer_secrets に保存 ---
   const token = crypto.randomUUID().replaceAll("-", ""); // 32 hex
@@ -154,9 +168,11 @@ Deno.serve(async (req) => {
     .from("organizer_secrets")
     .insert({ event_id: event.id, token });
   if (secretErr) {
+    console.error("create-event: organizer_secrets insert failed:", secretErr);
     // 孤児イベント防止: 作成した events 行を削除してから 500 を返す
-    await supabase.from("events").delete().eq("id", event.id);
-    return json(500, { error: secretErr.message });
+    const { error: undoErr } = await supabase.from("events").delete().eq("id", event.id);
+    if (undoErr) console.error("create-event: rollback delete failed:", undoErr);
+    return json(500, { error: GENERIC_ERROR });
   }
 
   return json(200, { event_id: event.id, organizer_token: token });

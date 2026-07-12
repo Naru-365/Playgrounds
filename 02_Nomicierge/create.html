@@ -258,10 +258,11 @@
   }
   function buildUrls(eventId, token) {
     var dir = baseDir();
+    var ev = encodeURIComponent(eventId);
     return {
-      answer: dir + 'answer.html?event=' + eventId,
-      vote: dir + 'vote.html?event=' + eventId,
-      organizer: dir + 'organizer.html?event=' + eventId + '&key=' + token
+      answer: dir + 'answer.html?event=' + ev,
+      vote: dir + 'vote.html?event=' + ev,
+      organizer: dir + 'organizer.html?event=' + ev + '&key=' + encodeURIComponent(token)
     };
   }
 
