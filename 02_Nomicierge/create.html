@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nomicierge｜イベントを作る</title>
+<meta name="description" content="飲み会コンシェルジュ Nomicierge。飲み会名・開催日・想定人数を決めて作戦会議室(イベント)を作成し、参加者・投票・幹事の3つのURLを発行します。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<style>
+/* ============ create.html 固有レイアウト ============ */
+.page { padding: clamp(24px, 5vw, 48px) 0 72px; }
+.create-shell { max-width: 720px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 32px); }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13.5px; color: var(--text-muted);
+}
+.back-link:hover { color: var(--teal); text-decoration: none; }
+
+.page-head { text-align: center; margin-top: 6px; }
+.page-head .page-title { margin-top: 10px; }
+.page-head .lead { margin-top: 12px; color: var(--text-muted); font-size: 14.5px; }
+
+.form-card { margin-top: clamp(24px, 4vw, 40px); }
+.count-hint { font-size: 12.5px; color: var(--text-faint); margin-top: 7px; }
+.submit-wrap { margin-top: 28px; }
+.errbox {
+  font-size: 13px; color: var(--err);
+  background: rgba(255, 125, 144, 0.09); border: 1px solid rgba(255, 125, 144, 0.3);
+  border-radius: 10px; padding: 10px 13px; margin-bottom: 12px;
+}
+.foot-note { text-align: center; font-size: 12px; color: var(--text-faint); margin-top: 12px; }
+.page-foot-note { text-align: center; font-size: 12px; color: var(--text-faint); margin-top: 26px; }
+
+/* ============ 作成完了ビュー ============ */
+.done { text-align: center; animation: rise 0.45s ease both; }
+.done-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--surface-2); border: 1px solid var(--border-strong);
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-bottom: 20px; color: var(--coral); font-size: 30px;
+}
+.done-title {
+  font-family: var(--font-serif); font-size: clamp(20px, 4vw, 25px);
+  font-weight: 600; line-height: 1.6; letter-spacing: 0.05em; margin-bottom: 12px;
+}
+.done-sub { font-size: 14px; line-height: 1.9; color: var(--text-muted); margin-bottom: 22px; }
+
+.url-list { text-align: left; display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+.url-item {
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 15px 16px;
+}
+.url-item.secret { border-color: var(--coral); background: rgba(255, 107, 94, 0.07); }
+.url-head {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 4px;
+}
+.url-role-note { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+.url-secret-note {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--coral); font-weight: 700;
+}
+.url-row { display: flex; align-items: stretch; gap: 8px; }
+.url-text {
+  flex: 1 1 auto; min-width: 0;
+  background: #1c1526; border: 1px solid var(--border-strong);
+  border-radius: var(--radius-input); padding: 10px 12px;
+  color: var(--text); font-size: 13px; font-family: var(--font-sans);
+  overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch;
+  user-select: all;
+}
+.copy-btn {
+  flex: none; padding: 10px 14px;
+  border: 1px solid var(--border-strong); border-radius: 10px;
+  background: transparent; color: var(--text); font-size: 13px;
+  font-family: var(--font-sans); cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.copy-btn:hover { border-color: var(--teal); color: var(--teal); }
+.copy-btn.copied { border-color: var(--teal); background: var(--teal-dim); color: var(--teal); }
+
+.done-actions { margin-top: 26px; }
+.done-foot { font-size: 12px; color: var(--text-faint); margin-top: 22px; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .done { animation: none; } }
+
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ===== 共通ナビ ===== -->
+<nav class="nav">
+  <a class="nav-brand" href="index.html" data-nomi-link="index.html">
+    <span class="bell-logo" aria-hidden="true"><i></i></span>
+    Nomicierge
+  </a>
+  <div class="nav-links">
+    <a href="answer.html" data-nomi-link="answer.html">回答する</a>
+    <a href="organizer.html" data-nomi-link="organizer.html">幹事画面</a>
+    <a class="btn-outline-coral" href="create.html" data-nomi-link="create.html">イベントを作る</a>
+  </div>
+</nav>
+
+<main class="page">
+<div class="create-shell">
+
+  <a class="back-link" href="index.html" data-nomi-link="index.html">← 戻る</a>
+  <header class="page-head">
+    <span class="eyebrow">NOMICIERGE</span>
+    <h1 class="page-title">今夜の作戦名は？</h1>
+    <p class="lead">名前・日付・人数。決めるのはそれだけ！</p>
+  </header>
+
+  <!-- ===== 入力フォーム ===== -->
+  <section class="card form-card" id="viewForm">
+    <div class="container-narrow" style="padding:0">
+
+      <div class="field" style="margin-top:0">
+        <label for="nameInput">飲み会名</label>
+        <input class="input" id="nameInput" type="text" placeholder="チーム歓迎会🍻" autocomplete="off" maxlength="60">
+      </div>
+
+      <div class="field">
+        <label for="dateInput">開催日</label>
+        <input class="input" id="dateInput" type="date">
+      </div>
+
+      <div class="field">
+        <label for="countInput">想定人数</label>
+        <input class="input" id="countInput" type="number" inputmode="numeric" min="2" max="50" value="6">
+        <div class="count-hint">2〜50人。あとから変えても大丈夫です。</div>
+      </div>
+
+      <div class="submit-wrap">
+        <div class="notice" id="offlineNotice" hidden></div>
+        <div class="errbox" id="errBox" hidden></div>
+        <button class="btn-cta" id="submitBtn">作戦会議をスタート 🔔</button>
+        <p class="foot-note">登録・ログインは不要です。</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== 作成完了ビュー ===== -->
+  <section class="card done" id="viewDone" hidden>
+    <div class="done-icon" aria-hidden="true">🔔</div>
+    <h2 class="done-title">作戦会議室ができました！</h2>
+    <p class="done-sub">下の3つの URL を用途ごとに配ってください。<br>幹事用だけは、あなただけの秘密です。</p>
+
+    <div class="url-list">
+      <!-- 参加者用 -->
+      <div class="url-item">
+        <div class="url-head">🍶 参加者用</div>
+        <div class="url-role-note">みんなに配る条件回答フォーム。</div>
+        <div class="url-row">
+          <div class="url-text" id="urlAnswer" tabindex="0"></div>
+          <button class="copy-btn" data-copy="urlAnswer">コピー</button>
+        </div>
+      </div>
+      <!-- 投票用 -->
+      <div class="url-item">
+        <div class="url-head">🗳 投票用</div>
+        <div class="url-role-note">候補が出そろったら参加者が投票する画面。</div>
+        <div class="url-row">
+          <div class="url-text" id="urlVote" tabindex="0"></div>
+          <button class="copy-btn" data-copy="urlVote">コピー</button>
+        </div>
+      </div>
+      <!-- 幹事用（秘密） -->
+      <div class="url-item secret">
+        <div class="url-head">
+          🔑 幹事用
+          <span class="url-secret-note">
+            <svg width="11" height="13" viewBox="0 0 12 14" fill="none" aria-hidden="true"><rect x="1" y="6" width="10" height="7" rx="1.5" fill="currentColor"></rect><path d="M3.5 6V4.5a2.5 2.5 0 0 1 5 0V6" stroke="currentColor" stroke-width="1.6" fill="none"></path></svg>
+            この URL は幹事だけの秘密です
+          </span>
+        </div>
+        <div class="url-role-note">AI にお店を選ばせたり、投票を締めたりする管理画面。他の人には配らないでください。</div>
+        <div class="url-row">
+          <div class="url-text" id="urlOrganizer" tabindex="0"></div>
+          <button class="copy-btn" data-copy="urlOrganizer">コピー</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="done-actions">
+      <a class="btn-cta inline" id="goOrganizer" href="organizer.html">幹事画面を開く →</a>
+    </div>
+    <p class="done-foot">この画面を閉じると URL は再表示できません。忘れずに控えてください。</p>
+  </section>
+
+  <p class="page-foot-note">※画面・店舗名はイメージです</p>
+
+</div>
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var hasApi = typeof window.NomiApi !== 'undefined';
+
+  /* --- 内部リンクへ ?event= を伝播(NomiApi 不在時は素のファイル名) --- */
+  function applyNavLinks() {
+    var els = document.querySelectorAll('[data-nomi-link]');
+    for (var i = 0; i < els.length; i++) {
+      var page = els[i].getAttribute('data-nomi-link');
+      els[i].setAttribute('href', hasApi ? NomiApi.link(page) : page);
+    }
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  var viewForm = $('viewForm'), viewDone = $('viewDone');
+  var nameInput = $('nameInput'), dateInput = $('dateInput'), countInput = $('countInput');
+  var errBox = $('errBox'), offlineNotice = $('offlineNotice'), submitBtn = $('submitBtn');
+
+  function showError(msg) {
+    errBox.textContent = msg;
+    errBox.hidden = !msg;
+  }
+
+  function backendReady() {
+    return hasApi && NomiApi.hasBackend();
+  }
+
+  /* --- クライアント側バリデーション(サーバと同じルール) --- */
+  function validate() {
+    var name = nameInput.value.trim();
+    if (name.length < 1) return { error: '飲み会名を入力してください。' };
+    if (name.length > 60) return { error: '飲み会名は60文字以内で入力してください。' };
+
+    var dateVal = dateInput.value; // <input type=date> は "YYYY-MM-DD" か ""
+    var eventDate = dateVal ? dateVal : null;
+
+    var countRaw = countInput.value.trim();
+    var expectedCount = null;
+    if (countRaw !== '') {
+      var n = Number(countRaw);
+      if (!Number.isInteger(n)) return { error: '想定人数は整数で入力してください。' };
+      if (n < 2 || n > 50) return { error: '想定人数は2〜50人で入力してください。' };
+      expectedCount = n;
+    }
+    return { payload: { name: name, event_date: eventDate, expected_count: expectedCount } };
+  }
+
+  /* --- URL 組み立て --- */
+  function baseDir() {
+    return location.origin + location.pathname.replace(/[^\/]*$/, '');
+  }
+  function buildUrls(eventId, token) {
+    var dir = baseDir();
+    return {
+      answer: dir + 'answer.html?event=' + eventId,
+      vote: dir + 'vote.html?event=' + eventId,
+      organizer: dir + 'organizer.html?event=' + eventId + '&key=' + token
+    };
+  }
+
+  /* --- 成功ビューの描画(ID/トークンは textContent で挿入) --- */
+  function showDone(eventId, token) {
+    var urls = buildUrls(eventId, token);
+    $('urlAnswer').textContent = urls.answer;
+    $('urlVote').textContent = urls.vote;
+    $('urlOrganizer').textContent = urls.organizer;
+    $('goOrganizer').setAttribute('href', urls.organizer);
+    viewForm.hidden = true;
+    viewDone.hidden = false;
+    window.scrollTo(0, 0);
+  }
+
+  /* --- コピーボタン --- */
+  function bindCopy() {
+    var btns = document.querySelectorAll('.copy-btn');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].addEventListener('click', function () {
+        var btn = this;
+        var text = $(btn.getAttribute('data-copy')).textContent;
+        var done = function () {
+          btn.classList.add('copied');
+          btn.textContent = 'コピーしました';
+          setTimeout(function () {
+            btn.classList.remove('copied');
+            btn.textContent = 'コピー';
+          }, 1600);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, function () { selectText(btn); });
+        } else {
+          selectText(btn);
+        }
+      });
+    }
+  }
+  // クリップボード不可環境: URL テキストを選択状態にして手動コピーを促す
+  function selectText(btn) {
+    var el = $(btn.getAttribute('data-copy'));
+    try {
+      var range = document.createRange();
+      range.selectNodeContents(el);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    } catch (e) { /* 選択 API 非対応環境は user-select:all に委ねる */ }
+    btn.textContent = '選択しました';
+    setTimeout(function () { btn.textContent = 'コピー'; }, 1600);
+  }
+
+  /* --- 送信 --- */
+  var sending = false;
+  submitBtn.addEventListener('click', function () {
+    if (sending) return;
+    showError('');
+
+    var v = validate();
+    if (v.error) { showError(v.error); return; }
+
+    if (!backendReady()) {
+      offlineNotice.hidden = false;
+      offlineNotice.textContent = 'Supabase が未設定です。supabase/README.md の手順で設定してください。';
+      return;
+    }
+
+    sending = true;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'コンシェルジュが準備中…';
+
+    NomiApi.createEvent(v.payload).then(function (data) {
+      if (!data || !data.event_id || !data.organizer_token) {
+        throw new Error('サーバーからの応答が不正です。');
+      }
+      showDone(data.event_id, data.organizer_token);
+    }, function (e) {
+      sending = false;
+      submitBtn.disabled = false;
+      submitBtn.textContent = '作戦会議をスタート 🔔';
+      showError(e && e.message ? e.message : '作成に失敗しました。もう一度お試しください。');
+    });
+  });
+
+  // Enter キーで送信(数値・テキスト入力から)
+  [nameInput, dateInput, countInput].forEach(function (el) {
+    el.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter') { ev.preventDefault(); submitBtn.click(); }
+    });
+    el.addEventListener('input', function () { showError(''); });
+  });
+
+  applyNavLinks();
+  bindCopy();
+})();
+</script>
+</body>
+</html>

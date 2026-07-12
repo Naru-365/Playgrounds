@@ -5,10 +5,14 @@
 -- =====================================================================
 
 -- イベント(飲み会)本体
+-- event_date / expected_count は create.html からのイベント作成で使う
+-- (既存プロジェクトへは migration_002_event_create.sql で追加)。
 create table events (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   event_info text,
+  event_date date,
+  expected_count int check (expected_count between 2 and 50),
   status text not null default 'collecting'
     check (status in ('collecting', 'review', 'voting', 'decided')),
   decided_candidate_id uuid,

@@ -14,6 +14,12 @@
 2. このフォルダの [`setup.sql`](./setup.sql) を全文貼り付けて **Run**
 3. 実行結果に表示される **EVENT_ID** と **ORGANIZER_TOKEN** を控える
 
+> **既にセットアップ済みのプロジェクトを更新する場合**
+> `setup.sql` を作り直さず、[`migration_002_event_create.sql`](./migration_002_event_create.sql)
+> を SQL Editor に貼り付けて **Run** してください。`events` テーブルに
+> `event_date` / `expected_count` の2列を追加します(冪等・二重実行しても安全)。
+> 新規に `setup.sql` を実行した場合はこの2列が既に入っているので不要です。
+
 ## 3. フロントに接続情報を貼る
 
 1. ダッシュボード → **Settings → API** を開く
@@ -41,6 +47,24 @@ CLI 派の場合:
 supabase functions deploy suggest-candidates --no-verify-jwt
 ```
 
+### create-event 関数(イベント作成用)
+
+`create.html` からイベントを新規作成するための関数です。同じ要領でもう1つデプロイします。
+
+1. ダッシュボード → **Edge Functions** → **Deploy a new function** → 名前は `create-event`
+2. エディタに [`functions/create-event/index.ts`](./functions/create-event/index.ts) の中身を貼り付け
+3. **「Verify JWT」を必ずオフ**にしてデプロイ
+
+```sh
+supabase functions deploy create-event --no-verify-jwt
+```
+
+この関数は `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY`(どちらも Supabase が自動注入)
+だけで動きます。**`ANTHROPIC_API_KEY` は不要**です(LLM 呼び出しはありません)。
+
+`create.html` を使わず setup.sql のシードイベント1件だけで運用する場合は、
+この関数のデプロイは不要です。
+
 ## 5. ANTHROPIC_API_KEY を登録する
 
 1. https://console.anthropic.com → API Keys でキーを発行
@@ -57,6 +81,29 @@ supabase functions deploy suggest-candidates --no-verify-jwt
 
 ローカル確認は `python3 -m http.server 8000 -d 02_Nomicierge` などで OK。
 GitHub Pages / Vercel への公開設定は本リポジトリでは未構成です(必要になったら別途)。
+
+## 7. マルチイベント運用(create.html で毎回作る)
+
+飲み会ごとに `setup.sql` を叩き直す代わりに、`create.html` からイベントを
+量産できます(手順4で `create-event` 関数をデプロイ済みであることが前提)。
+
+1. ブラウザで `.../02_Nomicierge/create.html` を開く
+2. 飲み会名・開催日・想定人数を入力して **作戦会議をスタート** を押す
+3. 発行される **3つの URL** を用途ごとに配る
+
+| 誰に | URL |
+|---|---|
+| 参加者 | `.../answer.html?event=<EVENT_ID>` |
+| 参加者(投票) | `.../vote.html?event=<EVENT_ID>` |
+| 幹事(自分) | `.../organizer.html?event=<EVENT_ID>&key=<ORGANIZER_TOKEN>` |
+
+各画面は URL の `?event=<EVENT_ID>` を読み、**`js/config.js` の `EVENT_ID` より優先**します。
+そのため手順3で `config.js` に `EVENT_ID` を貼らなくても、URL さえ配れば複数イベントを
+並行して運用できます。`config.js` の `EVENT_ID` を使う既存の単一イベント運用も
+そのまま有効です(`?event=` が付かない場合のフォールバックになります)。
+
+幹事 URL の `?key=` は他人に配らないでください(この URL を持つ人だけが
+AI 提案の実行・投票の締め切りなど管理操作を行えます)。
 
 ## セキュリティ上の割り切り(6人の飲み会用)
 
