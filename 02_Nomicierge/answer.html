@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nomicierge｜条件を回答する</title>
+<meta name="description" content="飲み会コンシェルジュ Nomicierge。参加者の条件(出発駅・好み・喫煙・予算)を匿名で回答する画面。登録不要。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<style>
+/* ============ answer.html 固有レイアウト ============ */
+.page { padding: clamp(28px, 5vw, 56px) 0 72px; }
+.answer-shell { max-width: 720px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 32px); }
+
+/* ページヘッダ */
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13.5px; color: var(--text-muted);
+}
+.back-link:hover { color: var(--teal); text-decoration: none; }
+.page-head { text-align: center; margin-top: 14px; }
+.page-head .page-title { margin-top: 10px; }
+.page-head .lead { margin-top: 12px; color: var(--text-muted); font-size: 14.5px; }
+
+/* 進捗行 */
+.prog-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; margin-bottom: 10px;
+}
+.prog-row .p-label { font-size: 13px; color: var(--text-muted); }
+.prog-row .p-time { font-size: 13px; color: var(--teal); font-weight: 700; }
+
+/* セクション */
+.qsec { padding-top: 26px; margin-top: 26px; border-top: 1px solid var(--border); }
+.qsec:first-of-type { padding-top: 22px; margin-top: 22px; }
+.qsec .section-title { margin-bottom: 14px; }
+.sub-label { font-size: 12.5px; color: var(--text-faint); margin: 4px 0 9px; }
+.sub-label.mt { margin-top: 16px; }
+
+/* 駅名入力＋サジェスト */
+.station-box { position: relative; }
+.suggest {
+  position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+  background: var(--surface-2); border: 1px solid var(--border-strong);
+  border-radius: var(--radius-input); box-shadow: var(--shadow-card);
+  overflow: hidden; z-index: 20;
+}
+.sitem {
+  padding: 12px 15px; font-size: 14px; color: var(--text);
+  cursor: pointer; display: flex; align-items: baseline; gap: 9px;
+}
+.sitem:hover { background: rgba(61, 219, 192, 0.10); }
+.sitem .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); flex: none; position: relative; top: -1px; }
+.sitem .eki { font-size: 11px; color: var(--text-faint); }
+.privacy-note {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--text-faint); margin-top: 9px;
+}
+.privacy-note svg { flex: none; }
+
+.seg-inline { margin-top: 12px; max-width: 320px; }
+
+/* 予算グリッド内チップ行 */
+.anon-box .budget-sub { font-size: 13px; color: var(--text-muted); margin: 14px 0 10px; }
+
+/* 送信部（スティッキー） */
+.submit-wrap { position: sticky; bottom: 12px; margin-top: 30px; }
+.errbox {
+  font-size: 13px; color: var(--err);
+  background: rgba(255, 125, 144, 0.09); border: 1px solid rgba(255, 125, 144, 0.3);
+  border-radius: 10px; padding: 10px 13px; margin-bottom: 12px;
+}
+.foot-note { text-align: center; font-size: 12px; color: var(--text-faint); margin-top: 12px; }
+.page-foot-note { text-align: center; font-size: 12px; color: var(--text-faint); margin-top: 26px; }
+
+/* ============ 送信完了ビュー ============ */
+.done { text-align: center; animation: rise 0.45s ease both; }
+.done-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--surface-2); border: 1px solid var(--border-strong);
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-bottom: 20px; color: var(--coral);
+}
+.done-title {
+  font-family: var(--font-serif); font-size: clamp(20px, 4vw, 24px);
+  font-weight: 600; line-height: 1.7; letter-spacing: 0.05em; margin-bottom: 12px;
+}
+.done-sub { font-size: 14px; line-height: 1.9; color: var(--text-muted); margin-bottom: 26px; }
+.sum { text-align: left; margin-bottom: 24px; }
+.sum-row {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 14px;
+}
+.sum-row:last-child { border-bottom: none; }
+.sum-row .k { color: var(--text-muted); flex: none; }
+.sum-row .v { color: var(--text); text-align: right; }
+.sum-row .v.strong { font-weight: 700; }
+.sum-anon { display: inline-flex; align-items: center; gap: 6px; color: var(--teal); font-weight: 700; }
+.wait-note {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-size: 13px; color: var(--text-muted); margin-bottom: 20px;
+}
+.wait-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); animation: pulse 1.6s ease-in-out infinite; }
+.edit-link { font-size: 13px; color: var(--teal); text-decoration: underline; cursor: pointer; }
+.done-foot { font-size: 12px; color: var(--text-faint); margin-top: 22px; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes pulse { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .done { animation: none; } .wait-dot { animation: none; } }
+
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ===== 共通ナビ ===== -->
+<nav class="nav">
+  <a class="nav-brand" href="index.html" data-nomi-link="index.html">
+    <span class="bell-logo" aria-hidden="true"><i></i></span>
+    Nomicierge
+  </a>
+  <div class="nav-links">
+    <a href="answer.html" data-nomi-link="answer.html">回答する</a>
+    <a href="organizer.html" data-nomi-link="organizer.html">幹事画面</a>
+    <a class="btn-outline-coral" href="create.html" data-nomi-link="create.html">イベントを作る</a>
+  </div>
+</nav>
+
+<main class="page">
+<div class="answer-shell">
+
+  <!-- ===== 送信完了ビュー ===== -->
+  <section class="card done" id="viewDone" hidden>
+    <div class="done-icon" aria-hidden="true">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5.4" r="1.4" fill="currentColor"></circle><path d="M4.8 17a7.2 7.2 0 0 1 14.4 0Z" fill="currentColor"></path><rect x="3.4" y="17.6" width="17.2" height="1.9" rx=".95" fill="currentColor"></rect></svg>
+    </div>
+    <h2 class="done-title">ご回答、確かに承りました。</h2>
+    <p class="done-sub">皆さまの条件が揃いましたら、<br>コンシェルジュがお店をお選びします。</p>
+    <div class="sum card-sub">
+      <div class="sum-row"><span class="k">お名前</span><span class="v strong" id="sumName"></span></div>
+      <div class="sum-row"><span class="k">出発駅</span><span class="v strong" id="sumStation"></span></div>
+      <div class="sum-row"><span class="k">好み</span><span class="v" id="sumGenre"></span></div>
+      <div class="sum-row"><span class="k">おたばこ</span><span class="v" id="sumSmoke"></span></div>
+      <div class="sum-row"><span class="k">ご予算</span>
+        <span class="sum-anon"><svg width="11" height="13" viewBox="0 0 12 14" fill="none"><rect x="1" y="6" width="10" height="7" rx="1.5" fill="currentColor"></rect><path d="M3.5 6V4.5a2.5 2.5 0 0 1 5 0V6" stroke="currentColor" stroke-width="1.6" fill="none"></path></svg>回答済み(匿名)</span>
+      </div>
+    </div>
+    <div class="wait-note" id="waitNote"><span class="wait-dot"></span>皆さまの回答が揃うのを待っています…</div>
+    <a class="btn-cta" id="voteLink" href="vote.html" hidden style="margin-bottom:18px;">候補が届きました。投票へ進む →</a>
+    <div><a href="#" class="edit-link" id="editAgain">回答を修正する</a></div>
+    <p class="done-foot">回答内容はいつでも修正できます。</p>
+  </section>
+
+  <!-- ===== 入力フォーム ===== -->
+  <div id="viewForm">
+
+    <a class="back-link" href="index.html" data-nomi-link="index.html">← 戻る</a>
+    <header class="page-head">
+      <span class="eyebrow">NOMICIERGE</span>
+      <h1 class="page-title">あなたの条件を教えてください</h1>
+      <p class="lead">登録は不要です。回答内容から個人が特定されることはありません。</p>
+    </header>
+
+    <div class="card mt-4">
+
+      <!-- 進捗 -->
+      <div class="prog-row">
+        <span class="p-label">回答の進み具合</span>
+        <span class="p-time">約3分</span>
+      </div>
+      <div class="progress"><div class="progress-fill" id="progFill" style="width:0"></div></div>
+
+      <!-- はじめに（お名前） -->
+      <section class="qsec">
+        <h2 class="section-title">はじめに</h2>
+        <div class="field" style="margin-top:0">
+          <label for="nameInput">お名前</label>
+          <input class="input" id="nameInput" placeholder="ニックネームでOK(例: まつ)" autocomplete="off" maxlength="30">
+        </div>
+        <div class="privacy-note">投票のときに、どなたの回答かが分かるように表示されます。</div>
+      </section>
+
+      <!-- 出発駅 -->
+      <section class="qsec">
+        <h2 class="section-title">どこから向かいますか？</h2>
+        <div class="field" style="margin-top:0">
+          <label for="stationInput">出発駅</label>
+          <div class="station-box">
+            <input class="input" id="stationInput" placeholder="駅名を入力(例: 神田)" autocomplete="off">
+            <div class="suggest" id="suggestBox" hidden></div>
+          </div>
+        </div>
+        <div class="seg seg-inline" id="fromSeg"></div>
+        <div class="privacy-note">
+          <svg width="11" height="13" viewBox="0 0 12 14" fill="none"><rect x="1" y="6" width="10" height="7" rx="1.5" fill="currentColor"></rect><path d="M3.5 6V4.5a2.5 2.5 0 0 1 5 0V6" stroke="currentColor" stroke-width="1.6" fill="none"></path></svg>
+          駅名のみお伺いします。住所や現在地は使いません。
+        </div>
+      </section>
+
+      <!-- お店のご希望 -->
+      <section class="qsec">
+        <h2 class="section-title">お店のご希望</h2>
+        <div class="sub-label">ジャンル（複数選択可・任意）</div>
+        <div class="chip-row" id="genreRow"></div>
+        <div class="sub-label mt">雰囲気</div>
+        <div class="chip-row" id="moodRow"></div>
+        <div class="field">
+          <input class="input" id="moodNote" placeholder="ひとことあれば(例: 日本酒が豊富だと嬉しい)">
+        </div>
+      </section>
+
+      <!-- 喫煙 -->
+      <section class="qsec">
+        <h2 class="section-title">喫煙について</h2>
+        <div class="seg" id="smokeSeg"></div>
+      </section>
+
+      <!-- 予算（匿名） -->
+      <section class="qsec">
+        <div class="anon-box">
+          <div class="anon-head">
+            <svg width="15" height="17" viewBox="0 0 12 14" fill="none" style="color:var(--teal)"><rect x="1" y="6" width="10" height="7" rx="1.5" fill="currentColor"></rect><path d="M3.5 6V4.5a2.5 2.5 0 0 1 5 0V6" stroke="currentColor" stroke-width="1.6" fill="none"></path></svg>
+            この回答は幹事にも表示されません
+          </div>
+          <div class="anon-note">予算は匿名で集計され、個人の回答は誰にも開示されません。</div>
+          <div class="budget-sub">1人あたりの予算</div>
+          <div class="chip-row" id="budgetGrid"></div>
+        </div>
+      </section>
+
+      <!-- 送信（スティッキー） -->
+      <div class="submit-wrap">
+        <div class="errbox" id="errBox" hidden></div>
+        <button class="btn-cta" id="submitBtn" disabled>この内容で回答する →</button>
+        <p class="foot-note">登録・ログインは不要です。</p>
+      </div>
+
+    </div><!-- /card -->
+
+    <p class="page-foot-note">※画面・店舗名はイメージです</p>
+
+  </div><!-- /viewForm -->
+
+</div>
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* --- 内部リンクへ ?event= を伝播 --- */
+  function applyNavLinks() {
+    var els = document.querySelectorAll('[data-nomi-link]');
+    for (var i = 0; i < els.length; i++) {
+      els[i].setAttribute('href', NomiApi.link(els[i].getAttribute('data-nomi-link')));
+    }
+  }
+  applyNavLinks();
+
+  var STORAGE_KEY = 'nomicierge-s02';
+  var STATIONS = ['神田', '神保町', '新宿', '新橋', '渋谷', '品川', '池袋', '東京', '秋葉原', '御茶ノ水', '恵比寿', '中野', '五反田', '飯田橋'];
+  var GENRES = ['和食', 'イタリアン', '中華', '焼肉', '居酒屋', 'その他'];
+  var MOODS = ['ワイワイ', '落ち着いた個室', 'おしゃれ'];
+  var SMOKES = ['喫煙席が欲しい', '禁煙がよい', 'どちらでも'];
+  var BUDGETS = [
+    { label: '〜3,000円', sub: 'サクッと' },
+    { label: '3,000〜5,000円', sub: 'ほどよく' },
+    { label: '5,000〜8,000円', sub: 'しっかり' },
+    { label: '8,000円〜', sub: 'ちゃんとした席' }
+  ];
+
+  var state = {
+    name: '', station: '', from: 'work', genres: [], anyGenre: false,
+    mood: null, moodNote: '', smoke: null, budget: null,
+    submitted: false, focusStation: false, error: '', sending: false,
+    eventStatus: 'collecting'
+  };
+
+  function loadState() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (saved && typeof saved === 'object') {
+        state.name = typeof saved.name === 'string' ? saved.name : '';
+        state.station = typeof saved.station === 'string' ? saved.station : '';
+        state.from = saved.from === 'home' ? 'home' : 'work';
+        state.genres = Array.isArray(saved.genres) ? saved.genres.filter(function (g) { return GENRES.indexOf(g) >= 0; }) : [];
+        state.anyGenre = !!saved.anyGenre;
+        state.mood = MOODS.indexOf(saved.mood) >= 0 ? saved.mood : null;
+        state.moodNote = typeof saved.moodNote === 'string' ? saved.moodNote : '';
+        state.smoke = SMOKES.indexOf(saved.smoke) >= 0 ? saved.smoke : null;
+        state.budget = BUDGETS.some(function (b) { return b.label === saved.budget; }) ? saved.budget : null;
+        state.submitted = !!saved.submitted;
+      }
+    } catch (e) { /* 破損データは無視して初期状態で開始 */ }
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        name: state.name,
+        station: state.station, from: state.from, genres: state.genres, anyGenre: state.anyGenre,
+        mood: state.mood, moodNote: state.moodNote, smoke: state.smoke, budget: state.budget,
+        submitted: state.submitted
+      }));
+    } catch (e) { /* プライベートモード等では保存しない */ }
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  var viewForm = $('viewForm'), viewDone = $('viewDone');
+  var nameInput = $('nameInput');
+  var stationInput = $('stationInput'), suggestBox = $('suggestBox');
+  var moodNoteInput = $('moodNote');
+  var errBox = $('errBox'), submitBtn = $('submitBtn');
+  var progFill = $('progFill');
+  var voteLink = $('voteLink'), waitNote = $('waitNote');
+
+  // 予算の匿名回答を同じ端末から上書きするためだけの乱数キー(名前とは紐づかない)
+  function clientKey() {
+    var k = localStorage.getItem('nomicierge-client-key');
+    if (!k) {
+      if (crypto.randomUUID) {
+        k = crypto.randomUUID();
+      } else {
+        // 非セキュアコンテキスト用フォールバック(uuid 形式を維持する)
+        var b = new Uint8Array(16);
+        crypto.getRandomValues(b);
+        b[6] = (b[6] & 0x0f) | 0x40;
+        b[8] = (b[8] & 0x3f) | 0x80;
+        var h = Array.prototype.map.call(b, function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
+        k = h.slice(0, 8) + '-' + h.slice(8, 12) + '-' + h.slice(12, 16) + '-' + h.slice(16, 20) + '-' + h.slice(20);
+      }
+      localStorage.setItem('nomicierge-client-key', k);
+    }
+    return k;
+  }
+
+  /* --- 選択肢ボタンの生成 --- */
+  var fromBtns = [{ key: 'work', label: '職場から' }, { key: 'home', label: '自宅から' }].map(function (f) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = f.label;
+    b.addEventListener('click', function () { state.from = f.key; update(); });
+    $('fromSeg').appendChild(b);
+    return { key: f.key, el: b };
+  });
+
+  var genreBtns = GENRES.map(function (g) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip';
+    b.textContent = g;
+    b.addEventListener('click', function () {
+      state.anyGenre = false;
+      var i = state.genres.indexOf(g);
+      if (i >= 0) state.genres.splice(i, 1); else state.genres.push(g);
+      update();
+    });
+    $('genreRow').appendChild(b);
+    return { key: g, el: b };
+  });
+
+  var anyChipBtn = document.createElement('button');
+  anyChipBtn.type = 'button';
+  anyChipBtn.className = 'chip';
+  anyChipBtn.textContent = 'なんでもOK';
+  anyChipBtn.addEventListener('click', function () {
+    state.anyGenre = !state.anyGenre;
+    state.genres = [];
+    update();
+  });
+  $('genreRow').appendChild(anyChipBtn);
+
+  var moodBtns = MOODS.map(function (m) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip';
+    b.textContent = m;
+    b.addEventListener('click', function () {
+      state.mood = state.mood === m ? null : m;
+      update();
+    });
+    $('moodRow').appendChild(b);
+    return { key: m, el: b };
+  });
+
+  var smokeBtns = SMOKES.map(function (k) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = k;
+    b.addEventListener('click', function () { state.smoke = k; update(); });
+    $('smokeSeg').appendChild(b);
+    return { key: k, el: b };
+  });
+
+  var budgetBtns = BUDGETS.map(function (bd) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip';
+    b.textContent = bd.label;
+    b.addEventListener('click', function () { state.budget = bd.label; update(); });
+    $('budgetGrid').appendChild(b);
+    return { key: bd.label, el: b };
+  });
+
+  /* --- お名前 --- */
+  nameInput.addEventListener('input', function () {
+    state.name = nameInput.value;
+    state.error = '';
+    update();
+  });
+
+  /* --- 駅名入力とサジェスト --- */
+  stationInput.addEventListener('input', function () {
+    state.station = stationInput.value;
+    state.error = '';
+    update();
+  });
+  stationInput.addEventListener('focus', function () { state.focusStation = true; update(); });
+  stationInput.addEventListener('blur', function () {
+    setTimeout(function () { state.focusStation = false; update(); }, 120);
+  });
+
+  function renderSuggestions() {
+    var q = state.station.trim();
+    var list = (state.focusStation && q.length > 0)
+      ? STATIONS.filter(function (n) { return n.indexOf(q) === 0 && n !== q; }).slice(0, 4)
+      : [];
+    suggestBox.hidden = list.length === 0;
+    suggestBox.textContent = '';
+    list.forEach(function (name) {
+      var item = document.createElement('div');
+      item.className = 'sitem';
+      var dot = document.createElement('span');
+      dot.className = 'dot';
+      var eki = document.createElement('span');
+      eki.className = 'eki';
+      eki.textContent = '駅';
+      item.appendChild(dot);
+      item.appendChild(document.createTextNode(name));
+      item.appendChild(eki);
+      item.addEventListener('mousedown', function () {
+        state.station = name;
+        state.focusStation = false;
+        stationInput.value = name;
+        update();
+      });
+      suggestBox.appendChild(item);
+    });
+  }
+
+  moodNoteInput.addEventListener('input', function () {
+    state.moodNote = moodNoteInput.value;
+    update();
+  });
+
+  /* --- 送信 --- */
+  submitBtn.addEventListener('click', function () {
+    if (state.sending) return;
+    var a = answered();
+    if (!a.ready) {
+      var miss = [];
+      if (!a.a0) miss.push('お名前');
+      if (!a.a1) miss.push('出発駅');
+      if (!a.a3) miss.push('おたばこのご希望');
+      if (!a.a4) miss.push('ご予算');
+      state.error = miss.join('・') + ' をお聞かせください。';
+      update();
+      return;
+    }
+    state.error = '';
+
+    if (!NomiApi.enabled()) {
+      // Supabase 未設定時はローカルのみで完結(開発・プレビュー用)
+      state.submitted = true;
+      saveState();
+      update();
+      return;
+    }
+
+    state.sending = true;
+    update();
+    Promise.all([
+      NomiApi.upsert('responses', {
+        participant_name: state.name.trim(),
+        from_type: state.from,
+        station: state.station.trim(),
+        genres: state.genres,
+        any_genre: state.anyGenre,
+        mood: state.mood,
+        mood_note: state.moodNote.trim(),
+        smoke: state.smoke,
+        updated_at: new Date().toISOString()
+      }, 'event_id,participant_name'),
+      // 予算は名前を持たない別テーブルへ(匿名)
+      NomiApi.upsert('budget_votes', {
+        budget: state.budget,
+        client_key: clientKey()
+      }, 'event_id,client_key')
+    ]).then(function () {
+      state.sending = false;
+      state.submitted = true;
+      saveState();
+      update();
+    }, function (e) {
+      state.sending = false;
+      state.error = '送信に失敗しました(' + e.message + ')。電波の良いところでもう一度お試しください。';
+      update();
+    });
+  });
+
+  $('editAgain').addEventListener('click', function (e) {
+    e.preventDefault();
+    state.submitted = false;
+    saveState();
+    update();
+  });
+
+  /* --- 回答状況の判定 --- */
+  function answered() {
+    var a0 = state.name.trim().length > 0;
+    var a1 = state.station.trim().length > 0;
+    var a2 = state.anyGenre || state.genres.length > 0 || !!state.mood || state.moodNote.trim().length > 0;
+    var a3 = !!state.smoke;
+    var a4 = !!state.budget;
+    var requiredLeft = [a0, a1, a3, a4].filter(function (x) { return !x; }).length;
+    return {
+      a0: a0, a1: a1, a2: a2, a3: a3, a4: a4,
+      requiredLeft: requiredLeft,
+      doneCount: [a0, a1, a2, a3, a4].filter(Boolean).length,
+      ready: requiredLeft === 0
+    };
+  }
+
+  /* --- 状態 → DOM 反映 --- */
+  function update() {
+    var a = answered();
+
+    viewForm.hidden = state.submitted;
+    viewDone.hidden = !state.submitted;
+
+    if (state.submitted) {
+      $('sumName').textContent = state.name.trim();
+      $('sumStation').textContent = (state.from === 'work' ? '職場から・' : '自宅から・') + state.station.trim() + '駅';
+      $('sumGenre').textContent = state.anyGenre
+        ? 'なんでもOK'
+        : (state.genres.concat(state.mood ? [state.mood] : []).join('・') || '指定なし');
+      $('sumSmoke').textContent = state.smoke || '—';
+      var voting = state.eventStatus === 'voting' || state.eventStatus === 'decided';
+      voteLink.hidden = !voting;
+      voteLink.textContent = state.eventStatus === 'decided' ? '決定しました。結果を見る →' : '候補が届きました。投票へ進む →';
+      voteLink.setAttribute('href', NomiApi.link('vote.html'));
+      waitNote.hidden = voting || !NomiApi.enabled();
+      return;
+    }
+
+    fromBtns.forEach(function (b) { b.el.classList.toggle('selected', state.from === b.key); });
+
+    genreBtns.forEach(function (b) {
+      var sel = !state.anyGenre && state.genres.indexOf(b.key) >= 0;
+      b.el.classList.toggle('selected', sel);
+    });
+    anyChipBtn.classList.toggle('selected', state.anyGenre);
+
+    moodBtns.forEach(function (b) { b.el.classList.toggle('selected', state.mood === b.key); });
+    smokeBtns.forEach(function (b) { b.el.classList.toggle('selected', state.smoke === b.key); });
+    budgetBtns.forEach(function (b) { b.el.classList.toggle('selected', state.budget === b.key); });
+
+    progFill.style.width = (a.doneCount / 5 * 100) + '%';
+
+    errBox.hidden = !state.error;
+    errBox.textContent = state.error;
+
+    submitBtn.disabled = state.sending || !a.ready;
+    submitBtn.textContent = state.sending
+      ? '送信中…'
+      : (a.ready
+        ? 'この内容で回答する →'
+        : 'この内容で回答する（あと' + a.requiredLeft + '項目）');
+
+    renderSuggestions();
+    saveState();
+  }
+
+  loadState();
+  nameInput.value = state.name;
+  stationInput.value = state.station;
+  moodNoteInput.value = state.moodNote;
+  update();
+
+  /* --- イベント情報の取得とステータスのポーリング --- */
+  if (NomiApi.enabled()) {
+    var refreshEvent = function () {
+      NomiApi.getEvent().then(function (ev) {
+        if (ev.status !== state.eventStatus) {
+          state.eventStatus = ev.status;
+          update();
+        }
+      }, function () { /* 一時的な通信エラーは無視して次のポーリングに任せる */ });
+    };
+    NomiApi.startPolling(refreshEvent, 10000);
+  }
+})();
+</script>
+</body>
+</html>
