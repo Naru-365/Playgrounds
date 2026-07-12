@@ -66,7 +66,12 @@
 .anon-box .budget-sub { font-size: 13px; color: var(--text-muted); margin: 14px 0 10px; }
 
 /* 送信部（スティッキー） */
-.submit-wrap { position: sticky; bottom: 12px; margin-top: 30px; }
+.submit-wrap {
+  position: sticky; bottom: 0; margin-top: 30px;
+  padding: 16px 0 14px;
+  /* 下のコンテンツが透けないよう、カード面色でフェードする背景を敷く */
+  background: linear-gradient(to top, var(--surface) 86%, rgba(36, 27, 46, 0));
+}
 .errbox {
   font-size: 13px; color: var(--err);
   background: rgba(255, 125, 144, 0.09); border: 1px solid rgba(255, 125, 144, 0.3);

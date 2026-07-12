@@ -114,7 +114,7 @@ a:hover { text-decoration: underline; }
 }
 .nav-brand:hover { text-decoration: none; }
 .nav-links { display: flex; align-items: center; gap: clamp(8px, 2.5vw, 26px); }
-.nav-links a { color: var(--text); font-size: 14px; }
+.nav-links a { color: var(--text); font-size: 14px; white-space: nowrap; }
 .nav-links a:hover { color: var(--teal); text-decoration: none; }
 .btn-outline-coral {
   display: inline-block;
@@ -126,6 +126,15 @@ a:hover { text-decoration: underline; }
   transition: background 0.2s, color 0.2s;
 }
 .btn-outline-coral:hover { background: var(--coral); color: #fff !important; text-decoration: none; }
+/* 狭幅でリンクが折り返して崩れないようにする */
+@media (max-width: 480px) {
+  .nav { padding: 10px 12px; gap: 8px; }
+  .nav-brand { font-size: 17px; gap: 7px; }
+  .nav-brand .bell-logo { width: 24px; height: 21px; }
+  .nav-links { gap: 10px; }
+  .nav-links a { font-size: 12px; }
+  .btn-outline-coral { padding: 7px 10px; font-size: 12px !important; border-radius: 8px; }
+}
 
 /* ベルロゴ（クローシュ）: CSS 描画 */
 .bell-logo {
