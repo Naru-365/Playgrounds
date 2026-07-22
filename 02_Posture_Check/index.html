@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>あなたの姿勢タイプ診断｜理学療法士監修</title>
+<meta name="description" content="10の質問に答えるだけ。理学療法士監修の姿勢タイプ診断。あなたはスマホ首型?猫背型?反り腰型?タイプ別おすすめストレッチ付き。">
+<style>
+:root{
+  --bg-0:#0a0e1f;
+  --bg-1:#101533;
+  --bg-2:#1b2148;
+  --ink:#f8f4e3;
+  --ink-dim:#cbd0e0;
+  --muted:#8b93a8;
+  --gold:#ffd166;
+  --gold-deep:#f7a93b;
+  --pink:#ef476f;
+  --lime:#06d6a0;
+  --sky:#4cc9f0;
+  --line:rgba(248,244,227,.12);
+  --line-soft:rgba(248,244,227,.06);
+  --card:rgba(255,255,255,.05);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg-0);color:var(--ink);overflow-x:hidden}
+body{
+  font-family:ui-rounded,"Hiragino Maru Gothic ProN","Hiragino Sans",system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  font-weight:500;line-height:1.7;letter-spacing:.02em;
+  background:
+    radial-gradient(900px 500px at 80% -10%,rgba(239,71,111,.18),transparent 60%),
+    radial-gradient(900px 500px at -10% 30%,rgba(76,201,240,.14),transparent 60%),
+    radial-gradient(900px 500px at 100% 80%,rgba(6,214,160,.12),transparent 60%),
+    radial-gradient(1200px 700px at 50% 110%,rgba(255,209,102,.10),transparent 60%),
+    linear-gradient(180deg,var(--bg-0) 0%,var(--bg-1) 60%,var(--bg-2) 100%);
+  min-height:100vh;
+}
+.mincho{font-family:ui-serif,"Hiragino Mincho ProN","Yu Mincho",Georgia,serif}
+.tabular{font-variant-numeric:tabular-nums}
+
+.wrap{max-width:560px;margin:0 auto;padding:0 20px}
+
+/* ===== Floating background blobs ===== */
+.blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;animation:drift 22s ease-in-out infinite}
+.blob.b1{width:380px;height:380px;background:rgba(239,71,111,.22);top:-100px;left:-120px}
+.blob.b2{width:340px;height:340px;background:rgba(76,201,240,.20);top:35%;right:-140px;animation-delay:-7s;animation-duration:26s}
+.blob.b3{width:420px;height:420px;background:rgba(255,209,102,.16);bottom:-160px;left:25%;animation-delay:-14s;animation-duration:28s}
+@keyframes drift{
+  0%,100%{transform:translate(0,0) scale(1)}
+  33%{transform:translate(40px,-30px) scale(1.06)}
+  66%{transform:translate(-30px,40px) scale(.96)}
+}
+
+main{position:relative;z-index:1}
+.screen{display:none;padding:28px 0 60px;animation:fadeUp .45s ease both}
+.screen.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== Landing ===== */
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--line);border-radius:999px;
+  padding:6px 16px;font-size:12px;color:var(--ink-dim);
+  background:rgba(255,255,255,.04);letter-spacing:.12em;
+}
+.badge .dot{width:8px;height:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 12px var(--lime)}
+.hero{text-align:center;padding-top:40px}
+.hero h1{
+  font-size:clamp(30px,8.5vw,44px);line-height:1.35;letter-spacing:.04em;
+  margin:22px 0 10px;font-weight:800;
+}
+.hero h1 .grad{
+  background:linear-gradient(90deg,var(--sky),var(--lime) 45%,var(--gold));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero .lead{color:var(--ink-dim);font-size:15px;margin-bottom:8px}
+.hero .meta{color:var(--muted);font-size:13px;letter-spacing:.08em}
+
+.type-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:26px 0 8px}
+.type-chips span{
+  font-size:12px;padding:7px 14px;border-radius:999px;border:1px solid var(--line);
+  background:rgba(255,255,255,.04);color:var(--ink-dim);letter-spacing:.04em;
+}
+.type-chips span i{font-style:normal;margin-right:5px}
+
+.btn{
+  display:block;width:100%;border:none;cursor:pointer;
+  font-family:inherit;font-weight:800;letter-spacing:.08em;
+  border-radius:18px;transition:transform .15s ease,box-shadow .15s ease,filter .15s ease;
+}
+.btn:active{transform:scale(.97)}
+.btn-primary{
+  margin-top:30px;padding:18px 20px;font-size:17px;color:#1a1405;
+  background:linear-gradient(135deg,var(--gold),var(--gold-deep));
+  box-shadow:0 10px 30px rgba(255,209,102,.28);
+}
+.btn-primary:hover{filter:brightness(1.06)}
+.btn-ghost{
+  margin-top:14px;padding:15px 20px;font-size:14px;color:var(--ink-dim);
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+}
+.note{margin-top:22px;font-size:11px;color:var(--muted);line-height:1.8;text-align:center}
+
+/* ===== Quiz ===== */
+.progress-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.progress-head .qnum{font-size:13px;color:var(--muted);letter-spacing:.12em}
+.progress-head .qnum b{color:var(--gold);font-size:20px}
+.bar{height:8px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.bar i{
+  display:block;height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--sky),var(--lime) 55%,var(--gold));
+  transition:width .35s ease;
+}
+.q-card{margin-top:26px;animation:fadeUp .35s ease both}
+.q-emoji{font-size:40px;line-height:1;margin-bottom:14px}
+.q-title{font-size:clamp(19px,5.4vw,23px);font-weight:800;line-height:1.55;letter-spacing:.03em;min-height:3.1em}
+.opts{margin-top:22px;display:grid;gap:12px}
+.opt{
+  text-align:left;cursor:pointer;font-family:inherit;font-size:15px;font-weight:600;
+  color:var(--ink);line-height:1.55;
+  padding:16px 18px;border-radius:16px;
+  border:1px solid var(--line);background:var(--card);
+  transition:transform .12s ease,border-color .12s ease,background .12s ease;
+  display:flex;align-items:center;gap:12px;
+}
+.opt .key{
+  flex:none;width:28px;height:28px;border-radius:50%;
+  display:grid;place-items:center;font-size:12px;font-weight:800;
+  border:1px solid var(--line);color:var(--muted);
+}
+.opt:hover{border-color:rgba(255,209,102,.5);background:rgba(255,209,102,.06)}
+.opt:active{transform:scale(.98)}
+.opt.picked{border-color:var(--gold);background:rgba(255,209,102,.12)}
+.opt.picked .key{background:var(--gold);color:#1a1405;border-color:var(--gold)}
+.back-link{
+  margin-top:22px;background:none;border:none;cursor:pointer;font-family:inherit;
+  color:var(--muted);font-size:13px;letter-spacing:.06em;padding:6px 2px;
+}
+.back-link:hover{color:var(--ink-dim)}
+
+/* ===== Result ===== */
+.result-head{text-align:center;padding-top:8px}
+.result-head .small{font-size:13px;color:var(--muted);letter-spacing:.2em}
+.result-card{
+  margin-top:16px;border-radius:26px;padding:30px 22px 26px;text-align:center;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+  position:relative;overflow:hidden;
+}
+.result-card::before{
+  content:"";position:absolute;inset:-40%;
+  background:radial-gradient(circle at 50% 0%,var(--accent,rgba(76,201,240,.25)),transparent 55%);
+  pointer-events:none;
+}
+.result-card>*{position:relative}
+.type-label{font-size:12px;letter-spacing:.3em;color:var(--muted)}
+.type-name{
+  font-size:clamp(24px,7.2vw,38px);font-weight:800;line-height:1.4;letter-spacing:.04em;margin:8px 0 2px;
+}
+.type-en{font-size:12px;letter-spacing:.24em;color:var(--muted);text-transform:uppercase}
+.type-figure{margin:18px auto 6px;width:130px;height:150px}
+.type-catch{
+  margin-top:10px;font-size:15px;font-weight:700;line-height:1.8;color:var(--ink-dim);
+}
+.score-block{margin-top:26px;text-align:left}
+.score-row{display:flex;align-items:center;gap:10px;margin-top:10px}
+.score-row .nm{flex:none;width:7.5em;font-size:12px;color:var(--ink-dim);letter-spacing:.02em}
+.score-row .track{flex:1;height:9px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.score-row .track i{display:block;height:100%;width:0;border-radius:99px;transition:width .8s cubic-bezier(.22,1,.36,1)}
+.score-row .pc{flex:none;width:3.2em;text-align:right;font-size:12px;color:var(--muted)}
+
+.sec{margin-top:30px}
+.sec h2{
+  font-size:16px;font-weight:800;letter-spacing:.1em;display:flex;align-items:center;gap:10px;
+}
+.sec h2::after{content:"";flex:1;height:1px;background:var(--line)}
+.plain-card{
+  margin-top:14px;border:1px solid var(--line);border-radius:18px;
+  background:var(--card);padding:18px;
+}
+.plain-card ul{list-style:none}
+.plain-card li{
+  font-size:14px;color:var(--ink-dim);padding:6px 0 6px 26px;position:relative;line-height:1.7;
+}
+.plain-card li::before{
+  content:"✓";position:absolute;left:2px;top:6px;color:var(--lime);font-weight:800;
+}
+.risk-card li::before{content:"⚠";color:var(--gold)}
+
+.stretch{margin-top:14px;border:1px solid var(--line);border-radius:18px;background:var(--card);padding:18px}
+.stretch .st-head{display:flex;align-items:center;gap:12px}
+.stretch .st-emoji{font-size:28px;line-height:1}
+.stretch .st-name{font-size:15px;font-weight:800}
+.stretch .st-time{
+  margin-left:auto;flex:none;font-size:11px;color:#1a1405;font-weight:800;
+  background:linear-gradient(135deg,var(--gold),var(--gold-deep));
+  border-radius:999px;padding:4px 10px;letter-spacing:.04em;
+}
+.stretch ol{margin-top:10px;padding-left:22px}
+.stretch ol li{font-size:13.5px;color:var(--ink-dim);padding:3px 0;line-height:1.7}
+
+.share-card{
+  margin-top:30px;text-align:center;border-radius:20px;padding:22px 18px;
+  border:1px dashed rgba(255,209,102,.45);background:rgba(255,209,102,.06);
+}
+.share-card p{font-size:14px;color:var(--ink-dim);line-height:1.9}
+.share-card .cam{font-size:26px}
+
+footer{position:relative;z-index:1;text-align:center;padding:10px 20px 46px;color:var(--muted);font-size:11px;line-height:1.9}
+</style>
+</head>
+<body>
+
+<div class="blobs" aria-hidden="true">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+</div>
+
+<main>
+  <!-- ===== Landing ===== -->
+  <section id="screen-landing" class="screen active">
+    <div class="wrap hero">
+      <span class="badge"><span class="dot"></span>理学療法士監修セルフチェック</span>
+      <h1>あなたの<br><span class="grad">姿勢タイプ</span>診断</h1>
+      <p class="lead">10の質問に答えるだけで、あなたの姿勢のクセと<br>今日からできるストレッチがわかります。</p>
+      <p class="meta">所要時間 約1分・全10問</p>
+      <div class="type-chips">
+        <span><i>📱</i>スマホ首型</span>
+        <span><i>🐈</i>猫背・巻き肩型</span>
+        <span><i>🍑</i>反り腰型</span>
+        <span><i>🪑</i>骨盤後傾型</span>
+      </div>
+      <button class="btn btn-primary" onclick="startQuiz()">診断をはじめる →</button>
+      <p class="note">※本診断は医療的な診断ではなく、姿勢習慣のセルフチェックです。<br>痛みやしびれがある場合は医療機関にご相談ください。</p>
+    </div>
+  </section>
+
+  <!-- ===== Quiz ===== -->
+  <section id="screen-quiz" class="screen">
+    <div class="wrap">
+      <div class="progress-head">
+        <span class="qnum">QUESTION <b id="q-now" class="tabular">1</b><span class="tabular"> / 10</span></span>
+      </div>
+      <div class="bar"><i id="q-bar"></i></div>
+      <div class="q-card" id="q-card">
+        <div class="q-emoji" id="q-emoji"></div>
+        <div class="q-title" id="q-title"></div>
+        <div class="opts" id="q-opts"></div>
+        <button class="back-link" id="q-back" onclick="prevQuestion()">← ひとつ前の質問に戻る</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Result ===== -->
+  <section id="screen-result" class="screen">
+    <div class="wrap">
+      <div class="result-head"><span class="small">RESULT — 診断結果</span></div>
+
+      <div class="result-card" id="r-card">
+        <div class="type-label">あなたの姿勢タイプは…</div>
+        <div class="type-name mincho" id="r-name"></div>
+        <div class="type-en" id="r-en"></div>
+        <div class="type-figure" id="r-figure"></div>
+        <div class="type-catch" id="r-catch"></div>
+        <div class="score-block" id="r-scores"></div>
+      </div>
+
+      <div class="sec">
+        <h2>🔍 このタイプの特徴</h2>
+        <div class="plain-card"><ul id="r-features"></ul></div>
+      </div>
+
+      <div class="sec">
+        <h2>⏳ 放置するとどうなる?</h2>
+        <div class="plain-card risk-card"><ul id="r-risks"></ul></div>
+      </div>
+
+      <div class="sec">
+        <h2>💪 おすすめストレッチ 3選</h2>
+        <div id="r-stretches"></div>
+      </div>
+
+      <div class="share-card">
+        <div class="cam">📸</div>
+        <p><b>結果をスクショしてストーリーズでシェア!</b><br>「#姿勢タイプ診断」であなたのタイプを教えてください。</p>
+      </div>
+
+      <button class="btn btn-primary" onclick="startQuiz()">もう一度診断する</button>
+      <button class="btn btn-ghost" onclick="showScreen('landing')">最初の画面に戻る</button>
+    </div>
+  </section>
+</main>
+
+<footer>
+  本アプリは姿勢習慣のセルフチェックを目的としたものであり、医学的診断に代わるものではありません。<br>
+  痛み・しびれ・強い違和感がある場合は、運動を中止し医療機関にご相談ください。
+</footer>
+
+<script>
+"use strict";
+
+/* ============================================================
+   タイプ定義
+   neck : スマホ首・ストレートネック型
+   kypho: 猫背・巻き肩型
+   lordo: 反り腰型
+   flat : 骨盤後傾・フラットバック型
+   ============================================================ */
+const TYPES = {
+  neck: {
+    name:"スマホ首・\nストレートネック型",
+    en:"Text Neck Type",
+    accent:"rgba(76,201,240,.30)",
+    color:"#4cc9f0",
+    catch:"頭が肩より前へ。首まわりに毎日ボウリング球1個ぶんの負担がかかっているかも。",
+    features:[
+      "画面を見るとき、顔が前に突き出やすい",
+      "首の後ろ〜肩上部のこりが慢性化しやすい",
+      "あごが上がり、首の自然なカーブが失われがち",
+      "夕方になると首の付け根が重だるくなる"
+    ],
+    risks:[
+      "慢性的な首こり・緊張型の頭痛につながりやすい",
+      "首のカーブ減少で衝撃吸収がしにくくなる",
+      "フェイスラインのたるみ・二重あごの一因にも"
+    ],
+    stretches:[
+      {emoji:"🙆", name:"あご引きエクササイズ(チンタック)", time:"10回×2セット",
+       steps:["背すじを伸ばして座り、目線はまっすぐ前へ","あごを水平に引き、後頭部を後ろへスライドさせる","首の後ろが軽く伸びる位置で3秒キープ","力を抜いて戻す。反動をつけずゆっくり繰り返す"]},
+      {emoji:"🦢", name:"首の前側(斜角筋)ストレッチ", time:"左右20秒ずつ",
+       steps:["右手で左の鎖骨の下を軽く押さえる","あごを少し上げ、顔を右斜め上へゆっくり向ける","首の左前側が伸びるのを感じながら20秒キープ","反対側も同様に行う"]},
+      {emoji:"🧱", name:"壁つき姿勢リセット", time:"30秒×2セット",
+       steps:["かかと・お尻・背中を壁につけて立つ","あごを引き、後頭部を壁に近づける","腰と壁の隙間は手のひら1枚を目安に","呼吸を止めずに30秒キープ"]}
+    ]
+  },
+  kypho: {
+    name:"猫背・巻き肩型",
+    en:"Rounded Shoulder Type",
+    accent:"rgba(239,71,111,.30)",
+    color:"#ef476f",
+    catch:"胸が閉じて背中が丸く。呼吸まで浅くなっているかもしれません。",
+    features:[
+      "肩が内側に巻き込み、胸を張りにくい",
+      "背中(肩甲骨まわり)の重だるさを感じやすい",
+      "デスクワークで背中が丸まりやすい",
+      "深呼吸をすると胸が開きにくい感覚がある"
+    ],
+    risks:[
+      "肩こり・四十肩など肩トラブルのリスク増",
+      "呼吸が浅くなり疲れやすさにつながる",
+      "見た目年齢が上がって見えやすい"
+    ],
+    stretches:[
+      {emoji:"🚪", name:"胸開き(大胸筋)ストレッチ", time:"左右30秒ずつ",
+       steps:["壁の横に立ち、肘を90度に曲げて壁につける","肘の高さは肩と同じくらいに","体を壁と反対側へゆっくりひねる","胸の前が伸びるのを感じて30秒キープ"]},
+      {emoji:"🦋", name:"肩甲骨よせ(タオルローイング)", time:"15回×2セット",
+       steps:["タオルの両端を持ち、腕を前に伸ばす","肘を後ろに引き、タオルを胸に引き寄せる","肩甲骨を背骨に寄せるイメージで2秒キープ","肩がすくまないように注意して繰り返す"]},
+      {emoji:"🐱", name:"キャット&ドッグ", time:"10回×2セット",
+       steps:["四つばいになり、手は肩の下・膝は股関節の下","息を吐きながら背中を丸め、目線はおへそへ","息を吸いながら背中を反らせ、目線は斜め前へ","呼吸に合わせてゆっくり繰り返す"]}
+    ]
+  },
+  lordo: {
+    name:"反り腰型",
+    en:"Sway Back Type",
+    accent:"rgba(255,209,102,.30)",
+    color:"#ffd166",
+    catch:"腰のカーブが強め。がんばり屋の腰が、休めていないサインです。",
+    features:[
+      "仰向けで寝ると腰と床の隙間が大きい",
+      "お腹が前に出て、お尻が後ろに突き出て見える",
+      "長く立っていると腰が張ってくる",
+      "ヒールや立ち仕事で腰の反りが強くなりがち"
+    ],
+    risks:[
+      "慢性的な腰の張り・腰痛につながりやすい",
+      "ぽっこりお腹が定着しやすい",
+      "太もも前側の張り・脚のラインの崩れの一因に"
+    ],
+    stretches:[
+      {emoji:"🧎", name:"腸腰筋(股関節前)ストレッチ", time:"左右30秒ずつ",
+       steps:["片膝立ちになり、後ろ脚の膝を床につける","骨盤を軽く後ろに倒し、お腹に力を入れる","体重を前にかけ、後ろ脚の付け根を伸ばす","腰を反らさないよう注意して30秒キープ"]},
+      {emoji:"🤱", name:"膝かかえ(腰まるめ)ストレッチ", time:"30秒×2セット",
+       steps:["仰向けに寝て、両膝を胸にかかえる","腰が床に沈むのを感じながらリラックス","呼吸を止めずに30秒キープ","ゆっくり左右に揺れると腰まわりがほぐれる"]},
+      {emoji:"🎈", name:"ドローイン(腹圧トレーニング)", time:"10回×2セット",
+       steps:["仰向けで膝を立て、腰と床の隙間をなくすイメージ","息を吐きながらお腹をゆっくりへこませる","へこませたまま浅い呼吸で5秒キープ","力を抜いて戻す。腰で押しつけすぎない"]}
+    ]
+  },
+  flat: {
+    name:"骨盤後傾・\nフラットバック型",
+    en:"Flat Back Type",
+    accent:"rgba(6,214,160,.30)",
+    color:"#06d6a0",
+    catch:"骨盤が後ろに倒れて背骨がまっすぐ。楽な座り方が、クセになっています。",
+    features:[
+      "椅子に浅く座り、骨盤が後ろに倒れやすい",
+      "お尻が平べったく見え、膝が軽く曲がりがち",
+      "背骨のS字カーブが少なく、衝撃を吸収しにくい",
+      "長時間座ると腰からお尻にかけて重くなる"
+    ],
+    risks:[
+      "座り腰痛・お尻まわりの慢性的なだるさ",
+      "お尻の筋力低下でヒップラインが下がりやすい",
+      "歩行時の衝撃が腰にダイレクトに伝わりやすい"
+    ],
+    stretches:[
+      {emoji:"🪑", name:"骨盤前後ゆらし(ペルビックチルト)", time:"15回×2セット",
+       steps:["椅子に座り、坐骨(お尻の骨)を感じる","骨盤を前に倒し、軽く胸を張る","次に骨盤を後ろに倒し、背中を丸める","前後にゆっくり動かし、真ん中で止める感覚を掴む"]},
+      {emoji:"🍖", name:"もも裏(ハムストリングス)ストレッチ", time:"左右30秒ずつ",
+       steps:["椅子に浅く座り、片脚を前に伸ばす","つま先を上げ、かかとを床につける","背すじを伸ばしたまま股関節から前に倒れる","もも裏が伸びるのを感じて30秒キープ"]},
+      {emoji:"🌉", name:"ヒップリフト", time:"10回×2セット",
+       steps:["仰向けで膝を立て、足は腰幅に開く","お尻を締めながらゆっくり持ち上げる","肩から膝が一直線になったら2秒キープ","背中を反らせすぎず、ゆっくり下ろす"]}
+    ]
+  }
+};
+
+/* 同点時の優先順位(現代の生活習慣で頻度が高い順) */
+const TIE_ORDER = ["neck","kypho","lordo","flat"];
+
+/* ============================================================
+   質問データ:各選択肢が各タイプへ加点
+   ============================================================ */
+const QUESTIONS = [
+  {emoji:"📱", title:"1日にスマホを見ている時間は、合計どのくらい?",
+   opts:[
+     {label:"5時間以上", score:{neck:3}},
+     {label:"3〜5時間くらい", score:{neck:2}},
+     {label:"1〜3時間くらい", score:{neck:1}},
+     {label:"1時間未満", score:{}}
+   ]},
+  {emoji:"💻", title:"デスクワークや作業中、気づくと自分はどうなっている?",
+   opts:[
+     {label:"画面に顔がどんどん近づいている", score:{neck:2,kypho:1}},
+     {label:"背中が丸まっている", score:{kypho:2}},
+     {label:"浅く座って背もたれに寄りかかっている", score:{flat:2}},
+     {label:"わりと良い姿勢を保てている", score:{}}
+   ]},
+  {emoji:"👂", title:"横から鏡や写真で見たとき、耳の位置は肩の真上にある?",
+   opts:[
+     {label:"かなり前に出ている", score:{neck:3}},
+     {label:"やや前に出ている", score:{neck:2}},
+     {label:"ほぼ真上にある", score:{}},
+     {label:"確認したことがない/わからない", score:{neck:1}}
+   ]},
+  {emoji:"🛏️", title:"仰向けで寝たとき、腰と床のあいだの隙間は?",
+   opts:[
+     {label:"手のひらがすっぽり入って余裕がある", score:{lordo:3}},
+     {label:"手のひら1枚がちょうど入るくらい", score:{}},
+     {label:"ほとんど隙間がない", score:{flat:2}},
+     {label:"仰向け自体が腰につらい", score:{lordo:2}}
+   ]},
+  {emoji:"🧱", title:"壁にかかと・お尻・背中をつけて立つと、後頭部は?",
+   opts:[
+     {label:"意識しないと壁につかない", score:{neck:2,kypho:1}},
+     {label:"つくけれど、あごが上がってしまう", score:{neck:1}},
+     {label:"自然に壁につく", score:{}},
+     {label:"腰の反りが強くて窮屈に感じる", score:{lordo:2}}
+   ]},
+  {emoji:"😖", title:"ふだん一番つらさを感じるのはどこ?",
+   opts:[
+     {label:"首すじ〜首の付け根がガチガチ", score:{neck:2}},
+     {label:"肩甲骨まわり・背中が重い", score:{kypho:2}},
+     {label:"腰が張る・反ると痛い", score:{lordo:2}},
+     {label:"特にない/座るとお尻や腰が重い", score:{flat:1}}
+   ]},
+  {emoji:"📷", title:"ふと写った立ち姿の写真。気になるのはどれ?",
+   opts:[
+     {label:"顔が前に出ている", score:{neck:2}},
+     {label:"背中が丸くて肩が内に入っている", score:{kypho:2}},
+     {label:"お腹が前に出て腰が反っている", score:{lordo:2}},
+     {label:"お尻が平らで膝が軽く曲がっている", score:{flat:2}}
+   ]},
+  {emoji:"👠", title:"ヒールを履く・長時間の立ち仕事をすることは?",
+   opts:[
+     {label:"ほぼ毎日ある", score:{lordo:2}},
+     {label:"ときどきある", score:{lordo:1}},
+     {label:"ほとんどない", score:{}},
+     {label:"むしろ座りっぱなしの毎日", score:{flat:1,kypho:1}}
+   ]},
+  {emoji:"🪑", title:"座り方のクセ、当てはまるのは?",
+   opts:[
+     {label:"つい脚を組んでしまう", score:{kypho:1,lordo:1}},
+     {label:"浅く座って骨盤が後ろに倒れる", score:{flat:2}},
+     {label:"あぐら・横座りが多い", score:{flat:1}},
+     {label:"深く座って背もたれを使えている", score:{}}
+   ]},
+  {emoji:"🫁", title:"胸を張って大きく深呼吸。どう感じる?",
+   opts:[
+     {label:"胸が開きにくい/肩がすくむ", score:{kypho:2}},
+     {label:"腰が反ってしまう感じがする", score:{lordo:2}},
+     {label:"首の後ろが詰まる感じがする", score:{neck:2}},
+     {label:"気持ちよく吸える", score:{}}
+   ]}
+];
+
+/* ============================================================
+   状態とロジック
+   ============================================================ */
+let currentQ = 0;
+let answers = [];   // 質問ごとに選んだ選択肢 index
+
+function showScreen(name){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  const el = document.getElementById("screen-"+name);
+  el.classList.remove("active");
+  void el.offsetWidth;              // アニメーション再発火
+  el.classList.add("active");
+  window.scrollTo({top:0,behavior:"instant"});
+}
+
+function startQuiz(){
+  currentQ = 0;
+  answers = [];
+  showScreen("quiz");
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = QUESTIONS[currentQ];
+  document.getElementById("q-now").textContent = currentQ+1;
+  document.getElementById("q-bar").style.width = ((currentQ)/QUESTIONS.length*100)+"%";
+  document.getElementById("q-emoji").textContent = q.emoji;
+  document.getElementById("q-title").textContent = q.title;
+  document.getElementById("q-back").style.visibility = currentQ===0 ? "hidden" : "visible";
+
+  const box = document.getElementById("q-opts");
+  box.innerHTML = "";
+  const keys = ["A","B","C","D"];
+  q.opts.forEach((opt,i)=>{
+    const b = document.createElement("button");
+    b.className = "opt" + (answers[currentQ]===i ? " picked" : "");
+    b.innerHTML = `<span class="key">${keys[i]}</span><span>${opt.label}</span>`;
+    b.onclick = ()=>pickOption(i,b);
+    box.appendChild(b);
+  });
+
+  const card = document.getElementById("q-card");
+  card.style.animation = "none";
+  void card.offsetWidth;
+  card.style.animation = "";
+}
+
+let locking = false;
+function pickOption(i, btn){
+  if(locking) return;
+  locking = true;
+  answers[currentQ] = i;
+  btn.classList.add("picked");
+  setTimeout(()=>{
+    locking = false;
+    if(currentQ < QUESTIONS.length-1){
+      currentQ++;
+      renderQuestion();
+    }else{
+      showResult();
+    }
+  }, 280);
+}
+
+function prevQuestion(){
+  if(currentQ>0){ currentQ--; renderQuestion(); }
+}
+
+function calcScores(){
+  const total = {neck:0,kypho:0,lordo:0,flat:0};
+  answers.forEach((ai,qi)=>{
+    const sc = QUESTIONS[qi].opts[ai].score;
+    for(const k in sc) total[k] += sc[k];
+  });
+  return total;
+}
+
+function decideType(scores){
+  let best = TIE_ORDER[0];
+  for(const k of TIE_ORDER){
+    if(scores[k] > scores[best]) best = k;
+  }
+  return best;
+}
+
+/* 姿勢の側面シルエット(簡易SVG) */
+function figureSVG(typeKey, color){
+  // 背骨ラインをタイプごとに変える
+  const spines = {
+    neck :"M78,34 C66,52 60,66 62,88 C63,104 64,116 63,132",
+    kypho:"M74,36 C56,54 52,74 58,94 C62,108 63,120 62,132",
+    lordo:"M64,34 C62,52 60,66 66,86 C72,102 62,116 60,132",
+    flat :"M64,36 C63,52 62,68 62,88 C62,104 62,118 62,132"
+  };
+  const heads = { neck:[86,22], kypho:[80,24], lordo:[64,20], flat:[64,22] };
+  const [hx,hy] = heads[typeKey];
+  return `
+  <svg viewBox="0 0 130 150" width="100%" height="100%" aria-hidden="true">
+    <ellipse cx="65" cy="142" rx="34" ry="5" fill="rgba(0,0,0,.35)"/>
+    <path d="${spines[typeKey]}" fill="none" stroke="${color}" stroke-width="9" stroke-linecap="round"/>
+    <circle cx="${hx}" cy="${hy}" r="13" fill="${color}"/>
+    <path d="M62,132 L56,144 M62,132 L72,144" stroke="${color}" stroke-width="8" stroke-linecap="round"/>
+    <path d="M78,34 C66,52 60,66 62,88 C63,104 64,116 63,132" fill="none" stroke="rgba(248,244,227,.14)" stroke-width="2" stroke-dasharray="3 5" transform="translate(-14,0)"/>
+  </svg>`;
+}
+
+function showResult(){
+  const scores = calcScores();
+  const key = decideType(scores);
+  const t = TYPES[key];
+
+  document.getElementById("r-card").style.setProperty("--accent", t.accent);
+  document.getElementById("r-name").innerHTML = t.name.replace(/\n/g,"<br>");
+  document.getElementById("r-en").textContent = t.en;
+  document.getElementById("r-catch").textContent = t.catch;
+  document.getElementById("r-figure").innerHTML = figureSVG(key, t.color);
+
+  // スコアバー(相対%)
+  const names = {neck:"スマホ首型", kypho:"猫背・巻き肩型", lordo:"反り腰型", flat:"骨盤後傾型"};
+  const max = Math.max(1, ...Object.values(scores));
+  const box = document.getElementById("r-scores");
+  box.innerHTML = "";
+  TIE_ORDER.forEach(k=>{
+    const pct = Math.round(scores[k]/max*100);
+    const row = document.createElement("div");
+    row.className = "score-row";
+    row.innerHTML = `
+      <span class="nm">${names[k]}${k===key?" ★":""}</span>
+      <span class="track"><i style="background:${TYPES[k].color}"></i></span>
+      <span class="pc tabular">${pct}%</span>`;
+    box.appendChild(row);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      row.querySelector("i").style.width = pct+"%";
+    }));
+  });
+
+  document.getElementById("r-features").innerHTML =
+    t.features.map(f=>`<li>${f}</li>`).join("");
+  document.getElementById("r-risks").innerHTML =
+    t.risks.map(r=>`<li>${r}</li>`).join("");
+  document.getElementById("r-stretches").innerHTML =
+    t.stretches.map(s=>`
+      <div class="stretch">
+        <div class="st-head">
+          <span class="st-emoji">${s.emoji}</span>
+          <span class="st-name">${s.name}</span>
+          <span class="st-time">${s.time}</span>
+        </div>
+        <ol>${s.steps.map(st=>`<li>${st}</li>`).join("")}</ol>
+      </div>`).join("");
+
+  showScreen("result");
+}
+</script>
+</body>
+</html>
