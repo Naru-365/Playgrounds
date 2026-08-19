@@ -1,0 +1,193 @@
+# =====================================================================
+# 絵コンテ: 第1章「会議前」
+# 寸劇尺 75秒 / 7カット / 各8-12秒
+# 本編タイムライン上の位置: 00:38 - 01:53
+# =====================================================================
+
+section:
+  id: "before_meeting"
+  title: "会議前"
+  theme: "会議に必要な情報が見つからない"
+  total_duration_seconds: 75
+  cut_count: 7
+  location: "open_office"
+  characters: ["employee_a", "employee_b"]
+  emotional_arc: "平常 → 焦り → 諦め混じりの苦笑 → 小さな希望"
+
+cuts:
+
+  - id: "B-C1"
+    time: {start: "0:00", end: "0:10", duration_seconds: 10}
+    shot_type: "office wide shot → slow push in to Sato's desk"
+    camera:
+      framing: "ワイド。オフィス全体を左から捉え、右手前にサトウのデスク"
+      movement: "非常にゆっくりとしたドリーイン（寄り）"
+      lens: "35mm"
+    background: "open_office / 朝〜昼の自然光、窓は画面右"
+    characters_in_frame: ["employee_a"]
+    action: >
+      サトウがデスクでノートPCに向かい、複数のウィンドウを行き来している。
+      短い通知音が鳴り、視線が画面右上へ動く。姿勢が少し固まる。
+    dialogue:
+      - speaker: "employee_a"
+        text: "……あ。今日の14時、定例だ。"
+        delivery: "独り言。ほぼ息だけの小声。"
+    props: ["ノートPC", "外部モニター", "マグカップ", "紙のノート"]
+    audio:
+      sfx: ["オフィス環境音（低）", "通知音風SE（Teams通知そのものではない）"]
+      bgm: "イントロ。軽いピアノ/マリンバ。フェードイン。"
+    subtitle: "……あ。今日の14時、定例だ。"
+    notes: "画面の中身は絶対に映さない。モニターは背面か、ぼけた光のみ。"
+
+  - id: "B-C2"
+    time: {start: "0:10", end: "0:22", duration_seconds: 12}
+    shot_type: "two-shot, medium"
+    camera:
+      framing: "サトウ着席、タカハシが横に立つ。二人が同じフレームに入る高さ"
+      movement: "固定"
+      lens: "35mm"
+    background: "open_office / 同じデスク島"
+    characters_in_frame: ["employee_a", "employee_b"]
+    action: >
+      タカハシがマグカップを片手に通りかかり、デスクの横で足を止める。
+      サトウは画面を見たまま、少し困った顔で振り向く。
+    dialogue:
+      - speaker: "employee_b"
+        text: "お、今日の定例ってサトウさんも出るんだっけ。準備できてる？"
+        delivery: "普通の声量。世間話のトーン。"
+      - speaker: "employee_a"
+        text: "それが……前回って、何決めたんだっけ。"
+        delivery: "語尾が下がる。半笑い。"
+    props: ["マグカップ", "ノートPC"]
+    audio: {sfx: ["オフィス環境音"], bgm: "継続（低音量）"}
+    subtitle: "お、今日の定例ってサトウさんも出るんだっけ。準備できてる？ / それが……前回って、何決めたんだっけ。"
+    notes: "二人の身長差・服装をここで視聴者に印象づける。以降のカットの基準になる。"
+
+  - id: "B-C3"
+    time: {start: "0:22", end: "0:34", duration_seconds: 12}
+    shot_type: "over-the-shoulder shot（サトウの肩越し）"
+    camera:
+      framing: "サトウの右肩越し。画面はフレーム外か、ぼけた光のみ"
+      movement: "わずかに手持ち感のある固定"
+      lens: "50mm"
+    background: "open_office / デスク周辺のみ"
+    characters_in_frame: ["employee_a", "employee_b"]
+    action: >
+      サトウがスクロール操作を繰り返す。タカハシは腕を組んで画面の方を見ながら、
+      記憶をたどるように視線を上へ動かす。
+    dialogue:
+      - speaker: "employee_b"
+        text: "議事録……Teamsのチャットに貼った気がする。メールでも送ったような。"
+        delivery: "自信なさげに、思い出しながら。"
+      - speaker: "employee_a"
+        text: "共有フォルダにもある気がするんだよね。"
+        delivery: "ため息まじり。"
+    props: ["ノートPC", "ワイヤレスマウス"]
+    audio: {sfx: ["キーボード/マウスのクリック音（小）"], bgm: "継続"}
+    subtitle: "議事録……Teamsのチャットに貼った気がする。メールでも送ったような。 / 共有フォルダにもある気がするんだよね。"
+    notes: "『複数の場所を探す』という痛点を、探す動作だけで表現するカット。"
+
+  - id: "B-C4"
+    time: {start: "0:34", end: "0:45", duration_seconds: 11}
+    shot_type: "medium shot（二人が画面を覗き込む）"
+    camera:
+      framing: "デスク正面やや斜めから。二人の顔と手が入る"
+      movement: "固定"
+      lens: "50mm"
+    background: "open_office"
+    characters_in_frame: ["employee_a", "employee_b"]
+    action: >
+      タカハシが少し身をかがめて画面を覗き込む。サトウが指で画面を指し示す。
+      タカハシが一拍おいて、同情するように小さく頷く。
+    dialogue:
+      - speaker: "employee_a"
+        text: "資料も、どれが最新版だと思う？『最終』と『最終_v2』と『最終_修正』があるんだけど。"
+        delivery: "早口気味。うんざり感。"
+      - speaker: "employee_b"
+        text: "……見たことある光景だ。"
+        delivery: "一拍おいてから、静かに。"
+    props: ["ノートPC", "マグカップ"]
+    audio: {sfx: ["環境音"], bgm: "継続。ここで軽く間を作る。"}
+    subtitle: "資料も、どれが最新版だと思う？『最終』と『最終_v2』と『最終_修正』があるんだけど。 / ……見たことある光景だ。"
+    notes: >
+      ファイル名は生成映像に写さない。編集で必要なら、実写デモ側のダミーファイル名を
+      インサートするか、字幕のみで見せる。
+
+  - id: "B-C5"
+    time: {start: "0:45", end: "0:56", duration_seconds: 11}
+    shot_type: "insert（PC時計/腕時計） → close-up reaction（サトウ）"
+    camera:
+      framing: "前半3秒: 腕時計または卓上時計のインサート。後半: サトウの顔のクローズアップ"
+      movement: "固定 → わずかな寄り"
+      lens: "85mm（クローズアップ側）"
+    background: "open_office / 被写界深度で背景を落とす"
+    characters_in_frame: ["employee_a", "employee_b"]
+    action: >
+      時計をインサートで見せ、サトウの表情に切り替える。サトウは目を閉じて短く息をつく。
+      タカハシは画面外から声だけ、または画面端に肩だけ入る。
+    dialogue:
+      - speaker: "employee_a"
+        text: "会議まで、あと5分。"
+        delivery: "淡々と。"
+      - speaker: "employee_b"
+        text: "アジェンダは？"
+        delivery: "短く。"
+      - speaker: "employee_a"
+        text: "……これから作るところ。"
+        delivery: "小声。開き直り気味。"
+    props: ["腕時計", "卓上時計"]
+    audio: {sfx: ["秒針音（小、任意）"], bgm: "ここで一度音数を減らす"}
+    subtitle: "会議まで、あと5分。 / アジェンダは？ / ……これから作るところ。"
+    notes: "章のクライマックス（痛点のピーク）。ここが一番の『あるある』ポイント。"
+
+  - id: "B-C6"
+    time: {start: "0:56", end: "1:07", duration_seconds: 11}
+    shot_type: "two-shot, medium"
+    camera:
+      framing: "C2と同じ構図に戻す（帰結感を出す）"
+      movement: "固定"
+      lens: "35mm"
+    background: "open_office"
+    characters_in_frame: ["employee_a", "employee_b"]
+    action: >
+      二人が顔を見合わせる。タカハシが思いついたように軽く眉を上げる。
+      サトウが半信半疑の表情でタカハシを見る。
+    dialogue:
+      - speaker: "employee_b"
+        text: "これ、AIに任せられないかな。"
+        delivery: "思いつきのトーン。押しつけない。"
+      - speaker: "employee_a"
+        text: "……そんなことできるの？"
+        delivery: "疑い半分、期待半分。"
+    props: []
+    audio: {sfx: [], bgm: "ここでBGMが前向きなコード進行に切り替わる"}
+    subtitle: "これ、AIに任せられないかな。 / ……そんなことできるの？"
+    notes: "章の転換点。ここまでが『問題』、ここからが『解決』。"
+
+  - id: "B-C7"
+    time: {start: "1:07", end: "1:15", duration_seconds: 8}
+    shot_type: "hands on keyboard → slow push in toward the laptop"
+    camera:
+      framing: "サトウの手元中心。奥に二人の顔がぼけて入る"
+      movement: "画面に向かってゆっくり寄る（デモへの導線）"
+      lens: "50mm"
+    background: "open_office"
+    characters_in_frame: ["employee_a", "employee_b"]
+    action: >
+      サトウの手がキーボードへ伸びる。タカハシが横から画面を覗く。
+      カメラが画面方向へ寄り、最後の1秒でフォーカスが浅くなり、ホワイトへ抜ける。
+    dialogue:
+      - speaker: "employee_b"
+        text: "やってみようよ。5分あれば足りる。"
+        delivery: "軽く背中を押すトーン。"
+    props: ["ノートPC"]
+    audio: {sfx: ["キー入力音（1〜2打）"], bgm: "盛り上がりのピーク → デモでフェードダウン"}
+    subtitle: "やってみようよ。5分あれば足りる。"
+    notes: >
+      デモへの接続カット。最終フレームは必ず「画面に寄っている」状態にすること。
+      編集ではここから画面録画へ 0.5秒のディゾルブでつなぐ。
+
+transition_out:
+  to: "demo/01_before_meeting.md"
+  method: "0.5秒ディゾルブ（生成映像のラストフレーム → 画面録画のフルスクリーン）"
+  narration_overlap: "接続ナレーションは寸劇の最後1秒から被せ始める"

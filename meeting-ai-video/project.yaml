@@ -1,0 +1,231 @@
+# =====================================================================
+# その会議、AIに任せてみない？ — プロジェクト定義（確定版）
+# 入力要件YAMLを制作可能なレベルまで具体化したもの。
+# 数値・名称の変更はこのファイルを起点に行う。
+# =====================================================================
+
+project:
+  name: "その会議、AIに任せてみない？"
+  subtitle: "会議と情報整理の効率化"
+  purpose: >
+    生成AIを活用することで、会議前・会議中・会議後の情報整理や作業負荷を
+    どのように削減できるかを、日常的な悩みの寸劇と実際のデモを組み合わせて紹介する。
+  target_duration_minutes: 15
+  language: "ja-JP"
+  target_audience:
+    - "生成AI初学者"
+    - "Microsoft 365 / Copilot利用者"
+    - "普段からTeams会議を利用するビジネスユーザー"
+
+concept:
+  core_message: >
+    会議に関する面倒な情報整理は、人がすべて頑張るのではなく、
+    AIに任せられる部分を増やすことで、本来の議論や意思決定に集中できる。
+  structure: "会議前・会議中・会議後の3部構成"
+  storytelling_style: "ビジネスあるある × AIによる解決"
+  tone: ["親しみやすい", "日常会話ベース", "堅すぎない", "共感できる", "短くテンポが良い"]
+  one_line_pitch: "『探す・書く・まとめる』をAIに渡すと、会議は『決める場』に戻る。"
+
+# ---------------------------------------------------------------------
+# 全体タイムライン（15:00 ちょうどに収める確定配分）
+# 要件では3章×5分=15分だったが、OP/EDを入れると尺が破綻するため
+# 各章を4:30に圧縮し、OP 0:30 / ED 1:00 を確保する構成に確定した。
+# ---------------------------------------------------------------------
+overall_timeline:
+  total_minutes: 15
+  sections:
+    - section: "オープニング"
+      start: "00:00"
+      end: "00:30"
+      duration_seconds: 30
+      content: "タイトル / 今日話すこと（会議前・中・後）"
+
+    - section: "会議前"
+      start: "00:30"
+      end: "05:00"
+      duration_seconds: 270
+      generated_ai_video_seconds: 75      # 目標60-100秒
+      screen_demo_seconds: 167            # 目標165-240秒
+      buffer_seconds: 28                  # 章タイトル8 + 接続ナレ10 + 章まとめ10
+
+    - section: "会議中"
+      start: "05:00"
+      end: "09:30"
+      duration_seconds: 270
+      generated_ai_video_seconds: 70
+      screen_demo_seconds: 172
+      buffer_seconds: 28
+
+    - section: "会議後"
+      start: "09:30"
+      end: "14:00"
+      duration_seconds: 270
+      generated_ai_video_seconds: 70
+      screen_demo_seconds: 172
+      buffer_seconds: 28
+
+    - section: "クロージング"
+      start: "14:00"
+      end: "15:00"
+      duration_seconds: 60
+      content: "3章の振り返り / 明日から試せる3ステップ / 注意事項"
+
+video_strategy:
+  generated_video_role: >
+    AIの機能説明そのものではなく、視聴者が「あるある」と感じる
+    会議業務の悩みや非効率を日常会話の寸劇として表現する。
+  demo_role: >
+    寸劇で提示した問題に対して、実際の生成AI・Copilot等を操作し、
+    どのように解決できるかを画面録画で見せる。
+  transition_pattern:
+    - "日常会話による悩み提示"
+    - "問題を明確化"
+    - "『これ、AIに任せられない？』などの一言"
+    - "生成AI動画終了"
+    - "実際の画面録画デモへ切り替え"
+  transition_rule: >
+    寸劇の最終カットは必ず「PCへ視線が向く／手がキーボードへ伸びる」動作で終える。
+    そのまま画面録画のフルスクリーンへディゾルブすることで、
+    寸劇→デモの切り替えを説明なしで成立させる。
+
+# ---------------------------------------------------------------------
+# 登場人物（詳細な外見仕様は prompts/characters.yaml が正）
+# ---------------------------------------------------------------------
+characters:
+  consistency_required: true
+
+  employee_a:
+    display_name: "サトウ"
+    role: "一般社員"
+    personality: ["真面目", "仕事はできるが情報整理に時間を取られがち"]
+    story_function: "悩みを抱える側。視聴者の代弁者。"
+    visual_guideline:
+      nationality: "Japanese"
+      age_range: "late 20s to 30s"
+      clothing: "office casual"
+      style: "realistic"
+      anchor: "眼鏡 / ネイビーのカーディガン / 首下げの社員証"
+
+  employee_b:
+    display_name: "タカハシ"
+    role: "同僚"
+    personality: ["親しみやすい", "社員Aと自然に会話する"]
+    story_function: "『AIに任せられないかな？』と提案し、デモへ橋渡しする側。"
+    visual_guideline:
+      nationality: "Japanese"
+      age_range: "late 20s to 30s"
+      clothing: "office casual"
+      style: "realistic"
+      anchor: "眼鏡なし / ベージュのニット / 黒い腕時計"
+
+  continuity:
+    use_same_characters_across: ["会議前", "会議中", "会議後"]
+    use_same_office_environment: true
+    avoid_character_design_changes: true
+    method: "基準画像（reference image）を先に確定し、全カットで同一画像を参照する"
+
+generation_platform:
+  primary_candidate:
+    service: "Gemini（Veo系の動画生成）"
+    reason:
+      - "生成AIによる映像制作が可能"
+      - "人物・シーンを参照しながら動画を生成できる"
+      - "日常的なオフィスシーンを生成しやすい"
+      - "映像と音声を含む短いカット生成に向いている"
+  claude_role:
+    service: "Claude Code"
+    responsibility:
+      - "プロジェクト全体の構成管理"
+      - "脚本作成"
+      - "絵コンテ作成"
+      - "カット分割"
+      - "Gemini向け動画生成プロンプト作成"
+      - "キャラクター設定管理"
+      - "シーン間の一貫性チェック"
+      - "ファイル構成管理"
+
+generation_policy:
+  do_not_generate_full_2_minute_video_at_once: true
+  recommended_clip_length_seconds: "8-20"
+  process:
+    - "脚本を作成"
+    - "脚本を短いカットへ分割"
+    - "登場人物の基準画像を作成"
+    - "必要に応じてオフィス背景の基準画像を作成"
+    - "基準画像を参照して各カットを生成"
+    - "各カットを動画編集ソフトで連結"
+    - "字幕・BGM・効果音を追加"
+    - "実際の画面録画デモと連結"
+  editing_candidates: ["CapCut", "Adobe Premiere Pro", "DaVinci Resolve"]
+  retry_policy: >
+    1カットにつき3〜5本生成し、顔・服装・背景の一貫性が最も高いテイクを採用する。
+    3回生成しても一貫性が崩れる場合は、カットを短く割り直すか
+    人物の顔が大きく映らない構図（OTS / 手元 / 引き）へ変更する。
+
+shot_design:
+  default_aspect_ratio: "16:9"
+  resolution_target: "1920x1080"
+  fps: "24 or 30"
+  visual_style:
+    location: "modern Japanese office"
+    lighting: "natural office lighting"
+    realism: "photorealistic"
+    atmosphere: "ordinary working day"
+    camera_style: ["natural", "corporate drama", "subtle cinematic", "not overly dramatic"]
+  recommended_shots:
+    - "two-shot conversation"
+    - "medium shot"
+    - "over-the-shoulder shot"
+    - "PC screen reaction shot"
+    - "close-up reaction"
+    - "office wide shot"
+  avoid:
+    - "派手すぎるSF表現"
+    - "未来的すぎるオフィス"
+    - "過剰な演技"
+    - "不自然な表情"
+    - "キャラクターの顔・服装の変化"
+    - "映像内にAI生成された細かいUI文字を大量表示すること"
+
+audio:
+  dialogue_language: "Japanese"
+  speaking_style: ["自然な日本語", "社内の同僚同士", "ややカジュアル", "演技しすぎない"]
+  background_music:
+    enabled: true
+    volume: "low"
+    purpose: "寸劇のテンポを補助する"
+    mix_target_db: "-24dB前後（セリフ -6dB 基準）"
+  sound_effects:
+    optional: ["Teams通知音風の効果音", "PC操作音", "会議開始通知"]
+    note: "商標・著作権上問題のない素材を使用する。実際のTeams通知音そのものは使用しない。"
+  dialogue_fallback: >
+    生成音声の日本語が不自然な場合は、映像のみ採用し、
+    セリフは別途収録したナレーション/吹き替えに差し替える。
+
+demo_recording:
+  type: "actual_screen_recording"
+  principle: >
+    実際の製品UIや生成AIの操作は生成映像で再現せず、
+    原則として実環境の画面録画を使用する。
+  possible_products: ["Microsoft Teams", "Microsoft 365 Copilot", "Copilot Chat"]
+  editing: ["不要部分をカット", "必要箇所をズーム", "マウスポインターを強調", "重要部分のみ字幕を追加"]
+  privacy_rule: >
+    実データを含む画面は録画しない。デモ専用テナント／ダミーの会議・
+    ダミーの参加者名・ダミーの資料で事前に環境を用意する。
+
+deliverable_status:
+  phase_1_planning: "done — 本ファイル / editing/timeline.yaml"
+  phase_2_script: "done — scripts/01-03"
+  phase_3_storyboard: "done — storyboards/01-03"
+  phase_4_gemini_prompts: "done — prompts/characters.yaml, prompts/gemini/01-03"
+  phase_5_demo_design: "done — demo/01-03"
+  phase_6_editing: "done — editing/timeline.yaml"
+
+success_criteria:
+  - "15分全体で会議前・中・後の流れが理解できる"
+  - "寸劇を見て視聴者が業務上の悩みに共感できる"
+  - "寸劇から実際のAIデモへ自然につながる"
+  - "同じ登場人物が3章を通して登場する"
+  - "生成AI動画だけで機能説明を完結させない"
+  - "実際のAI活用価値を画面録画で確認できる"
+  - "各生成動画は1〜2分以内でテンポよく進行する"

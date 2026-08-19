@@ -1,0 +1,185 @@
+# =====================================================================
+# キャラクター / 背景 の固定設定（一貫性の単一の情報源）
+#
+# 使い方:
+#   1. 本ファイルの reference_image_prompt で基準画像を生成する
+#   2. 気に入った1枚を assets/reference/ に保存し、file 欄にパスを書き戻す
+#   3. 以降のすべての動画生成カットで、その画像を参照画像として添付する
+#   4. 動画プロンプト側には character_lock_text をそのまま貼り付ける
+#
+# ルール: 本ファイルの記述と異なる外見表現をカットプロンプトに書かない。
+#         服・髪型・眼鏡・小物は3章を通して一切変更しない（同じ1日の出来事）。
+# =====================================================================
+
+meta:
+  version: "1.0"
+  aspect_ratio: "16:9"
+  resolution: "1920x1080"
+  fps: 24
+  style: "photorealistic, natural office documentary look, subtle cinematic grade"
+
+# ---------------------------------------------------------------------
+# 共通の否定条件（全カット共通で必ず付与する）
+# ---------------------------------------------------------------------
+global_negative_prompt: >
+  text overlays, captions, subtitles, watermarks, logos, brand names,
+  readable UI text on screens, fake software interfaces, dense small text,
+  futuristic sci-fi office, holograms, floating holographic panels, neon lighting,
+  robots, glowing AI effects, exaggerated acting, over-the-top facial expressions,
+  slapstick comedy, distorted faces, extra fingers, deformed hands, morphing clothing,
+  changing hairstyle, changing eyeglasses, changing clothes between shots,
+  crowded background with many people, camera shake, fisheye lens, extreme low angle,
+  dutch angle, heavy lens flare, anime style, cartoon style, 3d render, cgi look,
+  oversaturated colors, night scene, empty white void background
+
+global_positive_suffix: >
+  photorealistic, shot on a full-frame cinema camera, 35mm lens, shallow but natural
+  depth of field, soft natural daylight from large office windows, neutral color grade,
+  calm and ordinary weekday atmosphere, natural micro-expressions, restrained acting,
+  stable tripod-like camera with very subtle movement, 16:9, 1920x1080, 24fps
+
+# ---------------------------------------------------------------------
+# 登場人物A: サトウ（一般社員 / 悩む側）
+# ---------------------------------------------------------------------
+employee_a:
+  id: "employee_a"
+  display_name: "サトウ"
+  reference_image:
+    file: "assets/reference/employee_a.png"   # 生成後にここへ保存する
+    status: "TODO — 基準画像を生成して差し替える"
+
+  # 動画プロンプトへそのまま貼り付ける固定記述
+  character_lock_text: >
+    Person A ("Sato"): a Japanese office worker in their early 30s, slim build,
+    short neat black hair parted on the side, thin black-rimmed rectangular eyeglasses,
+    light blue button-down shirt with the sleeves rolled once, worn under an open
+    navy cardigan, dark gray trousers, a company ID card hanging from a navy lanyard,
+    a simple silver-band wristwatch on the left wrist, calm and serious expression,
+    slightly tired eyes.
+
+  reference_image_prompt: >
+    Full-body and upper-body character reference sheet of a Japanese office worker in
+    their early 30s, slim build, short neat black hair parted on the side, thin
+    black-rimmed rectangular eyeglasses, light blue button-down shirt with sleeves
+    rolled once under an open navy cardigan, dark gray trousers, a company ID card on
+    a navy lanyard, silver-band wristwatch on the left wrist. Neutral standing pose,
+    front view and three-quarter view, plain light gray studio background, even soft
+    lighting, photorealistic, sharp focus on the face, no text, no logos.
+
+  do_not_change: ["髪型", "眼鏡の形", "シャツの色", "カーディガンの色", "社員証のストラップ", "腕時計"]
+  acting_notes: >
+    困っていても大声を出さない。眉を寄せる / 画面を目で追う / 短く息をつく、程度の
+    小さな表情変化で表現する。第3章のC5でのみ、わずかに口角を上げる。
+
+# ---------------------------------------------------------------------
+# 登場人物B: タカハシ（同僚 / 提案する側）
+# ---------------------------------------------------------------------
+employee_b:
+  id: "employee_b"
+  display_name: "タカハシ"
+  reference_image:
+    file: "assets/reference/employee_b.png"
+    status: "TODO — 基準画像を生成して差し替える"
+
+  character_lock_text: >
+    Person B ("Takahashi"): a Japanese office worker in their late 20s, average build,
+    shoulder-length black hair tucked behind the ears, no eyeglasses, a plain white
+    crew-neck t-shirt under a beige open knit cardigan, black slim trousers,
+    a black-strap analog wristwatch on the left wrist, a company ID card on a navy
+    lanyard, relaxed friendly expression, easy posture.
+
+  reference_image_prompt: >
+    Full-body and upper-body character reference sheet of a Japanese office worker in
+    their late 20s, average build, shoulder-length black hair tucked behind the ears,
+    no eyeglasses, plain white crew-neck t-shirt under a beige open knit cardigan,
+    black slim trousers, black-strap analog wristwatch on the left wrist, company ID
+    card on a navy lanyard. Neutral standing pose, front view and three-quarter view,
+    plain light gray studio background, even soft lighting, photorealistic, sharp
+    focus on the face, no text, no logos.
+
+  do_not_change: ["髪の長さ", "眼鏡なし", "ベージュのニット", "黒い腕時計", "社員証のストラップ"]
+  acting_notes: >
+    常に一歩引いた余裕がある。相手を茶化さず、共感してから提案する。
+    「AIに任せられないかな」は説教口調にせず、思いつきのトーンで言う。
+
+# ---------------------------------------------------------------------
+# 背景1: オープンオフィス（第1章 / 第3章後半）
+# ---------------------------------------------------------------------
+location_open_office:
+  id: "open_office"
+  reference_image:
+    file: "assets/reference/open_office.png"
+    status: "TODO — 基準画像を生成して差し替える"
+
+  location_lock_text: >
+    Setting: a modern Japanese open-plan office on a mid-rise floor. Light wood desks
+    in rows with low frosted-glass partitions, silver laptop stands and external
+    monitors seen from behind, ergonomic mesh chairs in dark gray, a white wall with a
+    large whiteboard on the left, small potted green plants on the desk ends, a row of
+    tall windows on the right with soft daylight and a blurred city skyline, white
+    ceiling with recessed lights, a few blurred colleagues far in the background.
+    Tidy but lived-in: paper cups, a notebook, a wireless mouse on the desk.
+
+  reference_image_prompt: >
+    Wide interior photograph of a modern Japanese open-plan office: light wood desks in
+    rows with low frosted-glass partitions, dark gray mesh chairs, external monitors
+    seen from behind, a large whiteboard on the white left wall, small potted plants,
+    tall windows on the right with soft daylight and a blurred city skyline, recessed
+    ceiling lights, calm ordinary weekday atmosphere, photorealistic, natural color
+    grade, no people in focus, no text, no logos, no readable screens.
+
+  props: ["ノートPC", "外部モニター", "マグカップ", "紙のノートとペン", "ワイヤレスマウス", "観葉植物"]
+
+# ---------------------------------------------------------------------
+# 背景2: 小会議室（第2章 / 第3章C1）
+# ---------------------------------------------------------------------
+location_meeting_room:
+  id: "meeting_room"
+  reference_image:
+    file: "assets/reference/meeting_room.png"
+    status: "TODO — 基準画像を生成して差し替える"
+
+  location_lock_text: >
+    Setting: a small meeting room in the same modern Japanese office, connected to the
+    open-plan floor by a glass wall and a glass door. A light wood table for six,
+    dark gray chairs, a wall-mounted large display at the far end that is switched on
+    but shows only a soft blurred glow (no readable interface), a small conference
+    speakerphone puck at the center of the table, a whiteboard on the side wall with
+    faint unreadable marker strokes, daylight coming through the glass wall from the
+    office windows.
+
+  reference_image_prompt: >
+    Interior photograph of a small meeting room in a modern Japanese office: light wood
+    table for six, dark gray chairs, glass wall facing an open-plan office, a large
+    wall-mounted display at the far end switched on but showing only a soft blurred
+    glow with no readable interface, a small round conference speakerphone on the table,
+    a side whiteboard with faint unreadable marker strokes, soft daylight,
+    photorealistic, natural color grade, no people, no text, no logos.
+
+  props: ["ノートPC×2", "会議用スピーカーフォン", "壁掛けディスプレイ（内容は非表示）", "ホワイトボード", "水のボトル"]
+
+# ---------------------------------------------------------------------
+# 画面の扱い（重要）
+# ---------------------------------------------------------------------
+screen_policy:
+  rule: >
+    生成映像内のPC・ディスプレイに、読み取れるUIや文字を一切生成させない。
+    製品UIはすべて実際の画面録画で見せる（demo/ 配下）。
+  prompt_phrase: >
+    the laptop screen is out of frame or shows only a soft out-of-focus glow,
+    no readable interface, no text on any screen
+  editing_fallback: >
+    生成映像に文字らしきものが写り込んだ場合は、編集でブラー／クロップして消す。
+
+# ---------------------------------------------------------------------
+# 一貫性チェックリスト（各カット採用前に確認する）
+# ---------------------------------------------------------------------
+consistency_checklist:
+  - "サトウは眼鏡をかけているか / カーディガンはネイビーか"
+  - "タカハシは眼鏡なしか / ニットはベージュか"
+  - "髪型が前カットと同じか"
+  - "社員証のストラップが両者ネイビーか"
+  - "オフィスの窓が画面の右側にあるか（第1章/第3章のオープンオフィス）"
+  - "画面に読める文字が写っていないか"
+  - "肌の色味・照明の色温度が前カットと揃っているか"
+  - "手の指が破綻していないか"

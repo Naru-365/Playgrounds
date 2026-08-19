@@ -1,0 +1,152 @@
+# =====================================================================
+# 絵コンテ: 第2章「会議中」
+# 寸劇尺 70秒 / 6カット / 各10-12秒
+# 本編タイムライン上の位置: 05:08 - 06:18
+# =====================================================================
+
+section:
+  id: "during_meeting"
+  title: "会議中"
+  theme: "メモを取ることに集中して議論に集中できない"
+  total_duration_seconds: 70
+  cut_count: 6
+  location: "meeting_room"
+  characters: ["employee_a", "employee_b"]
+  emotional_arc: "必死 → 置いていかれる感 → 脱力 → 気づき"
+  continuity_note: >
+    第1章と同じ日・同じ服装。第1章のC7から時間が進んで14時の会議中という設定。
+    会議の他の参加者は音声のみ（意味の取れない環境音レベル）で存在させ、映像には入れない。
+
+cuts:
+
+  - id: "D-C1"
+    time: {start: "0:00", end: "0:12", duration_seconds: 12}
+    shot_type: "meeting room wide shot"
+    camera:
+      framing: "会議室を斜め後方から。二人は並んで着席し、奥に壁掛けディスプレイ"
+      movement: "ごくわずかなドリーイン"
+      lens: "28mm"
+    background: "meeting_room / ガラス壁越しにオフィスの自然光"
+    characters_in_frame: ["employee_a", "employee_b"]
+    action: >
+      サトウがノートPCに前のめりでタイピングしている。視線は画面に固定。
+      タカハシは正面（発言者の方向）を見ているが、時々サトウの手元をちらりと見る。
+    dialogue:
+      - speaker: "employee_a"
+        text: "ちょっと待って……今の、メモしないと。"
+        delivery: "ほとんど独り言の小声。焦り。"
+    props: ["ノートPC×2", "会議用スピーカーフォン", "水のボトル"]
+    audio:
+      sfx: ["意味の取れない会議の話し声（-30dB程度）", "キーボードのタイピング音"]
+      bgm: "低く、リズムのあるBGM。焦りを表す。"
+    subtitle: "ちょっと待って……今の、メモしないと。"
+    notes: "壁掛けディスプレイは点灯しているが内容は写さない（ぼけた光のみ）。"
+
+  - id: "D-C2"
+    time: {start: "0:12", end: "0:24", duration_seconds: 12}
+    shot_type: "two-shot, medium（横並びを斜め前から）"
+    camera: {framing: "二人の顔が両方見える斜め前アングル", movement: "固定", lens: "50mm"}
+    background: "meeting_room"
+    characters_in_frame: ["employee_a", "employee_b"]
+    action: >
+      タカハシが体をわずかにサトウ側へ傾け、口元を手で隠して小声で尋ねる。
+      サトウはタイピングの手を止め、数秒フリーズしてから気まずそうに首を振る。
+    dialogue:
+      - speaker: "employee_b"
+        text: "ねえ、さっきの件って、結局どっちが対応することになった？"
+        delivery: "ひそひそ声。"
+      - speaker: "employee_a"
+        text: "え……ごめん、書くのに必死で聞いてなかった。"
+        delivery: "小声。決まりが悪い。"
+    props: ["ノートPC"]
+    audio: {sfx: ["会議の話し声（継続）"], bgm: "継続"}
+    subtitle: "ねえ、さっきの件って、結局どっちが対応することになった？ / え……ごめん、書くのに必死で聞いてなかった。"
+    notes: "痛点『決定事項を聞き逃す』『誰が担当か分からない』を1カットで表現。"
+
+  - id: "D-C3"
+    time: {start: "0:24", end: "0:36", duration_seconds: 12}
+    shot_type: "close-up（タカハシ） + サトウの返し"
+    camera: {framing: "タカハシのバストアップ。背景はガラス壁でぼかす", movement: "固定", lens: "85mm"}
+    background: "meeting_room"
+    characters_in_frame: ["employee_b", "employee_a"]
+    action: >
+      タカハシが少しばつが悪そうに視線を落とし、口元を手で隠したまま打ち明ける。
+      切り返しでサトウが小さく頷く。
+    dialogue:
+      - speaker: "employee_b"
+        text: "実は私、5分遅れて入ったんだけど、正直まだ話に追いつけてない。"
+        delivery: "自嘲気味の小声。"
+      - speaker: "employee_a"
+        text: "聞くタイミング、無いよね。"
+        delivery: "共感。小声。"
+    props: []
+    audio: {sfx: ["会議の話し声（継続）"], bgm: "継続"}
+    subtitle: "実は私、5分遅れて入ったんだけど、正直まだ話に追いつけてない。 / 聞くタイミング、無いよね。"
+    notes: "痛点『途中参加すると話についていけない』。第3の登場人物を出さずに表現する。"
+
+  - id: "D-C4"
+    time: {start: "0:36", end: "0:48", duration_seconds: 12}
+    shot_type: "insert（手元・紙のノート） → medium（サトウ）"
+    camera:
+      framing: "前半4秒: 走り書きのノートと止まったペンのインサート。後半: サトウの表情"
+      movement: "固定"
+      lens: "50mm"
+    background: "meeting_room"
+    characters_in_frame: ["employee_a", "employee_b"]
+    action: >
+      ペン先が紙の上で止まる。サトウが顔を上げ、正面を見て軽く眉を寄せる。
+      タカハシが小さく肩をすくめる。
+    dialogue:
+      - speaker: "employee_a"
+        text: "……で、今って何を決める時間だったっけ。"
+        delivery: "本当に分からなくなっている小声。"
+      - speaker: "employee_b"
+        text: "論点、どこかで1個ずれた気がする。"
+        delivery: "静かに。"
+    props: ["紙のノート", "ペン"]
+    audio: {sfx: ["紙をめくる音"], bgm: "音数を減らす"}
+    subtitle: "……で、今って何を決める時間だったっけ。 / 論点、どこかで1個ずれた気がする。"
+    notes: "ノートの文字は読めないレベルに（インサートは浅い被写界深度で撮る想定）。"
+
+  - id: "D-C5"
+    time: {start: "0:48", end: "1:00", duration_seconds: 12}
+    shot_type: "two-shot, medium"
+    camera: {framing: "D-C2と同じ構図に戻す", movement: "固定", lens: "50mm"}
+    background: "meeting_room"
+    characters_in_frame: ["employee_a", "employee_b"]
+    action: >
+      サトウが背もたれに体を預け、短く息をつく。タカハシが軽く笑って提案する。
+    dialogue:
+      - speaker: "employee_a"
+        text: "話を聞きたいのに、書くので手一杯なんだよね。"
+        delivery: "脱力。小声。"
+      - speaker: "employee_b"
+        text: "これも、AIに任せられないかな。"
+        delivery: "思いつきのトーン。第1章と同じ言い回しで揃える。"
+    props: []
+    audio: {sfx: [], bgm: "前向きなコードへ切り替え"}
+    subtitle: "話を聞きたいのに、書くので手一杯なんだよね。 / これも、AIに任せられないかな。"
+    notes: "各章で同じ決め台詞を使い、シリーズとしてのリズムを作る。"
+
+  - id: "D-C6"
+    time: {start: "1:00", end: "1:10", duration_seconds: 10}
+    shot_type: "over-the-shoulder → slow push in toward the laptop"
+    camera: {framing: "サトウの肩越しにノートPC。画面はぼけた光のみ", movement: "画面に向かって寄る", lens: "50mm"}
+    background: "meeting_room"
+    characters_in_frame: ["employee_a", "employee_b"]
+    action: >
+      サトウが画面へ視線を落とし、手をトラックパッドへ置く。
+      カメラが画面へ寄り、最後の1秒でフォーカスが浅くなる。
+    dialogue:
+      - speaker: "employee_a"
+        text: "……そうか。会議中でも、頼めるのか。"
+        delivery: "気づきの小声。"
+    props: ["ノートPC"]
+    audio: {sfx: ["トラックパッドのクリック音"], bgm: "ピーク → デモでフェードダウン"}
+    subtitle: "……そうか。会議中でも、頼めるのか。"
+    notes: "第1章C7と同じ『画面へ寄って終わる』型。3章通して同じ接続方法を使う。"
+
+transition_out:
+  to: "demo/02_during_meeting.md"
+  method: "0.5秒ディゾルブ"
+  narration_overlap: "接続ナレーションは寸劇の最後1秒から被せ始める"

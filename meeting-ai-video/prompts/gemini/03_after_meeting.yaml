@@ -1,0 +1,228 @@
+# =====================================================================
+# Gemini（Veo系）動画生成プロンプト: 第3章「会議後」
+# 使い方は prompts/gemini/01_before_meeting.yaml の冒頭コメントと同じ。
+# 服装・髪型は第1章・第2章と完全に同一（同じ日の出来事）。
+# A-C2 / A-C3 / A-C4 / A-C6 は第1章の対応カットと同じ構図を再現する。
+# =====================================================================
+
+meta:
+  section: "after_meeting"
+  cut_count: 6
+  total_seconds: 70
+  aspect_ratio: "16:9"
+  resolution: "1920x1080"
+  fps: 24
+  language_of_dialogue: "Japanese (ja-JP)"
+  location: "meeting_room の出口 → open_office"
+
+shared:
+  negative: &neg >
+    text overlays, captions, subtitles, watermarks, logos, brand names, readable UI text
+    on screens, fake software interfaces, dense small text, futuristic sci-fi office,
+    holograms, neon lighting, robots, glowing AI effects, exaggerated acting, slapstick,
+    overacted exhaustion, distorted faces, extra fingers, deformed hands, changing
+    hairstyle, changing eyeglasses, changing clothes, crowded background, camera shake,
+    fisheye lens, dutch angle, heavy lens flare, anime, cartoon, 3d render, cgi look,
+    oversaturated colors, night scene.
+
+cuts:
+
+  - id: "A-C1"
+    duration_seconds: 10
+    split_hint: "1テイク。歩き出しからセリフ2つまで"
+    reference_images: ["assets/reference/employee_a.png", "assets/reference/employee_b.png", "assets/reference/meeting_room.png", "assets/reference/open_office.png"]
+    prompt: |
+      A medium shot filmed from the corridor side of a modern Japanese office as a glass
+      meeting room door opens and two coworkers walk out toward the open-plan floor. The
+      camera tracks sideways with them.
+
+      Person A ("Sato"), a Japanese office worker in their early 30s, short neat black hair,
+      thin black-rimmed rectangular eyeglasses, light blue button-down shirt under an open
+      navy cardigan, company ID card on a navy lanyard — carrying a closed laptop and a paper
+      notebook, stretching slightly with a relieved expression.
+
+      Person B ("Takahashi"), a Japanese office worker in their late 20s, shoulder-length
+      black hair tucked behind the ears, no eyeglasses, white crew-neck t-shirt under a beige
+      open knit cardigan — following a step behind, calm and satisfied.
+
+      Setting: glass-walled meeting room door opening onto a modern Japanese open-plan office
+      with light wood desks, tall windows with soft daylight, a few blurred colleagues far in
+      the background.
+
+      Camera: medium tracking shot, 35mm lens, smooth lateral movement, eye level.
+      No readable interface on any screen, no readable text anywhere in frame.
+
+      Spoken dialogue in natural Japanese:
+      Person A (relieved, slightly playful): "終わったー。"
+      Person B (warm): "お疲れさま。いい議論だったね。"
+
+      Audio: a door sound, ambient office room tone. Photorealistic, natural daylight,
+      neutral color grade, restrained naturalistic acting, 16:9, 1920x1080, 24fps.
+    negative_prompt: *neg
+    dialogue_ja:
+      - "終わったー。"
+      - "お疲れさま。いい議論だったね。"
+
+  - id: "A-C2"
+    duration_seconds: 12
+    split_hint: "1テイク。座る → 2秒の間 → セリフ、の『間』が取れているテイクを選ぶ"
+    reference_images: ["assets/reference/employee_a.png", "assets/reference/open_office.png"]
+    prompt: |
+      A medium shot of a desk in a modern Japanese open-plan office, using exactly the same
+      framing and angle as the earlier desk shot in this series: the desk on the right of
+      frame, tall windows with soft daylight on the right side, whiteboard on the far left wall.
+
+      Person A ("Sato"), a Japanese office worker in their early 30s, short neat black hair,
+      thin black-rimmed rectangular eyeglasses, light blue button-down shirt under an open navy
+      cardigan, company ID card on a navy lanyard — sits down, opens the laptop, and stares
+      blankly ahead for about two seconds. Then their expression stiffens as they remember
+      something, and they speak quietly.
+
+      Camera: medium shot, 35mm lens, locked off, eye level.
+      The laptop screen faces away from the camera and is never readable.
+      No readable text anywhere in frame.
+
+      Spoken dialogue in natural Japanese, quiet, as if realizing something unwelcome:
+      Person A: "……あ。議事録、作らないと。"
+
+      Audio: a chair creak, ambient office room tone. Photorealistic, natural daylight,
+      neutral color grade, restrained acting, 16:9, 1920x1080, 24fps.
+    negative_prompt: *neg
+    dialogue_ja: "……あ。議事録、作らないと。"
+    note: "第1章 B-C1 と同じデスク・同じ角度で撮ること（一周した構図の反復）。"
+
+  - id: "A-C3"
+    duration_seconds: 12
+    split_hint: "1テイク。指折りの動作が自然なテイクを選ぶ"
+    reference_images: ["assets/reference/employee_a.png", "assets/reference/employee_b.png", "assets/reference/open_office.png"]
+    prompt: |
+      A medium two-shot in a modern Japanese open-plan office, using the same framing as the
+      earlier two-shot in this series: Person A seated at the desk, Person B standing beside it
+      with a mug.
+
+      Person B ("Takahashi"), late 20s Japanese office worker, shoulder-length black hair, no
+      eyeglasses, white t-shirt under a beige open knit cardigan — counting items off on their
+      fingers one by one, matter-of-fact but with good rhythm.
+
+      Person A ("Sato"), early 30s, thin black-rimmed eyeglasses, light blue shirt under an
+      open navy cardigan — raising a palm slightly as if to stop the list, replying briefly and
+      wearily.
+
+      Setting: light wood desks with low frosted-glass partitions, tall windows on the right
+      with soft daylight, blurred colleagues far in the background.
+
+      Camera: medium two-shot, 35mm lens, locked off, eye level.
+      No readable interface on any screen, no readable text anywhere in frame.
+
+      Spoken dialogue in natural Japanese:
+      Person B: "決定事項でしょ、ToDoでしょ、担当と期限も要るよね。あと、欠席だった人への共有も。"
+      Person A (short, flat): "増やさないで。"
+
+      Audio: ambient office room tone. Photorealistic, natural daylight, neutral color grade,
+      restrained naturalistic acting, 16:9, 1920x1080, 24fps.
+    negative_prompt: *neg
+    dialogue_ja:
+      - "決定事項でしょ、ToDoでしょ、担当と期限も要るよね。あと、欠席だった人への共有も。"
+      - "増やさないで。"
+
+  - id: "A-C4"
+    duration_seconds: 12
+    split_hint: "【必ず2ショットに分ける】(a) 時計のインサート3秒 (b) クローズアップ9秒"
+    reference_images: ["assets/reference/employee_a.png", "assets/reference/open_office.png"]
+    prompt: |
+      Shot A (3 seconds) — an insert close-up of a small desk clock on a light wood desk in a
+      modern Japanese office, with a laptop blurred behind it, shallow depth of field, soft
+      daylight. The clock face is visible but the numerals are soft and not emphasized. No
+      digital text, no readable screens.
+
+      Shot B (9 seconds) — a close-up reaction shot of Person A ("Sato"), a Japanese office
+      worker in their early 30s, short black hair, thin black-rimmed rectangular eyeglasses,
+      light blue shirt under an open navy cardigan, seated at the desk with the open-plan
+      office falling into soft bokeh behind. They tilt their head back slightly, look at the
+      ceiling and let out a short breath, then speak wearily but without exaggeration. An
+      off-screen colleague adds a comment matter-of-factly.
+
+      Camera: 85mm lens, locked off, eye level, shallow depth of field.
+      No readable text anywhere in frame.
+
+      Spoken dialogue in natural Japanese:
+      Person A (weary): "会議は終わったのに、ここからまた30分か……。"
+      Off-screen voice (Person B, matter-of-fact): "しかも来週には、何を決めたか忘れてる。"
+
+      Audio: ambient office room tone. Photorealistic, natural daylight, neutral color grade,
+      restrained acting, no overacted exhaustion, 16:9, 1920x1080, 24fps.
+    negative_prompt: *neg
+    dialogue_ja:
+      - "会議は終わったのに、ここからまた30分か……。"
+      - "しかも来週には、何を決めたか忘れてる。"
+    note: "第1章 B-C5 と対になるカット。同じインサート構図で撮ること。"
+
+  - id: "A-C5"
+    duration_seconds: 12
+    split_hint: "1テイク。サトウの苦笑（本編で唯一の笑顔）が自然なテイクを選ぶ"
+    reference_images: ["assets/reference/employee_a.png", "assets/reference/employee_b.png", "assets/reference/open_office.png"]
+    prompt: |
+      A medium two-shot in a modern Japanese open-plan office, same framing as the previous
+      two-shot: Person A seated at the desk, Person B standing beside it with a mug.
+
+      Person B ("Takahashi"), late 20s, shoulder-length black hair, no eyeglasses, beige open
+      knit cardigan over a white t-shirt — smiling lightly and gesturing toward Person A's
+      laptop with the mug, suggesting it casually.
+
+      Person A ("Sato"), early 30s, thin black-rimmed eyeglasses, light blue shirt under an
+      open navy cardigan — giving in with a small wry smile, the only real smile of the story.
+
+      Setting: light wood desks, tall windows on the right with soft daylight.
+
+      Camera: medium two-shot, 35mm lens, locked off, eye level.
+      No readable interface on any screen, no readable text anywhere in frame.
+
+      Spoken dialogue in natural Japanese:
+      Person B (light): "それこそ、AIに任せようよ。"
+      Person A (wry): "……最初からそう言ってほしかった。"
+
+      Audio: ambient office room tone. Photorealistic, natural daylight, neutral color grade,
+      restrained naturalistic acting, 16:9, 1920x1080, 24fps.
+    negative_prompt: *neg
+    dialogue_ja:
+      - "それこそ、AIに任せようよ。"
+      - "……最初からそう言ってほしかった。"
+
+  - id: "A-C6"
+    duration_seconds: 12
+    split_hint: "1テイク。ラストフレームが『画面に寄っている』ことが必須"
+    reference_images: ["assets/reference/employee_a.png", "assets/reference/employee_b.png", "assets/reference/open_office.png"]
+    prompt: |
+      A close shot of hands reaching for a laptop keyboard on a light wood desk in a modern
+      Japanese open-plan office, with two coworkers slightly out of focus behind, using the
+      same framing as the earlier keyboard shot in this series.
+
+      Person A ("Sato"), early 30s, thin black-rimmed rectangular eyeglasses, light blue shirt
+      under an open navy cardigan — turns back to the laptop and places both hands on the
+      keyboard with a positive, decided expression.
+
+      Person B ("Takahashi"), late 20s, shoulder-length black hair, no eyeglasses, beige knit
+      cardigan — leans in from the side to look at the laptop.
+
+      Action: the camera slowly pushes in toward the laptop; in the final second the focus
+      becomes very shallow and the frame is dominated by the soft glow of the screen area.
+
+      Camera: 50mm lens, slow push-in, ending on a soft defocused frame.
+      The screen never shows a readable interface — only a soft out-of-focus glow.
+      No readable text anywhere in frame.
+
+      Spoken dialogue in natural Japanese, positive:
+      Person A: "じゃあ、まとめてもらおうか。"
+
+      Audio: soft keystrokes, ambient office room tone. Photorealistic, natural daylight,
+      neutral color grade, 16:9, 1920x1080, 24fps.
+    negative_prompt: *neg
+    dialogue_ja: "じゃあ、まとめてもらおうか。"
+    note: "第1章 B-C7 / 第2章 D-C6 と同じ型。3カットを並べても違和感が出ないこと。"
+
+post_generation:
+  checklist_file: "prompts/characters.yaml#consistency_checklist"
+  extra_checks:
+    - "第1章・第2章と服装・髪型が一致しているか"
+    - "A-C2 が第1章 B-C1 と同じデスク・同じ角度になっているか"
+    - "疲労表現が過剰になっていないか（軽い脱力にとどめる）"

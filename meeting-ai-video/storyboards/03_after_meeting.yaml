@@ -1,0 +1,148 @@
+# =====================================================================
+# 絵コンテ: 第3章「会議後」
+# 寸劇尺 70秒 / 6カット / 各10-12秒
+# 本編タイムライン上の位置: 09:38 - 10:48
+# =====================================================================
+
+section:
+  id: "after_meeting"
+  title: "会議後"
+  theme: "会議が終わったあとも情報整理が終わらない"
+  total_duration_seconds: 70
+  cut_count: 6
+  location: "meeting_room（C1のみ） → open_office（C2以降）"
+  characters: ["employee_a", "employee_b"]
+  emotional_arc: "解放感 → 現実に戻る → うんざり → 軽い笑い"
+  continuity_note: >
+    第1章と同じデスク・同じ席へ戻る。服装は第1章・第2章と完全に同一。
+    第1章C1と同じ構図を第3章C2で再現することで、一周した感覚を出す。
+
+cuts:
+
+  - id: "A-C1"
+    time: {start: "0:00", end: "0:10", duration_seconds: 10}
+    shot_type: "medium shot（会議室のドアから出てくる二人）"
+    camera:
+      framing: "廊下側から。ガラスのドアが開き、二人が歩き出す"
+      movement: "軽い横移動でついていく"
+      lens: "35mm"
+    background: "meeting_room の出口 → open_office への導線"
+    characters_in_frame: ["employee_a", "employee_b"]
+    action: >
+      サトウがノートPCを抱えて出てきて、軽く伸びをする。タカハシが後から出てくる。
+      二人とも表情は明るい。
+    dialogue:
+      - speaker: "employee_a"
+        text: "終わったー。"
+        delivery: "解放感。ややコミカルに。"
+      - speaker: "employee_b"
+        text: "お疲れさま。いい議論だったね。"
+        delivery: "穏やかに。"
+    props: ["ノートPC", "紙のノート"]
+    audio: {sfx: ["ドアの音", "オフィス環境音"], bgm: "明るめのイントロ"}
+    subtitle: "終わったー。 / お疲れさま。いい議論だったね。"
+    notes: "『会議自体は良かった』ことを明示する。問題は会議ではなく事後作業だと示すため。"
+
+  - id: "A-C2"
+    time: {start: "0:10", end: "0:22", duration_seconds: 12}
+    shot_type: "medium shot（第1章C1と同じデスク・同じアングル）"
+    camera: {framing: "第1章C1のデスク構図を再現。窓は画面右", movement: "固定", lens: "35mm"}
+    background: "open_office"
+    characters_in_frame: ["employee_a"]
+    action: >
+      サトウが椅子に座り、ノートPCを開く。一瞬ぼんやりする間（2秒）。
+      そして何かを思い出したように表情が固まる。
+    dialogue:
+      - speaker: "employee_a"
+        text: "……あ。議事録、作らないと。"
+        delivery: "気づいてしまった、というトーン。"
+    props: ["ノートPC", "マグカップ"]
+    audio: {sfx: ["椅子の音"], bgm: "ここで一瞬止める（間を作る）"}
+    subtitle: "……あ。議事録、作らないと。"
+    notes: "第1章C1と同一構図。編集で2つのカットを並べて見せる案もあり（任意）。"
+
+  - id: "A-C3"
+    time: {start: "0:22", end: "0:34", duration_seconds: 12}
+    shot_type: "two-shot, medium"
+    camera: {framing: "第1章C2と同じ構図（タカハシが横に立つ）", movement: "固定", lens: "35mm"}
+    background: "open_office"
+    characters_in_frame: ["employee_a", "employee_b"]
+    action: >
+      タカハシが指を1本ずつ折りながら数え上げる。
+      サトウが手のひらを軽く前に出して制止する仕草。
+    dialogue:
+      - speaker: "employee_b"
+        text: "決定事項でしょ、ToDoでしょ、担当と期限も要るよね。あと、欠席だった人への共有も。"
+        delivery: "淡々と、しかしテンポよく。"
+      - speaker: "employee_a"
+        text: "増やさないで。"
+        delivery: "短く。力なく。"
+    props: ["マグカップ"]
+    audio: {sfx: [], bgm: "軽快に戻る"}
+    subtitle: "決定事項でしょ、ToDoでしょ、担当と期限も要るよね。あと、欠席だった人への共有も。 / 増やさないで。"
+    notes: "章の痛点を1セリフに凝縮するカット。指折りの動作でリズムを作る。"
+
+  - id: "A-C4"
+    time: {start: "0:34", end: "0:46", duration_seconds: 12}
+    shot_type: "insert（時計） → close-up reaction（サトウ）"
+    camera: {framing: "第1章C5と同じインサート構図 → サトウのクローズアップ", movement: "固定", lens: "85mm"}
+    background: "open_office / 背景は浅い被写界深度で落とす"
+    characters_in_frame: ["employee_a", "employee_b"]
+    action: >
+      時計のインサート。サトウが天井を仰いで短く息をつく。
+      タカハシは画面端に肩だけ、または声のみ。
+    dialogue:
+      - speaker: "employee_a"
+        text: "会議は終わったのに、ここからまた30分か……。"
+        delivery: "うんざり。ただし大げさにしない。"
+      - speaker: "employee_b"
+        text: "しかも来週には、何を決めたか忘れてる。"
+        delivery: "さらりと事実を言うトーン。"
+    props: ["腕時計", "卓上時計"]
+    audio: {sfx: [], bgm: "音数を減らす"}
+    subtitle: "会議は終わったのに、ここからまた30分か……。 / しかも来週には、何を決めたか忘れてる。"
+    notes: "第1章C5と対になるカット。『前も後も時計に追われている』構図の反復。"
+
+  - id: "A-C5"
+    time: {start: "0:46", end: "0:58", duration_seconds: 12}
+    shot_type: "two-shot, medium"
+    camera: {framing: "A-C3と同じ構図", movement: "固定", lens: "35mm"}
+    background: "open_office"
+    characters_in_frame: ["employee_a", "employee_b"]
+    action: >
+      タカハシが軽く笑って、マグカップでサトウのPCを指す。
+      サトウが観念したように小さく笑う（3章で唯一、サトウが笑うカット）。
+    dialogue:
+      - speaker: "employee_b"
+        text: "それこそ、AIに任せようよ。"
+        delivery: "軽やかに。3章の決め台詞。"
+      - speaker: "employee_a"
+        text: "……最初からそう言ってほしかった。"
+        delivery: "苦笑まじり。"
+    props: ["マグカップ"]
+    audio: {sfx: [], bgm: "前向きなコードへ"}
+    subtitle: "それこそ、AIに任せようよ。 / ……最初からそう言ってほしかった。"
+    notes: "シリーズ全体のオチにあたるカット。ここだけ少しユーモアを許容する。"
+
+  - id: "A-C6"
+    time: {start: "0:58", end: "1:10", duration_seconds: 12}
+    shot_type: "hands on keyboard → slow push in toward the laptop"
+    camera: {framing: "第1章C7と同じ構図", movement: "画面に向かって寄る", lens: "50mm"}
+    background: "open_office"
+    characters_in_frame: ["employee_a", "employee_b"]
+    action: >
+      サトウがPCに向き直り、キーボードに手を置く。タカハシが横から画面を覗く。
+      カメラが画面へ寄り、フォーカスが浅くなる。
+    dialogue:
+      - speaker: "employee_a"
+        text: "じゃあ、まとめてもらおうか。"
+        delivery: "前向きに。"
+    props: ["ノートPC"]
+    audio: {sfx: ["キー入力音"], bgm: "ピーク → デモでフェードダウン"}
+    subtitle: "じゃあ、まとめてもらおうか。"
+    notes: "3章とも同じ型で終える。編集上、3カットを並べても違和感が出ないように。"
+
+transition_out:
+  to: "demo/03_after_meeting.md"
+  method: "0.5秒ディゾルブ"
+  narration_overlap: "接続ナレーションは寸劇の最後1秒から被せ始める"
