@@ -1,0 +1,238 @@
+# =====================================================================
+# Gemini（Veo系）動画生成プロンプト: 第2章「会議中」
+# 使い方は prompts/gemini/01_before_meeting.yaml の冒頭コメントと同じ。
+# 服装・髪型は第1章と完全に同一（同じ日の出来事）。
+# =====================================================================
+
+meta:
+  section: "during_meeting"
+  cut_count: 6
+  total_seconds: 70
+  aspect_ratio: "16:9"
+  resolution: "1920x1080"
+  fps: 24
+  language_of_dialogue: "Japanese (ja-JP)"
+  location: "meeting_room"
+
+shared:
+  negative: &neg >
+    text overlays, captions, subtitles, watermarks, logos, brand names, readable UI text
+    on screens, fake software interfaces, dense small text, futuristic sci-fi office,
+    holograms, neon lighting, robots, glowing AI effects, exaggerated acting, slapstick,
+    distorted faces, extra fingers, deformed hands, changing hairstyle, changing
+    eyeglasses, changing clothes, many visible meeting participants, camera shake,
+    fisheye lens, dutch angle, heavy lens flare, anime, cartoon, 3d render, cgi look,
+    oversaturated colors, night scene.
+
+  meeting_room_setting: >
+    Setting: a small meeting room in a modern Japanese office, with a glass wall facing an
+    open-plan floor. A light wood table for six, dark gray chairs, a large wall-mounted
+    display at the far end that is switched on but shows only a soft blurred glow with no
+    readable interface, a small round conference speakerphone at the center of the table,
+    a side whiteboard with faint unreadable marker strokes, soft daylight coming through
+    the glass wall.
+
+cuts:
+
+  - id: "D-C1"
+    duration_seconds: 12
+    split_hint: "8秒でタイピング〜セリフまで。足りなければ引き6秒＋寄り6秒に分割"
+    reference_images: ["assets/reference/employee_a.png", "assets/reference/employee_b.png", "assets/reference/meeting_room.png"]
+    prompt: |
+      A wide shot of a small meeting room in a modern Japanese office, filmed from behind and
+      to the side, slowly dollying in. Two coworkers are seated next to each other at a light
+      wood table with laptops open.
+
+      Person A ("Sato"), a Japanese office worker in their early 30s, slim build, short neat
+      black hair parted on the side, thin black-rimmed rectangular eyeglasses, light blue
+      button-down shirt under an open navy cardigan, company ID card on a navy lanyard —
+      leaning forward, typing quickly, eyes locked on the laptop screen, visibly rushing to
+      keep up.
+
+      Person B ("Takahashi"), a Japanese office worker in their late 20s, shoulder-length
+      black hair tucked behind the ears, no eyeglasses, white crew-neck t-shirt under a beige
+      open knit cardigan, black-strap analog wristwatch — facing forward toward the far end of
+      the room, occasionally glancing at Person A's hands.
+
+      Setting: a small meeting room with a glass wall facing an open-plan office, a large
+      wall-mounted display at the far end switched on but showing only a soft blurred glow, a
+      round conference speakerphone at the center of the table, a side whiteboard with faint
+      unreadable strokes, soft daylight. No other people are visible in the room.
+
+      Camera: wide shot, 28mm lens, very slow dolly-in, slightly above eye level.
+      No readable interface on any screen, no readable text anywhere in frame.
+
+      Spoken dialogue in natural Japanese, almost a whisper to himself/herself:
+      Person A: "ちょっと待って……今の、メモしないと。"
+
+      Audio: soft indistinct meeting chatter in the background (words not intelligible),
+      keyboard typing. Photorealistic, natural daylight, neutral color grade, restrained
+      naturalistic acting, 16:9, 1920x1080, 24fps.
+    negative_prompt: *neg
+    dialogue_ja: "ちょっと待って……今の、メモしないと。"
+
+  - id: "D-C2"
+    duration_seconds: 12
+    split_hint: "タカハシの問いかけ / サトウの返答で2テイク"
+    reference_images: ["assets/reference/employee_a.png", "assets/reference/employee_b.png", "assets/reference/meeting_room.png"]
+    prompt: |
+      A medium two-shot of two coworkers seated side by side at a meeting room table, filmed
+      diagonally from the front so both faces are visible.
+
+      Person A ("Sato"), early 30s Japanese office worker, short black hair, thin black-rimmed
+      eyeglasses, light blue shirt under an open navy cardigan — typing, then stopping abruptly,
+      freezing for a beat, and shaking their head slightly with an awkward expression.
+
+      Person B ("Takahashi"), late 20s Japanese office worker, shoulder-length black hair, no
+      eyeglasses, white t-shirt under a beige knit cardigan — leaning slightly toward Person A
+      and covering the mouth with one hand to whisper a question.
+
+      Setting: small meeting room in a modern Japanese office, glass wall, light wood table,
+      round conference speakerphone, wall display showing only a soft blurred glow.
+
+      Camera: medium two-shot, 50mm lens, locked off, eye level.
+      No readable interface on any screen, no readable text anywhere in frame.
+
+      Spoken dialogue in natural Japanese, both whispering:
+      Person B: "ねえ、さっきの件って、結局どっちが対応することになった？"
+      Person A: "え……ごめん、書くのに必死で聞いてなかった。"
+
+      Audio: faint indistinct meeting chatter in the background. Photorealistic, natural
+      daylight, neutral color grade, restrained acting, 16:9, 1920x1080, 24fps.
+    negative_prompt: *neg
+    dialogue_ja:
+      - "ねえ、さっきの件って、結局どっちが対応することになった？"
+      - "え……ごめん、書くのに必死で聞いてなかった。"
+
+  - id: "D-C3"
+    duration_seconds: 12
+    split_hint: "タカハシのクローズアップ8秒 ＋ サトウの切り返し4秒"
+    reference_images: ["assets/reference/employee_a.png", "assets/reference/employee_b.png", "assets/reference/meeting_room.png"]
+    prompt: |
+      A close-up of Person B in a small meeting room, with the glass wall and the open-plan
+      office behind falling into soft bokeh, followed by a short reverse shot of Person A.
+
+      Person B ("Takahashi"), late 20s Japanese office worker, shoulder-length black hair
+      tucked behind the ears, no eyeglasses, white crew-neck t-shirt under a beige open knit
+      cardigan — glancing down with a slightly embarrassed, self-deprecating look, one hand
+      near the mouth, whispering an admission.
+
+      Reverse shot: Person A ("Sato"), early 30s, thin black-rimmed eyeglasses, light blue
+      shirt under a navy cardigan — nodding slightly in sympathy and whispering a short reply.
+
+      Camera: 85mm lens, locked off, eye level, shallow depth of field.
+      No readable interface on any screen, no readable text anywhere in frame.
+
+      Spoken dialogue in natural Japanese, whispered:
+      Person B: "実は私、5分遅れて入ったんだけど、正直まだ話に追いつけてない。"
+      Person A: "聞くタイミング、無いよね。"
+
+      Audio: faint indistinct meeting chatter. Photorealistic, natural daylight, neutral color
+      grade, restrained naturalistic acting, 16:9, 1920x1080, 24fps.
+    negative_prompt: *neg
+    dialogue_ja:
+      - "実は私、5分遅れて入ったんだけど、正直まだ話に追いつけてない。"
+      - "聞くタイミング、無いよね。"
+
+  - id: "D-C4"
+    duration_seconds: 12
+    split_hint: "【必ず2ショットに分ける】(a) ノートとペンのインサート4秒 (b) 会話8秒"
+    reference_images: ["assets/reference/employee_a.png", "assets/reference/employee_b.png", "assets/reference/meeting_room.png"]
+    prompt: |
+      Shot A (4 seconds) — an insert close-up of a paper notebook on a light wood meeting room
+      table, covered in hurried handwriting that is deliberately out of focus and unreadable.
+      A pen tip rests on the page and stops moving. Very shallow depth of field, soft daylight.
+      No readable text.
+
+      Shot B (8 seconds) — a medium shot of Person A ("Sato"), early 30s Japanese office worker,
+      short black hair, thin black-rimmed eyeglasses, light blue shirt under an open navy
+      cardigan, seated at the meeting room table. They lift their head, look toward the far end
+      of the room and frown slightly, genuinely unsure. Beside them, Person B ("Takahashi"),
+      shoulder-length black hair, no eyeglasses, beige knit cardigan over a white t-shirt,
+      gives a small shrug.
+
+      Setting: small meeting room, glass wall, wall display showing only a soft blurred glow.
+
+      Camera: 50mm lens, locked off, eye level.
+      No readable interface on any screen, no readable text anywhere in frame.
+
+      Spoken dialogue in natural Japanese, whispered:
+      Person A: "……で、今って何を決める時間だったっけ。"
+      Person B: "論点、どこかで1個ずれた気がする。"
+
+      Audio: page turning, faint indistinct meeting chatter. Photorealistic, natural daylight,
+      neutral color grade, 16:9, 1920x1080, 24fps.
+    negative_prompt: *neg
+    dialogue_ja:
+      - "……で、今って何を決める時間だったっけ。"
+      - "論点、どこかで1個ずれた気がする。"
+
+  - id: "D-C5"
+    duration_seconds: 12
+    split_hint: "1テイクで通す。『これも、AIに任せられないかな。』の言い方を重視して選ぶ"
+    reference_images: ["assets/reference/employee_a.png", "assets/reference/employee_b.png", "assets/reference/meeting_room.png"]
+    prompt: |
+      A medium two-shot of two coworkers seated side by side at a meeting room table, same
+      framing as before, filmed diagonally from the front.
+
+      Person A ("Sato"), early 30s Japanese office worker, thin black-rimmed eyeglasses, light
+      blue shirt under an open navy cardigan — leaning back against the chair, letting out a
+      short breath, hands off the keyboard for the first time.
+
+      Person B ("Takahashi"), late 20s, shoulder-length black hair, no eyeglasses, beige knit
+      cardigan over a white t-shirt — smiling slightly and offering an idea in a light,
+      casual tone.
+
+      Setting: small meeting room in a modern Japanese office, glass wall, light wood table,
+      wall display showing only a soft blurred glow.
+
+      Camera: medium two-shot, 50mm lens, locked off, eye level.
+      No readable interface on any screen, no readable text anywhere in frame.
+
+      Spoken dialogue in natural Japanese, whispered:
+      Person A: "話を聞きたいのに、書くので手一杯なんだよね。"
+      Person B: "これも、AIに任せられないかな。"
+
+      Audio: faint indistinct meeting chatter. Photorealistic, natural daylight, neutral color
+      grade, restrained naturalistic acting, 16:9, 1920x1080, 24fps.
+    negative_prompt: *neg
+    dialogue_ja:
+      - "話を聞きたいのに、書くので手一杯なんだよね。"
+      - "これも、AIに任せられないかな。"
+
+  - id: "D-C6"
+    duration_seconds: 10
+    split_hint: "1テイク。ラストフレームが『画面に寄っている』ことが必須"
+    reference_images: ["assets/reference/employee_a.png", "assets/reference/meeting_room.png"]
+    prompt: |
+      An over-the-shoulder shot from behind Person A's shoulder, looking toward an open laptop
+      on a meeting room table, slowly pushing in toward the screen.
+
+      Person A ("Sato"), early 30s Japanese office worker, short black hair, thin black-rimmed
+      eyeglasses, light blue shirt under an open navy cardigan — lowers their gaze to the
+      laptop and rests a hand on the trackpad, with a small look of realization.
+
+      Setting: small meeting room in a modern Japanese office, glass wall, soft daylight.
+
+      Action: the camera pushes in slowly toward the laptop; in the final second the focus
+      becomes very shallow and the frame is dominated by the soft glow of the screen area.
+
+      Camera: 50mm lens, slow push-in, ending on a soft defocused frame.
+      The screen never shows a readable interface — only a soft out-of-focus glow.
+      No readable text anywhere in frame.
+
+      Spoken dialogue in natural Japanese, quiet:
+      Person A: "……そうか。会議中でも、頼めるのか。"
+
+      Audio: a single soft trackpad click, faint indistinct meeting chatter.
+      Photorealistic, natural daylight, neutral color grade, 16:9, 1920x1080, 24fps.
+    negative_prompt: *neg
+    dialogue_ja: "……そうか。会議中でも、頼めるのか。"
+    note: "編集でこの最終フレームから画面録画へ0.5秒ディゾルブする。"
+
+post_generation:
+  checklist_file: "prompts/characters.yaml#consistency_checklist"
+  extra_checks:
+    - "第1章と服装・髪型が一致しているか（同じ日の設定）"
+    - "会議室に第三者が映り込んでいないか"
+    - "壁掛けディスプレイに読める文字が出ていないか"

@@ -1,0 +1,347 @@
+# =====================================================================
+# 編集タイムライン: 「その会議、AIに任せてみない？」
+# 総尺 15:00 / 1920x1080 / 30fps（生成映像24fpsは書き出し時に30fpsへ変換）
+#
+# 用語:
+#   GEN  = 生成AI動画（Gemini出力を連結したもの）
+#   REC  = 画面録画（demo/ のシナリオで収録したもの）
+#   CARD = 編集ソフトで作るタイトル/まとめカード
+# =====================================================================
+
+meta:
+  total_duration: "15:00"
+  resolution: "1920x1080"
+  fps: 30
+  audio: "48kHz / stereo"
+  safe_margin: "文字は画面端から5%以上内側に置く"
+  editing_software: ["CapCut", "Adobe Premiere Pro", "DaVinci Resolve"]
+
+# ---------------------------------------------------------------------
+# トラック構成
+# ---------------------------------------------------------------------
+tracks:
+  V1: "本編映像（GEN / REC / CARD）"
+  V2: "ズーム・ハイライト・アノテーション（デモ強調用）"
+  V3: "字幕"
+  V4: "章インジケーター（画面左下の小さな『会議前／会議中／会議後』表示）"
+  A1: "セリフ・ナレーション"
+  A2: "効果音（SE）"
+  A3: "BGM"
+
+# ---------------------------------------------------------------------
+# タイムライン本体
+# ---------------------------------------------------------------------
+timeline:
+
+  - id: "OP"
+    start: "00:00"
+    end: "00:30"
+    duration_seconds: 30
+    type: "CARD"
+    content: >
+      タイトル「その会議、AIに任せてみない？ / 会議と情報整理の効率化」を提示し、
+      「会議前」「会議中」「会議後」の3つのアイコンが順に現れる構成図を見せる。
+    narration: >
+      会議の前も、会議の最中も、会議が終わったあとも。
+      私たちは、ずいぶん多くの時間を「情報を整理すること」に使っています。
+      この15分では、その中のどこをAIに任せられるのかを見ていきます。
+    bgm: "メインテーマ。0秒からフェードイン、-20dB。"
+    transition_out: "クロスディゾルブ 0.5秒"
+
+  # ================= 第1章 =================
+  - id: "CH1-TITLE"
+    start: "00:30"
+    end: "00:38"
+    duration_seconds: 8
+    type: "CARD"
+    content: "第1章 会議前 — 探す時間が、いちばん長い"
+    narration: "会議の準備でいちばん時間を取られるのは、実は「考える時間」ではなく「探す時間」です。"
+    bgm: "-24dB"
+    transition_out: "カット"
+
+  - id: "CH1-GEN"
+    start: "00:38"
+    end: "01:53"
+    duration_seconds: 75
+    type: "GEN"
+    source: "prompts/gemini/01_before_meeting.yaml（B-C1 〜 B-C7）"
+    cut_markers:
+      - {cut: "B-C1", start: "00:38", end: "00:48"}
+      - {cut: "B-C2", start: "00:48", end: "01:00"}
+      - {cut: "B-C3", start: "01:00", end: "01:12"}
+      - {cut: "B-C4", start: "01:12", end: "01:23"}
+      - {cut: "B-C5", start: "01:23", end: "01:34"}
+      - {cut: "B-C6", start: "01:34", end: "01:45"}
+      - {cut: "B-C7", start: "01:45", end: "01:53"}
+    subtitles: "全セリフに字幕。scripts/01_before_meeting.md の付録表を使用。"
+    sfx:
+      - {at: "00:41", name: "通知音風SE", note: "Teams通知音そのものは使わない"}
+      - {at: "01:02", name: "マウスクリック音（小）"}
+      - {at: "01:47", name: "キー入力音"}
+    bgm: "軽いピアノ/マリンバ。-24dB。01:34（B-C6）で前向きなコード進行へ切り替え。"
+    transition_out: "ディゾルブ 0.5秒（B-C7のデフォーカス最終フレーム → REC）"
+
+  - id: "CH1-BRIDGE"
+    start: "01:53"
+    end: "02:03"
+    duration_seconds: 10
+    type: "REC（冒頭を静止で保持）"
+    narration: >
+      ここからは、実際の画面です。
+      「前回の会議で何が決まったか」から「今日のアジェンダ」まで、Copilotにまとめて聞いてみます。
+    bgm: "-30dBまで下げる（デモ中は常に低く保つ）"
+
+  - id: "CH1-DEMO"
+    start: "02:03"
+    end: "04:50"
+    duration_seconds: 167
+    type: "REC"
+    source: "demo/01_before_meeting.md"
+    segments:
+      - {step: 1, title: "前回の決定事項を確認", start: "02:03", end: "02:48", duration: 45}
+      - {step: 2, title: "情報を横断でまとめる", start: "02:48", end: "03:33", duration: 45}
+      - {step: 3, title: "最新版の資料を特定", start: "03:33", end: "04:05", duration: 32}
+      - {step: 4, title: "アジェンダ作成", start: "04:05", end: "04:50", duration: 45}
+    v2_effects:
+      - "各ステップの出力にズームイン（1.2〜1.3倍、0.6秒のイーズイン）"
+      - "重要箇所に黄色の半透明ハイライト矩形（不透明度25%）"
+      - "参照元リンクに矢印アノテーション"
+      - "マウスカーソルを1.5倍に拡大表示"
+    subtitles: "ナレーションのキーワードのみ（全文字幕にしない）"
+    bgm: "-30dB。ステップ4の出力表示に合わせてわずかに上げる。"
+    transition_out: "カット"
+
+  - id: "CH1-SUMMARY"
+    start: "04:50"
+    end: "05:00"
+    duration_seconds: 10
+    type: "CARD"
+    content: "会議前にAIへ任せられる3つ: 探す / 思い出す / 並べる"
+    narration: >
+      会議前にAIへ任せられるのは、「探す」「思い出す」「並べる」の3つ。
+      準備の時間は、そのまま考える時間になります。
+    bgm: "-22dBへ戻す"
+    transition_out: "クロスディゾルブ 0.5秒"
+
+  # ================= 第2章 =================
+  - id: "CH2-TITLE"
+    start: "05:00"
+    end: "05:08"
+    duration_seconds: 8
+    type: "CARD"
+    content: "第2章 会議中 — 書く人は、聞けない"
+    narration: "会議中、いちばん熱心にメモを取っている人が、いちばん議論に参加できていない。よくある光景です。"
+    transition_out: "カット"
+
+  - id: "CH2-GEN"
+    start: "05:08"
+    end: "06:18"
+    duration_seconds: 70
+    type: "GEN"
+    source: "prompts/gemini/02_during_meeting.yaml（D-C1 〜 D-C6）"
+    cut_markers:
+      - {cut: "D-C1", start: "05:08", end: "05:20"}
+      - {cut: "D-C2", start: "05:20", end: "05:32"}
+      - {cut: "D-C3", start: "05:32", end: "05:44"}
+      - {cut: "D-C4", start: "05:44", end: "05:56"}
+      - {cut: "D-C5", start: "05:56", end: "06:08"}
+      - {cut: "D-C6", start: "06:08", end: "06:18"}
+    subtitles: "全セリフに字幕（小声のシーンが続くため、字幕は特に重要）"
+    sfx:
+      - {at: "05:08", name: "意味の取れない会議の話し声（-30dB、章を通して継続）"}
+      - {at: "05:10", name: "タイピング音"}
+      - {at: "06:15", name: "トラックパッドのクリック音"}
+    bgm: "低く、リズムのあるBGM。-26dB。05:56（D-C5）で前向きなコードへ。"
+    transition_out: "ディゾルブ 0.5秒"
+
+  - id: "CH2-BRIDGE"
+    start: "06:18"
+    end: "06:28"
+    duration_seconds: 10
+    type: "REC（冒頭を静止で保持）"
+    narration: >
+      会議中に使えるのは、終わってからのまとめだけではありません。
+      「いま進行中の会議」に対して、その場で質問できます。
+    bgm: "-30dB"
+
+  - id: "CH2-DEMO"
+    start: "06:28"
+    end: "09:20"
+    duration_seconds: 172
+    type: "REC"
+    source: "demo/02_during_meeting.md"
+    segments:
+      - {step: 1, title: "文字起こしをオンにする", start: "06:28", end: "06:58", duration: 30}
+      - {step: 2, title: "途中参加のキャッチアップ", start: "06:58", end: "07:46", duration: 48}
+      - {step: 3, title: "決定事項と担当者未定タスク", start: "07:46", end: "08:36", duration: 50}
+      - {step: 4, title: "論点と残り時間の使い方", start: "08:36", end: "09:20", duration: 44}
+    v2_effects:
+      - "「記録しています」表示にハイライト矩形（06:35付近）"
+      - "ステップ2の3行要約にズームイン"
+      - "「担当者未定」の行に赤系ハイライト"
+      - "寸劇の該当セリフを字幕で一瞬だけ再提示（07:00 / 07:50 / 09:10）"
+    bgm: "-30dB"
+    transition_out: "カット"
+
+  - id: "CH2-SUMMARY"
+    start: "09:20"
+    end: "09:30"
+    duration_seconds: 10
+    type: "CARD"
+    content: "記録はAI、判断は人。"
+    narration: "記録はAI、判断は人。役割を分けるだけで、会議中にできることが変わります。"
+    bgm: "-22dB"
+    transition_out: "クロスディゾルブ 0.5秒"
+
+  # ================= 第3章 =================
+  - id: "CH3-TITLE"
+    start: "09:30"
+    end: "09:38"
+    duration_seconds: 8
+    type: "CARD"
+    content: "第3章 会議後 — 終わってからが、本番？"
+    narration: "会議が終わって、席に戻る。……そこから議事録づくりが始まります。"
+    transition_out: "カット"
+
+  - id: "CH3-GEN"
+    start: "09:38"
+    end: "10:48"
+    duration_seconds: 70
+    type: "GEN"
+    source: "prompts/gemini/03_after_meeting.yaml（A-C1 〜 A-C6）"
+    cut_markers:
+      - {cut: "A-C1", start: "09:38", end: "09:48"}
+      - {cut: "A-C2", start: "09:48", end: "10:00"}
+      - {cut: "A-C3", start: "10:00", end: "10:12"}
+      - {cut: "A-C4", start: "10:12", end: "10:24"}
+      - {cut: "A-C5", start: "10:24", end: "10:36"}
+      - {cut: "A-C6", start: "10:36", end: "10:48"}
+    subtitles: "全セリフに字幕"
+    sfx:
+      - {at: "09:39", name: "ドアの音"}
+      - {at: "09:50", name: "椅子の音"}
+      - {at: "10:44", name: "キー入力音"}
+    bgm: "明るめ。-24dB。09:50（A-C2の『間』）で一瞬ミュートし、10:24（A-C5）で戻す。"
+    optional_effect: >
+      A-C2 で第1章 B-C1 の同一構図カットを画面隅に小さく重ねる（0.5秒・不透明度40%）。
+      「一周して同じ席に戻った」ことを視覚的に示す任意演出。
+    transition_out: "ディゾルブ 0.5秒"
+
+  - id: "CH3-BRIDGE"
+    start: "10:48"
+    end: "10:58"
+    duration_seconds: 10
+    type: "REC（冒頭を静止で保持）"
+    narration: >
+      会議が終わった直後の画面です。
+      議事録、決定事項、ToDo、そしてフォローアップのメールまで、まとめて作ってもらいます。
+    bgm: "-30dB"
+
+  - id: "CH3-DEMO"
+    start: "10:58"
+    end: "13:50"
+    duration_seconds: 172
+    type: "REC"
+    source: "demo/03_after_meeting.md"
+    segments:
+      - {step: 1, title: "会議の要約", start: "10:58", end: "11:23", duration: 25}
+      - {step: 2, title: "議事録の形に整える", start: "11:23", end: "12:03", duration: 40}
+      - {step: 3, title: "アクションアイテムを表に", start: "12:03", end: "12:45", duration: 42}
+      - {step: 4, title: "フォローアップメール", start: "12:45", end: "13:20", duration: 35}
+      - {step: 5, title: "次回会議への引き継ぎ", start: "13:20", end: "13:50", duration: 30}
+    v2_effects:
+      - "プロンプトの見出し指定と出力の見出しを線で結ぶアノテーション（ステップ2）"
+      - "「未定」セルを赤系ハイライト、「根拠となった発言」列に矢印（ステップ3）"
+      - "ステップ5で第1章ステップ4の画面を右半分に並べて表示（分割画面）"
+    bgm: "-30dB。ステップ5で徐々に上げてクロージングへ繋ぐ。"
+    transition_out: "クロスディゾルブ 0.8秒"
+
+  - id: "CH3-SUMMARY"
+    start: "13:50"
+    end: "14:00"
+    duration_seconds: 10
+    type: "CARD"
+    content: "議事録は「書くもの」から「確認するもの」へ。"
+    narration: "議事録は「書くもの」から「確認するもの」へ。人の仕事は、内容の責任を持つことに集中できます。"
+    bgm: "-20dB"
+    transition_out: "カット"
+
+  # ================= クロージング =================
+  - id: "ED"
+    start: "14:00"
+    end: "15:00"
+    duration_seconds: 60
+    type: "CARD"
+    content: >
+      3章の振り返り図（会議前 → 会議中 → 会議後 → 次の会議前 へ戻る円環アニメーション）→
+      明日から試せる3ステップ → 注意事項 → エンドカード
+    beats:
+      - {start: "14:00", end: "14:20", content: "円環図。会議前『探す』/ 会議中『書く』/ 会議後『まとめる』をAIへ"}
+      - {start: "14:20", end: "14:40", content: "明日から試せる3ステップ（文字起こしON → 要約 → 次回アジェンダ）"}
+      - {start: "14:40", end: "14:52", content: "注意事項: 決定事項・担当・期限は必ず人が確認する"}
+      - {start: "14:52", end: "15:00", content: "エンドカード + タイトル再提示"}
+    narration: "scripts/03_after_meeting.md の「5. クロージング」を参照"
+    bgm: "メインテーマ再現。-18dB。14:55からフェードアウト。"
+
+# ---------------------------------------------------------------------
+# 字幕仕様
+# ---------------------------------------------------------------------
+subtitles:
+  font: "Noto Sans JP Bold / 太めのゴシック体"
+  size: "48-56px（1080p基準）"
+  color: "白 + 黒のドロップシャドウ、または黒の半透明帯（不透明度60%）"
+  position: "下から120px。デモ中はUIと重ならない位置へ都度調整する"
+  max_chars_per_line: 20
+  max_lines: 2
+  policy:
+    gen_sections: "寸劇は全セリフに字幕を入れる（生成音声の聞き取りにくさを補う）"
+    demo_sections: "ナレーションのキーワードのみ。画面のUI文字を隠さないこと"
+    cards: "ナレーションと同じ文言を大きく1〜2行で"
+
+# ---------------------------------------------------------------------
+# BGM / SE
+# ---------------------------------------------------------------------
+audio_plan:
+  bgm:
+    track: "1曲を通しで使い、章ごとに音量とフィルターで表情を変える"
+    reference_levels:
+      dialogue_and_narration: "-6dB"
+      bgm_under_gen: "-24dB"
+      bgm_under_demo: "-30dB"
+      bgm_under_cards: "-20dB"
+    licensing: "商用利用可・帰属表示条件を確認した素材のみ使用する"
+  sfx:
+    policy: "実際の製品の通知音は使わない。汎用の通知音風SEに差し替える"
+    list: ["通知音風SE", "キーボード入力音", "マウスクリック音", "ドアの音", "椅子の音", "紙をめくる音"]
+  ducking: "ナレーション/セリフが入る区間はBGMを自動で-6dB下げる（サイドチェイン）"
+
+# ---------------------------------------------------------------------
+# 書き出し設定
+# ---------------------------------------------------------------------
+export:
+  master:
+    codec: "H.264 / High Profile"
+    resolution: "1920x1080"
+    fps: 30
+    bitrate: "16-20 Mbps (VBR 2pass)"
+    audio: "AAC 320kbps / 48kHz"
+  subtitle_file: "別途 .srt も書き出す（社内共有時に検索できるようにするため）"
+  variants:
+    - {name: "full", description: "15分フル版"}
+    - {name: "short_before", description: "第1章のみ（4:30）— 社内展開用の分割版"}
+    - {name: "short_during", description: "第2章のみ（4:30）"}
+    - {name: "short_after", description: "第3章のみ（4:30）"}
+    - {name: "teaser", description: "寸劇3本だけを繋いだ約3分半版（導入用）"}
+
+# ---------------------------------------------------------------------
+# 最終チェック
+# ---------------------------------------------------------------------
+final_check:
+  - "総尺が15:00±5秒に収まっているか"
+  - "3章を通して登場人物の顔・服装が変わっていないか"
+  - "生成映像内に読める文字・ロゴが写っていないか"
+  - "デモ映像に実名・実データが1フレームも映っていないか"
+  - "字幕の誤字、話者の取り違えがないか"
+  - "BGMがナレーションを邪魔していないか（-6dBのダッキングが効いているか）"
+  - "各章の『これ、AIに任せられないかな』からデモへの繋ぎが滑らかか"
+  - "スマートフォンで再生したときに字幕が読めるサイズか"
